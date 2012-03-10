@@ -1,0 +1,47 @@
+Education\VisualFeedbackBundle\Entity\Pupilanswer:
+  type: entity
+  table: PupilAnswer
+  fields:
+    id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+    imageAnswer:
+      type: string
+      length: 45
+      fixed: false
+      nullable: true
+      column: image_answer
+    textAnswer:
+      type: string
+      length: 45
+      fixed: false
+      nullable: true
+      column: text_answer
+    timestamp:
+      type: integer
+      unsigned: false
+      nullable: false
+  oneToOne:
+    tutoringsession:
+      targetEntity: Tutoringsession
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        TutoringSession_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    lessonImagequestion:
+      targetEntity: LessonImagequestion
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Lesson_ImageQuestion_id:
+          referencedColumnName: id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

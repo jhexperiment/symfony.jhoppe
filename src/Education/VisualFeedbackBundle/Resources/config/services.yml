@@ -1,0 +1,7 @@
+parameters:
+#    education_visual_feedback.example.class: Education\VisualFeedbackBundle\Example
+
+services:
+#    education_visual_feedback.example:
+#        class: %education_visual_feedback.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

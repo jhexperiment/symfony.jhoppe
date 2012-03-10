@@ -1,0 +1,42 @@
+config_upload:
+    pattern:  /config/upload/image
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:uploadImage }
+
+config_index:
+    pattern:  /config/index
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
+
+config_image_list:
+    pattern:  /config/list/image.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listImage }
+
+config_pupil_list:
+    pattern:  /config/list/pupil.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listPupil }
+
+config_tutor_list:
+    pattern:  /config/list/tutor.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listTutor }
+
+config_lesson_list:
+    pattern:  /config/list/lesson.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listLesson }
+
+config_lesson_get:
+    pattern:  /config/get/lesson.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:getLesson }
+
+config_session_list:
+    pattern:  /config/list/session.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listSession }
+
+tutor_index:
+    pattern:  /tutor/index
+    defaults: { _controller: EducationVisualFeedbackBundle:Tutor:index }
+
+
+pupil_index:
+    pattern:  /pupil/index
+    defaults: { _controller: EducationVisualFeedbackBundle:Pupil:index }
+
+

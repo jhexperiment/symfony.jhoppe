@@ -1,0 +1,60 @@
+Education\VisualFeedbackBundle\Entity\Tutoringsession:
+  type: entity
+  table: TutoringSession
+  fields:
+    id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+    hash:
+      type: string
+      length: 256
+      fixed: false
+      nullable: false
+    displayContent:
+      type: string
+      length: 128
+      fixed: false
+      nullable: false
+      column: display_content
+  oneToOne:
+    pupil:
+      targetEntity: Pupil
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Pupil_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    tutor:
+      targetEntity: Tutor
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Tutor_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    lessonImagequestion:
+      targetEntity: LessonImagequestion
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Lesson_ImageQuestion_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    statuscode:
+      targetEntity: Statuscode
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        StatusCode_id:
+          referencedColumnName: id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

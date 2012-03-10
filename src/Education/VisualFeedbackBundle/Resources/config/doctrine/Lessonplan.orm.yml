@@ -1,0 +1,17 @@
+Education\VisualFeedbackBundle\Entity\Lessonplan:
+  type: entity
+  table: LessonPlan
+  fields:
+    id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+    name:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
+  lifecycleCallbacks: {  }

@@ -1,0 +1,31 @@
+Education\VisualFeedbackBundle\Entity\LessonplanLesson:
+  type: entity
+  table: LessonPlan_Lesson
+  fields:
+    id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+  oneToOne:
+    lesson:
+      targetEntity: Lesson
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Lesson_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    classLessonplan:
+      targetEntity: ClassLessonplan
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Class_LessonPlan_id:
+          referencedColumnName: id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

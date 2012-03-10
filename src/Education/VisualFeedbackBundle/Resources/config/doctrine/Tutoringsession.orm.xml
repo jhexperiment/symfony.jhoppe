@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Education\VisualFeedbackBundle\Entity\Tutoringsession" table="TutoringSession">
+    <change-tracking-policy>DEFERRED_IMPLICIT</change-tracking-policy>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="hash" type="string" column="hash" length="256"/>
+    <field name="displayContent" type="string" column="display_content" length="128"/>
+    <many-to-one field="pupil" target-entity="Pupil" orphan-removal="">
+      <join-columns>
+        <join-column name="Pupil_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="tutor" target-entity="Tutor" orphan-removal="">
+      <join-columns>
+        <join-column name="Tutor_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="lessonImagequestion" target-entity="LessonImagequestion" orphan-removal="">
+      <join-columns>
+        <join-column name="Lesson_ImageQuestion_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="statuscode" target-entity="Statuscode" orphan-removal="">
+      <join-columns>
+        <join-column name="StatusCode_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <lifecycle-callbacks/>
+  </entity>
+</doctrine-mapping>
