@@ -67,5 +67,28 @@
       <span class="text">Add</span>
     </span>
   </div>
-  
+</div>
+
+
+<div class="view-container">
+  <div id="image" class="view state-hide">
+    <div class="head">
+      <div class="title">Image</div>
+      <div class="search-bar">
+        <input type="text" />
+        <span class="search-button button">Search</span>
+      </div>
+    </div>
+    <div class="body">
+      
+    </div>
+  </div>
+  <div id="tutor" class="view state-hide">
+    <div class="head">
+      <div class="title">Tutor</div>
+    </div>
+    <div class="body">
+      
+    </div>
+  </div>
 </div>

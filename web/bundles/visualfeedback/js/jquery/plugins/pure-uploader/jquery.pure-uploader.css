@@ -1,0 +1,114 @@
+
+.pure {
+	position: relative;
+}
+
+.pure .pure-input {
+	opacity: 0;
+	-moz-opacity: 0;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+	top: 0;
+	right: 0;
+	position: absolute;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+    z-index:1;
+    cursor:pointer;
+    /* Make this huge so that we don't get an ibeam. */
+    font-size:500px;
+    height: 30px;
+}
+
+.pure .pure-upload-button {
+    background-color: #3B3B3B;
+    color:#FFFFFF;
+    display:block;
+    padding:7px 0;
+    text-align:center;
+    width:100px;
+    position: relative;
+    cursor: pointer;
+}
+
+.pure .pure-entry {
+	width: 400px;
+	padding: 5px;
+	margin: 5px;
+	border: 1px solid #DDD;
+	font-family: 'Verdana','Lucida Sans Unicode',Lucida;
+	font-size: 10px;
+	text-transform: uppercase;
+	color: #666;
+}
+
+.pure .pure-filename {
+	color: #3B3B3B;
+	font-size: 12px;
+	font-weight: bold;
+	text-transform: none;
+}
+
+.pure .pure-iframe {
+	width: 0;
+	height: 0;
+	display: none;
+}
+
+.pure .pure-progress {
+	height: 10px;
+	border: 1px solid #CCC;
+    float: left;
+    width: 380px;
+}
+
+* html .pure .pure-progress {
+	width: 370px;
+}
+
+.pure .pure-bar {
+	background-color: #1E90FF;
+	width: 0;
+	height: 100%;
+}
+
+.pure .pure-cancel {
+    background-image: url('images/close.png');
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    float: right;
+    margin-top: -2px;
+}
+
+* html .pure .pure-cancel {
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/close.png');
+    margin-top: -1px;
+}
+/* Only show the cancel button on non HTML5 brwosers once the download has completed */
+
+.pure .pure-entry.iframe .pure-cancel {
+    display: none;
+}
+
+.pure div.pure-entry.aborted .pure-cancel, 
+.pure div.pure-entry.error .pure-cancel ,
+.pure div.pure-entry.complete .pure-cancel {
+    display: block;
+}
+
+.aborted .pure-bar, .error .pure-bar, .complete .pure-bar {
+	width: 100% !important;
+}
+
+.pure .pure-entry.error .pure-bar {
+    background-color: #FF0000;
+}
+
+.pure .pure-entry.aborted .pure-bar {
+    background-color: #CCC;
+}
+
+.pure .pure-entry.complete .pure-bar {
+	background-color: #00CD00;
+}

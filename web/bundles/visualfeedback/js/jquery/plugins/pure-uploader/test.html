@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+		<script src="jquery.pure-uploader.js"></script>
+		<link rel="stylesheet" href="jquery.pure-uploader.css" />
+		<script>
+			$(document).ready(function() {
+				$('#pure').pureUploader({
+				    'url': 'noscript.html',
+				    'uploadAverageSpeed': true,
+				    'sizeLimit': 2 * 1024 * 1024
+					}
+				);
+			});
+		</script>
+	</head>
+	
+	<body>
+		<div id="pure">
+		</div>
+	</body>
+</html>
