@@ -33,8 +33,9 @@ oThisPage = {
       $(".view").addClass('state-hide');
       $("#" + sId + ".view").removeClass('state-hide');
     });
-    
-    
+    $(".main-menu #image.menu-item").click(function() {
+      oThisPage.fnGetImageList();
+    });
     
     $("#image.sub-menu .menu-item .input input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
@@ -81,9 +82,41 @@ oThisPage = {
         oInput.css("width", "auto");
       });
     });
-    
+   
+    $("#image.view .search-bar .search-button").click(function() {
+      oThisPage.fnGetImageList();
+    });
     
     // default to image tab
     $(".main-menu #image.menu-item").click();
+  },
+  'fnGetImageList': function() {
+    $("#image.view .body .image-list").html("");
+    
+    var aData = {
+      'sSearch': $("#image.view .search-bar input").val()
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/image.json",
+      'success': function(aData, textStatus, jqXHR) {
+        $.each(aData, function() {
+          var sHtml = 
+              '<div class="image">' + 
+                '<div class="icon">' +
+                  '<img src="' + this.sUrl + '" />' +
+                '</div>' + 
+                '<div class="label">' +
+                  this.sLabel +
+                '</div>' +
+              '</div>';
+          var oHtml = $(sHtml);
+          $("#image.view .body .image-list").append(oHtml);
+        });
+      }
+    });
   }
 };

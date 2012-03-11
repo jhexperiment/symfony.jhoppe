@@ -14,6 +14,9 @@ use Education\VisualFeedbackBundle\Entity\Imagefolder;
 class ConfigController extends Controller {
     
     public function indexAction() {
+        
+      
+      
       $aViewData = array(
         
       );
@@ -64,19 +67,60 @@ class ConfigController extends Controller {
      * @Route("/config/list/image.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_image_list")
      */
     public function listImageAction() {
-      $aItem = array(
-        'id' => '1',
-        'name' => 'pupil_default.gif',
-        'url' => '/bundles/visualfeedback/images/pupil_icons/',
-        'path' => '/web/bundles/visualfeedback/images/pupil_icons/',
-        'icon' => '/bundles/visualfeedback/images/pupil_icons/pupil_default.gif'
-      );
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
       
-      $aList = array(
-        $aItem
-      );
       
-      $oResponse = new Response(json_encode($aList));
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      if (empty($sSearch)) {
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
+        $aRecordList = $oRepository->findAll();
+      }
+      else {
+        $sSql = 
+          'SELECT i ' +
+          'FROM EducationVisualFeedbackBundle:Image i ' + 
+          'WHERE i.label LIKE :label ' +
+            'OR i.name LIKE :name ' +
+          'ORDER BY i.name ASC';
+        
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aRecordList = $oQueryBuilder
+          ->select('i')
+          ->from('EducationVisualFeedbackBundle:Image', 'i')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('i.filename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->orwhere( 
+            $oQueryBuilder->expr()
+              ->like('i.label', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->getQuery()
+          ->getResult();
+        
+        
+        /*
+        $oQuery = $oEntityManager->createQuery($sSql)->setParameters(array(
+          'name' => $sSearch,
+          'label' => $sSearch
+        ));
+        
+        
+        $aRecordList = $oQuery->getResult();
+        */
+      }
+      
+      $aImageList = array();
+      foreach ($aRecordList as $oImage) {
+        $oImageFolder = $oImage->getImagefolder();
+        $aImageList[] = array(
+          'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
+          'sLabel' => $oImage->getLabel()
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aImageList));
       
       return $oResponse;
     }

@@ -174,14 +174,14 @@ pre {
   float: left;
 }
 
-#image-view.view .search-bar {
+#image.view .search-bar {
   width: 100%;
   display: inline-block;
   float: left;
   text-align: center;
 }
 
-#image-view.view .search-bar .button {
+#image.view .search-bar .button {
   cursor: pointer;
   padding: 4px 0px;
   width: 80px;
@@ -194,7 +194,26 @@ pre {
   background-color: #DDDDDD;
 }
 
+#image.view .body .image {
+  cursor: pointer;
+  margin: 16px;
+  
+  display: inline-block;
+  float: left;
+  
+  text-align: center;
+  
+  border: 1px solid #000000;
+}
 
+#image.view .body .image .label {
+  font-size: 8pt;
+}
+
+#image.view .body .image .icon img {
+  width: 64px;
+  height: 64px;
+}
 
 
 

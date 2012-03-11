@@ -57,7 +57,7 @@
       <span class="text">Add</span>
     </span>
   </div>
-  <div id="lesson" class="sub-menu state-hide">
+  <div id="session" class="sub-menu state-hide">
     <span id="add" class="menu-item">
       <span class="text">Add</span>
     </span>
@@ -80,7 +80,7 @@
       </div>
     </div>
     <div class="body">
-      
+      <div class="image-list"></div>
     </div>
   </div>
   <div id="tutor" class="view state-hide">
@@ -92,3 +92,4 @@
     </div>
   </div>
 </div>
+
