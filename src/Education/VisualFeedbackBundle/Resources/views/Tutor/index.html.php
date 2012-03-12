@@ -1,5 +1,7 @@
 <?php $view->extend('EducationVisualFeedbackBundle::layout.html.php') ?>
 
+<link rel="stylesheet" href="/bundles/visualfeedback/css/tutor.css" type="text/css">
+<script type="text/javascript" src="/bundles/visualfeedback/js/tutor.js"></script>
 
 <div id="userMenu">
       <div class="text"><?=$sUserEmail?></div>

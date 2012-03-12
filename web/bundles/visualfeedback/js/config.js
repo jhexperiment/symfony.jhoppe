@@ -163,7 +163,7 @@ oThisPage = {
     
     
     $("#image.sub-menu #add.menu-item").click(function() {
-      var oInput = $(this).next(".input");
+      var oInput = $(this).parent().find(".input");
       oInput.data("original-width", oInput.width());
       oInput.width(0);
       oInput.removeClass("state-hide");
