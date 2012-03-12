@@ -18,6 +18,10 @@ config_tutor_list:
     pattern:  /config/list/tutor.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listTutor }
 
+config_tutor_icon_list:
+    pattern:  /config/list/tutor/icon.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listTutorIcon }
+
 config_lesson_list:
     pattern:  /config/list/lesson.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listLesson }

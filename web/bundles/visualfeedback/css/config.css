@@ -7,7 +7,7 @@ body {
   margin: 0;
   padding: 0;
   
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
 }
 
 pre {
@@ -18,6 +18,27 @@ pre {
 
 .state-hide {
   display: none !important;
+}
+
+.red {
+  color: #FF8A8A;
+}
+
+.modal {
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  left: 100%;
+  top: 0px;
+  position: fixed;
+  display: inline-block;
+  
+  background-color: #444444;
+  opacity: 0.8;
+}
+
+.modal.state-show {
+  left: 0px;
 }
 
 .top-bar {
@@ -287,10 +308,14 @@ pre {
   height: 64px;
 }
 
-#tutor.view .body .add-popup {
+#add-teacher-popup {
+  z-index: 1999;
   padding: 24px;
   width: 591px;
   height: 366px;
+  left: 400px;
+  top: 200px;
+  position: fixed;
   display: inline-block;
   
   font-family: chalkboard;
@@ -300,17 +325,150 @@ pre {
   background: url('/bundles/visualfeedback/images/chalkboard-med.png');
 }
 
-#tutor.view .body .add-popup .data-item .value input {
-  padding: 4px;
+#add-teacher-popup .button {
+  cursor: pointer;
+  margin: 4px 0px;
+  padding: 4px 0px;
+  width: 100px;
+  position: relative;
+  display: inline-block;
+  
+  font-family: Calibri;
+  font-size: 12pt;
+  text-align: center;
+  color: #000000;
+  
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  
+  background-color: #DDDDDD;
+}
+
+#add-teacher-popup .popup-view {
+  width: 100%;
+  display: inline-block;
+}
+
+#add-teacher-popup .popup-view .head {
+  font-size: 20pt;
+  text-decoration: underline;
+  text-align: center;
+  
+}
+
+#add-teacher-popup #main.popup-view .body .left {
+  width: 25%;
+  display: inline-block;
+  float: left;
+  
+  text-align: center;
+}
+
+#add-teacher-popup #main.popup-view .body .left .picture {
+  margin: 0px 0px 16px 0px;
+  padding: 8px;
+  display: inline-block;
+  background-color: #FFFFFF;
+}
+
+#add-teacher-popup #main.popup-view .body .left .picture img {
+  width: 80px;
+  height: 88px;
+}
+
+#add-teacher-popup #main.popup-view .body .left .upload {
+  width: 120px;
+  position: relative;
+  display: inline-block;
+  
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+#add-teacher-popup #main.popup-view .body .left .upload .label {
+  font-size: 12pt;
+  text-align: left;
+}
+
+#add-teacher-popup #main.popup-view .body .left .upload #new-button {
+}
+
+#add-teacher-popup #main.popup-view .body .left .upload .file-upload {
+  width: 96px;
+  height: 24px;
+  left: 12px;
+  top: 58px;
+  position: absolute;
+  display: inline-block;
+  
+  overflow: hidden;
+}
+
+#add-teacher-popup #main.popup-view .body .right {
+  width: 75%;
+  display: inline-block;
+  float: right;
+}
+
+#add-teacher-popup #main.popup-view .body .right .data-item {
+  width: 100%;
+  display: inline-block;
+  float: left;
+}
+
+#add-teacher-popup #main.popup-view .body .right .data-item .label {
+  width: 100px;
+  display: inline-block;
+}
+
+#add-teacher-popup #main.popup-view .body .right .data-item .value input {
+  padding: 4px 4px 0px 4px;
   margin: 4px 0px 0px 0px;
-  width: 500px;
-  font-size: 16pt;
-  font-family: chalkboard;
+  width: 300px;
+  font-size: 14pt;
   color: #FFFFFF;
   
   background-color: transparent;
   
 }
+
+#add-teacher-popup #main.popup-view .body .right .answer-container {
+  margin: 16px 0px 0px 0px;
+  width: 100%;
+  display: inline-block;
+  float: left;
+}
+
+#add-teacher-popup #main.popup-view .body .right .answer-container .button {
+  margin: 0px 16px;
+  float: right;
+}
+
+#add-teacher-popup #image-list.popup-view .body .image {
+  cursor: pointer;
+  margin: 16px;
+  display: inline-block;
+  float: left;
+  
+  text-align: center;
+}
+
+#add-teacher-popup #image-list.popup-view .body .image .icon img {
+  height: 64px;
+}
+
+#add-teacher-popup #image-list.popup-view .body .image .label {
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+  font-size: 12pt;
+  
+}
+
+
+
+
+
 
 
 

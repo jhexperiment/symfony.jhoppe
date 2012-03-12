@@ -55,7 +55,7 @@
     <span id="add" class="menu-item">
       <span class="text">Add</span>
       <span class="input state-hide">
-        <input id="file_upload" type="file" name="file_upload" />
+        <input id="image-file-upload" type="file" name="image-file-upload" />
       </span>
     </span>
   </div>
@@ -90,7 +90,7 @@
 <div class="view-container">
   <div id="image" class="view state-hide">
     <div class="head">
-      <div class="title">Image</div>
+      <div class="title">Images</div>
       
     </div>
     <div class="body">
@@ -99,23 +99,77 @@
   </div>
   <div id="tutor" class="view state-hide">
     <div class="head">
-      <div class="title">Tutor</div>
+      <div class="title">Tutors</div>
     </div>
     <div class="body">
       <div class="tutor-list"></div>
       
-      <div class="add-popup">
-        <div class="data-item">
-          <span class="label">Name:</span>
-          <span class="value">
-            <input type="text" value="John Smith" />
-          </span>
-        </div>
-        
-      </div>
+      
       
       <br /><br /><br /><br />
     </div>
   </div>
 </div>
 
+<div id="add-teacher-popup" class="state-hide">
+  <div class="popup-view-container">
+    <div id="main" class="popup-view">
+      <div class="head">Add Tutor</div>
+      <div class="body">
+        <span class="left">
+          <div class="picture">
+            <img src="/bundles/visualfeedback/images/tutor_icons/tutor_default.png" />
+          </div>
+          <div class="upload">
+            <div class="label">Choose Photo:</div>
+            <div id="choose-button" class="button">Use Existing</div>
+            <div id="new-button" class="button">Upload New</div>
+            <div class="file-upload">
+              <input id="tutor-file-upload" type="file" name="tutor-file-upload" />
+            </div>
+          </div>
+        </span>
+        <span class="right">
+          <div class="data-item">
+            <span class="label">
+              First Name:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <input type="text" value="John" />
+            </span>
+          </div>
+          <div class="data-item">
+            <span class="label">Middle Name:</span>
+            <span class="value">
+              <input type="text" value="Doe" />
+            </span>
+          </div>
+          <div class="data-item">
+            <span class="label">
+              Last Name:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <input type="text" value="Smith" />
+            </span>
+          </div>
+          <div class="answer-container">
+            <span id="cancel-button" class="button">Cancel</span>
+            <span id="create-button" class="button">Create Tutor</span>
+            
+          </div>
+        </span>
+      </div>
+    </div>
+    <div id="image-list" class="popup-view state-hide">
+      <div class="head">Choose Existing</div>
+      <div class="body">
+        
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<div class="modal"></div>

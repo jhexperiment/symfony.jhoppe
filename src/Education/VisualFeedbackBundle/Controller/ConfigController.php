@@ -18,7 +18,7 @@ class ConfigController extends Controller {
       
       
       $aViewData = array(
-        
+        'sWindowTitle' => 'Config'
       );
       
       return $this->render('EducationVisualFeedbackBundle:Config:index.html.php', $aViewData);
@@ -41,13 +41,11 @@ class ConfigController extends Controller {
         $oImageFolder = $repository->findOneByRootPath($_REQUEST['folder']);
         if (empty($oImageFolder)) {
           $oImageFolder = new Imagefolder();
-          $oImageFolder->setName('upload');
+          $oImageFolder->setName(str_replace('/bundles/visualfeedback/images/', '', $_REQUEST['folder']));
           $oImageFolder->setRootPath($_REQUEST['folder']);
           $em->persist($oImageFolder);
           $em->flush();
         }
-        
-        
         
         $oImage = new Image();
         $oImage->setLabel($_FILES['Filedata']['name']);
@@ -164,6 +162,42 @@ class ConfigController extends Controller {
       );
       
       $oResponse = new Response(json_encode($aList));
+      //$oResponse->headers->set('Content-Type', 'application/json');
+      
+      return $oResponse;
+    }
+
+    /**
+     * @Route("/config/list/pupil.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
+     */
+    public function listTutorIconAction() {
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $sSql = 
+        'SELECT i, f ' .
+        'FROM EducationVisualFeedbackBundle:Image i ' .
+        'JOIN i.Imagefolder f ' .
+        'WHERE f.name = :name';
+      
+      $oQuery = $oEntityManager->createQuery($sSql)->setParameter('name', 'tutor_icons');
+      
+      $aRecordList = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image') 
+        ->createQueryBuilder('i') 
+        ->leftJoin('i.imagefolder', 'f')
+        ->where("f.name = 'tutor_icons'") 
+        ->getQuery() 
+        ->getResult(); 
+      
+      $aImageList = array();
+      foreach ($aRecordList as $oImage) {
+        $oImageFolder = $oImage->getImagefolder();
+        $aImageList[] = array(
+          'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
+          'sLabel' => $oImage->getLabel()
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aImageList));
       //$oResponse->headers->set('Content-Type', 'application/json');
       
       return $oResponse;

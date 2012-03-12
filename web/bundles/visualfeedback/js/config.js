@@ -1,4 +1,6 @@
 $(document).ready(function() {
+  oMain.fnInit();
+  
   oThisPage.fnInit();
 
   $(window).load(function() {
@@ -62,7 +64,6 @@ oThisPage = {
     $("#image.sub-menu .menu-item .input input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
-      //'script' : '/bundles/visualfeedback/js/uploadify/uploadify.php',
       'cancelImage' : '/bundles/visualfeedback/js/uploadify/cancel.png',
       'folder' : '/bundles/visualfeedback/images/uploads',
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
@@ -70,13 +71,6 @@ oThisPage = {
       'multi' : true,
       'simUploadLimit': 10,
       'auto' : true,
-      //'sizeLimit': 4194304,
-      //'onInit': function() {
-      //  var tmp = '';
-      //},
-      //'onProgress': function(event, ID, fileObj, data) {
-      //  var tmp = '';
-      //},
       'onAllComplete' : function(event, ID, fileObj, response, data) {
         var oInput = $("#image.sub-menu .menu-item .input");
         oInput.animate({
@@ -92,7 +86,83 @@ oThisPage = {
       }
     });
     
-    $("#image.sub-menu .menu-item .text").click(function() {
+    $("#add-teacher-popup .upload input").uploadify({
+      'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
+      'script' : 'upload/image',
+      'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
+      'folder' : '/bundles/visualfeedback/images/tutor_icons',
+      'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
+      'fileDesc' : 'Image Files',
+      'multi' : false,
+      'auto' : true,
+      'hideButton': true,
+      'wmode': 'transparent',
+      'onAllComplete' : function(event, ID, fileObj, response, data) {
+       var tmp = '';
+      },
+      'onComplete' : function(event, ID, fileObj, response, data) {
+       var tmp = '';
+      },
+      'onUploadError' : function(event, ID, fileObj, errorObj) {
+        var tmp = '';
+      }
+    });
+    $("#add-teacher-popup .upload #choose-button").click(function() {
+      var oPopup = $(this).parents("#add-teacher-popup");
+      oPopup.find(".popup-view").addClass('state-hide');
+      oPopup.find("#image-list").removeClass('state-hide');
+      
+      var aData = {
+        
+      };
+      
+      $.ajax({
+        'data': aData,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "list/tutor/icon.json",
+        'success': function(aData, textStatus, jqXHR) {
+          var oBody = $("#add-teacher-popup #image-list.popup-view .body");
+          oBody.html("");
+          $.each(aData, function() {
+            var sHtml = 
+                '<div class="image">' + 
+                  '<div class="icon">' +
+                    '<img src="' + this.sUrl + '" />' +
+                  '</div>' + 
+                  '<div class="label">' +
+                    this.sLabel +
+                  '</div>' +
+                '</div>';
+            var oHtml = $(sHtml);
+            oHtml.click(function() {
+              var oPopup = $(this).parents("#add-teacher-popup");
+              oPopup.find(".popup-view").addClass('state-hide');
+              var sUrl = $(this).find("img").attr('src');
+              oPopup.find("#main.popup-view .body .left .picture img").attr('src', sUrl);
+              oPopup.find("#main.popup-view").removeClass('state-hide');
+            });
+            oBody.append(oHtml);
+          });
+        }
+      });
+    });
+    $("#add-teacher-popup #cancel-button").click(function() {
+      $(".modal").removeClass('state-show');
+      var oPopup = $("#add-teacher-popup");
+      oPopup.addClass('state-hide');
+      /*
+      oPopup.animate({
+        'opacity': 0.0
+      }, 1000, function() {
+        oPopup.addClass("state-hide");
+        oPopup.removeAttr('style');
+      });
+      */
+    });
+    
+    
+    $("#image.sub-menu #add.menu-item").click(function() {
       var oInput = $(this).next(".input");
       oInput.data("original-width", oInput.width());
       oInput.width(0);
@@ -103,6 +173,23 @@ oThisPage = {
       }, 250, function() {
         oInput.css("width", "auto");
       });
+    });
+   
+    $("#tutor.sub-menu #add.menu-item").click(function() {
+      var oPopup = $("#add-teacher-popup");
+      oPopup.removeClass("state-hide");
+      $.fnCenter(oPopup);
+      $(".modal").addClass('state-show');
+      /*
+      oPopup.css('opacity', 0.0);
+      
+      oPopup.animate({
+        'opacity': 1.0
+      }, 1000, function() {
+        //oPopup.removeAttr('style');
+      });
+      */
+      
     });
    
     $(".sub-menu-container .search-bar .search-button").click(function() {
