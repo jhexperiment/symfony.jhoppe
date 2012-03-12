@@ -64,7 +64,7 @@ oThisPage = {
     $("#image.sub-menu .menu-item .input input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
-      'cancelImage' : '/bundles/visualfeedback/js/uploadify/cancel.png',
+      'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
       'folder' : '/bundles/visualfeedback/images/uploads',
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
       'fileDesc' : 'Image Files',
@@ -124,30 +124,38 @@ oThisPage = {
         'success': function(aData, textStatus, jqXHR) {
           var oBody = $("#add-teacher-popup #image-list.popup-view .body");
           oBody.html("");
-          $.each(aData, function() {
+          if (aData == null || aData.length == 0) {
             var sHtml = 
-                '<div class="image">' + 
-                  '<div class="icon">' +
-                    '<img src="' + this.sUrl + '" />' +
-                  '</div>' + 
-                  '<div class="label">' +
-                    this.sLabel +
-                  '</div>' +
-                '</div>';
-            var oHtml = $(sHtml);
-            oHtml.click(function() {
-              var oPopup = $(this).parents("#add-teacher-popup");
-              oPopup.find(".popup-view").addClass('state-hide');
-              var sUrl = $(this).find("img").attr('src');
-              oPopup.find("#main.popup-view .body .left .picture img").attr('src', sUrl);
-              oPopup.find("#main.popup-view").removeClass('state-hide');
+              '<div class="message">No Tutor images found.</div>';
+            oBody.append(sHtml);
+          }
+          else {
+            $.each(aData, function() {
+              var sHtml = 
+                  '<div class="image">' + 
+                    '<div class="icon">' +
+                      '<img src="' + this.sUrl + '" />' +
+                    '</div>' + 
+                    '<div class="label">' +
+                      this.sLabel +
+                    '</div>' +
+                  '</div>';
+              var oHtml = $(sHtml);
+              oHtml.click(function() {
+                var oPopup = $(this).parents("#add-teacher-popup");
+                oPopup.find(".popup-view").addClass('state-hide');
+                var sUrl = $(this).find("img").attr('src');
+                oPopup.find("#main.popup-view .body .left .picture img").attr('src', sUrl);
+                oPopup.find("#main.popup-view").removeClass('state-hide');
+              });
+              oBody.append(oHtml);
             });
-            oBody.append(oHtml);
-          });
+          }
+          
         }
       });
     });
-    $("#add-teacher-popup #cancel-button").click(function() {
+    $("#add-teacher-popup #main.popup-view .foot #cancel-button").click(function() {
       $(".modal").removeClass('state-show');
       var oPopup = $("#add-teacher-popup");
       oPopup.addClass('state-hide');
@@ -160,7 +168,11 @@ oThisPage = {
       });
       */
     });
-    
+    $("#add-teacher-popup #image-list.popup-view .foot #return-button").click(function() {
+      var oPopup = $(this).parents("#add-teacher-popup");
+      oPopup.find("#image-list.popup-view").addClass("state-hide");
+      oPopup.find("#main.popup-view").removeClass("state-hide");
+    });
     
     $("#image.sub-menu #add.menu-item").click(function() {
       var oInput = $(this).parent().find(".input");

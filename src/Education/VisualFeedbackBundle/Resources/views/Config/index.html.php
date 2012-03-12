@@ -154,18 +154,20 @@
               <input type="text" value="Smith" />
             </span>
           </div>
-          <div class="answer-container">
-            <span id="cancel-button" class="button">Cancel</span>
-            <span id="create-button" class="button">Create Tutor</span>
-            
-          </div>
         </span>
+      </div>
+      <div class="foot">
+        <span id="cancel-button" class="button">Cancel</span>
+        <span id="create-button" class="button">Create Tutor</span>
       </div>
     </div>
     <div id="image-list" class="popup-view state-hide">
       <div class="head">Choose Existing</div>
       <div class="body">
         
+      </div>
+      <div class="foot">
+        <span id="return-button" class="button">Return</span>
       </div>
     </div>
   </div>

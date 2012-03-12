@@ -357,6 +357,27 @@ pre {
   
 }
 
+#add-teacher-popup .popup-view .body {
+  width: 100%;
+  height: 300px;
+  display: inline-block;
+  float: left;
+  overflow-y: auto;
+  
+}
+
+#add-teacher-popup .popup-view .foot {
+  padding: 4px 0px 0px 0px;
+  width: 100%;
+  display: inline-block;
+  float: left;
+}
+
+#add-teacher-popup .popup-view .foot .button {
+  margin: 0px 16px;
+  float: right;
+}
+
 #add-teacher-popup #main.popup-view .body .left {
   width: 25%;
   display: inline-block;
@@ -434,16 +455,9 @@ pre {
   
 }
 
-#add-teacher-popup #main.popup-view .body .right .answer-container {
-  margin: 16px 0px 0px 0px;
-  width: 100%;
-  display: inline-block;
-  float: left;
-}
 
-#add-teacher-popup #main.popup-view .body .right .answer-container .button {
-  margin: 0px 16px;
-  float: right;
+#add-teacher-popup #image-list.popup-view .body {
+  
 }
 
 #add-teacher-popup #image-list.popup-view .body .image {
@@ -465,7 +479,13 @@ pre {
   
 }
 
+#add-teacher-popup #image-list.popup-view .foot {
+  
+}
 
+#add-teacher-popup #image-list.popup-view .foot #return-button {
+  float: right;
+}
 
 
 
