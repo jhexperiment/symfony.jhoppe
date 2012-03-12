@@ -4,11 +4,14 @@ namespace Education\VisualFeedbackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+
 use Education\VisualFeedbackBundle\Entity\Image;
 use Education\VisualFeedbackBundle\Entity\Imagefolder;
+use Education\VisualFeedbackBundle\Entity\Tutor;
 
 
 class ConfigController extends Controller {
@@ -26,7 +29,7 @@ class ConfigController extends Controller {
     
     public function uploadImageAction() {
       
-      $oResponse = new Response(json_encode('blah'));
+      $oResponse = new Response(json_encode(array('success' => true)));
       
       if ( ! empty($_FILES)) {
         $tempFile = $_FILES['Filedata']['tmp_name'];
@@ -149,24 +152,75 @@ class ConfigController extends Controller {
      * @Route("/config/list/pupil.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
     public function listTutorAction() {
-      $aItem = array(
-        'id' => '2',
-        'first_name' => 'Seymore',
-        'middle_name' => '',
-        'last_name' => 'Butts',
-        'Images_id' => '21',
-        'icon' => '/bundles/visualfeedback/images/uploads/evilmonkey.jpg'
-      );
-      $aList = array(
-        $aItem
-      );
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
       
-      $oResponse = new Response(json_encode($aList));
-      //$oResponse->headers->set('Content-Type', 'application/json');
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      if (empty($sSearch)) {
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Tutor');
+        $aRecordList = $oRepository->findAll();
+      }
+      else {
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aRecordList = $oQueryBuilder
+          ->select('i')
+          ->from('EducationVisualFeedbackBundle:Tutor', 't')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('t.firstname', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->orwhere( 
+            $oQueryBuilder->expr()
+              ->like('t.middlename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->orwhere( 
+            $oQueryBuilder->expr()
+              ->like('t.lastname', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->getQuery()
+          ->getResult();
+      }
+      
+      $aTutorList = array();
+      foreach ($aRecordList as $oTutor) {
+        $oImage = $oTutor->getImage();
+        $oImageFolder = $oImage->getImagefolder();
+        $aTutorList[] = array(
+          'sFirstName' => $oTutor->getFirstname(),
+          'sMiddleName' => $oTutor->getMiddlename(),
+          'sLastName' => $oTutor->getLastname(),
+          'sIconUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename()
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aTutorList));
       
       return $oResponse;
     }
-
+    
+    public function createTutorAction() {
+      $oRequest = Request::createFromGlobals();
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
+      
+      
+      $oImage = $oRepository->find($oRequest->request->get('iImageId'));
+      
+      $oTutor = new Tutor();
+      $oTutor->setFirstName($oRequest->request->get('sFirstName'));
+      $oTutor->setMiddleName($oRequest->request->get('sMiddleName'));
+      $oTutor->setLastName($oRequest->request->get('sLastName'));
+      
+      $oTutor->setImage($oImage); 
+      
+      $oEntityManager->persist($oTutor);
+      $oEntityManager->flush();
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      return $oResponse;
+    }
+    
     /**
      * @Route("/config/list/pupil.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
@@ -192,6 +246,7 @@ class ConfigController extends Controller {
       foreach ($aRecordList as $oImage) {
         $oImageFolder = $oImage->getImagefolder();
         $aImageList[] = array(
+          'iId' => $oImage->getId(),
           'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
           'sLabel' => $oImage->getLabel()
         );

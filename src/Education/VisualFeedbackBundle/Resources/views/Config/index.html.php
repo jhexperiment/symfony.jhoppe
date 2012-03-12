@@ -103,10 +103,6 @@
     </div>
     <div class="body">
       <div class="tutor-list"></div>
-      
-      
-      
-      <br /><br /><br /><br />
     </div>
   </div>
 </div>
@@ -118,7 +114,8 @@
       <div class="body">
         <span class="left">
           <div class="picture">
-            <img src="/bundles/visualfeedback/images/tutor_icons/tutor_default.png" />
+            <input type="hidden" id="image-id" value="" />
+            <img src="" />
           </div>
           <div class="upload">
             <div class="label">Choose Photo:</div>
@@ -130,28 +127,28 @@
           </div>
         </span>
         <span class="right">
-          <div class="data-item">
+          <div id="first-name" class="data-item">
             <span class="label">
               First Name:
               <sup><span class="red">*</span></sup>
             </span>
             <span class="value">
-              <input type="text" value="John" />
+              <input type="text" value="" />
             </span>
           </div>
-          <div class="data-item">
+          <div id="middle-name" class="data-item">
             <span class="label">Middle Name:</span>
             <span class="value">
-              <input type="text" value="Doe" />
+              <input type="text" value="" />
             </span>
           </div>
-          <div class="data-item">
+          <div id="last-name" class="data-item">
             <span class="label">
               Last Name:
               <sup><span class="red">*</span></sup>
             </span>
             <span class="value">
-              <input type="text" value="Smith" />
+              <input type="text" value="" />
             </span>
           </div>
         </span>

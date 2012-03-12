@@ -308,6 +308,27 @@ pre {
   height: 64px;
 }
 
+#tutor.view .body .image {
+  cursor: pointer;
+  margin: 16px;
+  
+  display: inline-block;
+  float: left;
+  
+  text-align: center;
+  
+  border: 1px solid #000000;
+}
+
+#tutor.view .body .image .label {
+  font-size: 8pt;
+}
+
+#tutor.view .body .image .icon img {
+  width: 64px;
+  height: 64px;
+}
+
 #add-teacher-popup {
   z-index: 1999;
   padding: 24px;

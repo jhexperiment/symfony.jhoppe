@@ -6,13 +6,19 @@ config_index:
     pattern:  /config/index
     defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
 
+
+
 config_image_list:
     pattern:  /config/list/image.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listImage }
 
+
+
 config_pupil_list:
     pattern:  /config/list/pupil.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listPupil }
+
+
 
 config_tutor_list:
     pattern:  /config/list/tutor.{_format}
@@ -21,6 +27,12 @@ config_tutor_list:
 config_tutor_icon_list:
     pattern:  /config/list/tutor/icon.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listTutorIcon }
+
+config_tutor_create:
+    pattern:  /config/create/tutor
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:createTutor }
+
+
 
 config_lesson_list:
     pattern:  /config/list/lesson.{_format}
