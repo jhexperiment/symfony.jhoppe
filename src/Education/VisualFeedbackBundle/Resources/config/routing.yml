@@ -1,12 +1,14 @@
-config_upload:
-    pattern:  /config/upload/image
-    defaults: { _controller: EducationVisualFeedbackBundle:Config:uploadImage }
-
 config_index:
     pattern:  /config/index
     defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
 
+config_image_update:
+    pattern:  /config/update/image
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:updateImage }
 
+config_image_upload:
+    pattern:  /config/upload/image
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:uploadImage }
 
 config_image_list:
     pattern:  /config/list/image.{_format}

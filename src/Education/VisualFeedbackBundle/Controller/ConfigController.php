@@ -65,6 +65,26 @@ class ConfigController extends Controller {
       return $oResponse;
     }
     
+    public function updateImageAction() {
+      $oResponse = new Response(json_encode(array('success' => true)));
+      $oRequest = $this->getRequest();
+      $sLabel = $oRequest->get('sLabel');
+      $iId = intval($oRequest->get('iId'));
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oImage = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Image')
+        ->find($iId);
+  
+      if ( ! $oImage) {
+          throw $this->createNotFoundException('No image found for id ' . $iId);
+      }
+      
+      $oImage->setLabel($sLabel);
+      $oEntityManager->flush();
+      
+      return $oResponse;
+    }
+    
     /**
      * @Route("/config/list/image.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_image_list")
      */

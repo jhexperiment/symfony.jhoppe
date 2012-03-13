@@ -98,6 +98,13 @@ oThisPage = {
         oInput.css("width", "auto");
       });
     });
+    $("#image.view .body .image .label").dblclick(function() {
+      var sOldValue = $.trim($(this).html());
+      $(this).data("sOldValue", sOldValue);
+      var sHtml = '<input type="file" value="' + sOldValue + '" />';
+      $(this).html(sHtml);
+    });
+    
     
     // Tutor
     $(".main-menu #tutor.menu-item").click(function() {
@@ -382,7 +389,10 @@ oThisPage = {
     });
     
     // default to image tab
-    $(".main-menu #pupil.menu-item").click();
+    $(".main-menu #image.menu-item").click();
+  },
+  'fnUpdateImage': function(aData) {
+    
   },
   'fnGetPupilList': function() {
     $("#pupil.view .body .pupil-list").html("");
