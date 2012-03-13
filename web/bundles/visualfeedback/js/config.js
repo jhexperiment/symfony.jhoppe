@@ -15,10 +15,9 @@ oThisPage = {
     var iWidth = oMainMenu.width();
     oMainMenu.css("margin-left", "-" + iWidth +"px")
     oMainMenu.data('orig-width', iWidth);
-    
     oMainMenu.animate({
       "margin-left": 0
-    }, 1000, function() {
+    }, 500, function() {
       
     });
     
@@ -60,7 +59,7 @@ oThisPage = {
     
     // Image
     $(".main-menu #image.menu-item").click(function() {
-      oThisPage.fnGetImageList();
+      oThisPage.fnGetImageList('uploads', oThisPage.fnDisplayImageTabImages);
     });
     $("#image.sub-menu .menu-item .input input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
@@ -98,12 +97,7 @@ oThisPage = {
         oInput.css("width", "auto");
       });
     });
-    $("#image.view .body .image .label").dblclick(function() {
-      var sOldValue = $.trim($(this).html());
-      $(this).data("sOldValue", sOldValue);
-      var sHtml = '<input type="file" value="' + sOldValue + '" />';
-      $(this).html(sHtml);
-    });
+    
     
     
     // Tutor
@@ -125,7 +119,8 @@ oThisPage = {
         //oPopup.removeAttr('style');
       });
       */
-    });$("#add-tutor-popup .upload input").uploadify({
+    });
+    $("#add-tutor-popup .upload input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
       'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
@@ -257,7 +252,8 @@ oThisPage = {
         //oPopup.removeAttr('style');
       });
       */
-    });$("#add-pupil-popup .upload input").uploadify({
+    });
+    $("#add-pupil-popup .upload input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
       'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
@@ -364,22 +360,116 @@ oThisPage = {
       });
     });
     $("#add-pupil-popup #image-list.popup-view .foot #return-button").click(function() {
-      var oPopup = $(this).parents("#add-tutor-popup");
+      var oPopup = $(this).parents("#add-pupil-popup");
       oPopup.find("#image-list.popup-view").addClass("state-hide");
       oPopup.find("#main.popup-view").removeClass("state-hide");
     });
     
     
+    //Lesson
+    $(".main-menu #lesson.menu-item").click(function() {
+      oThisPage.fnGetLessonList();
+    });
+    $("#lesson.sub-menu #add.menu-item").click(function() {
+      var oPopup = $("#add-lesson-popup");
+      oPopup.removeClass("state-hide");
+      oPopup.find("#create-button").removeClass('state-hide');
+      $.fnCenter(oPopup);
+      $(".modal").addClass('state-show');
+      /*
+      oPopup.css('opacity', 0.0);
+      
+      oPopup.animate({
+        'opacity': 1.0
+      }, 1000, function() {
+        //oPopup.removeAttr('style');
+      });
+      */
+     
+      oThisPage.fnGetImageList('uploads', function(aData, textStatus, jqXHR) {
+        var oImageList = $("#add-lesson-popup .body .image-list");
+        $.each(aData, function() {
+          var sHtml = 
+          '<span class="image">' +
+            '<img src="' + this.sUrl + '" />' +
+          '</span>';
+          var oHtml = $(sHtml);
+          oHtml.data("aData", this);
+          oHtml.draggable({
+            'containment': '#add-lesson-popup',
+            'cursor': 'move',
+            //snap: '#content',
+            //stack: true
+            'helper': function(event) {
+              return $(this).clone();
+            }
+          });
+          
+          oImageList.append(oHtml);
+        });
+        
+      });
+    });
+    $("#add-lesson-popup .body .selected-images").droppable({
+      'drop': function( event, ui ) {
+        
+        $(this).find(".drop-message").addClass('state-hide');
+        
+        var draggable = ui.draggable;
+        // append only if dropped from image-list 
+        if (draggable.parent().hasClass("image-list")) {
+          $(this).append(draggable.clone());
+        }
+      }
+    });
+    $("#add-lesson-popup .body .selected-images").sortable({
+      'placeholder': "image ui-state-highlight"
+    });
+    $("#add-lesson-popup .body .selected-images").disableSelection();
+    $("#add-lesson-popup #main.popup-view .foot #cancel-button").click(function() {
+      $(".modal").removeClass('state-show');
+      var oPopup = $("#add-lesson-popup");
+      oPopup.addClass('state-hide');
+      /*
+      oPopup.animate({
+        'opacity': 0.0
+      }, 1000, function() {
+        oPopup.addClass("state-hide");
+        oPopup.removeAttr('style');
+      });
+      */
+    });
+    $("#add-lesson-popup .body #image-list-label .filter #filter-button").click(function() {
+      var oBody = $(this).parents(".body");
+      var oImageList = oBody.find(".image-list");
+      var sFilter = oBody.find(".filter input").val();
+      
+      var oRegExp = new RegExp(sFilter);
+      
+      $.each(oImageList.find(".image"), function() {
+        if (sFilter == undefined || sFilter == "") {
+          $(this).removeClass('state-hide');
+        }
+        else if ($(this).data("aData").sLabel.search(oRegExp) != -1) {
+          $(this).removeClass('state-hide');
+        }
+        else {
+          $(this).addClass('state-hide');
+        }
+      });
+    });
+    $("#add-lesson-popup .body #image-list-label .filter input").keypress(function(event) {
+      if (event.keyCode == $.KEY.RETURN) {
+        $(this).parents(".filter").find("#filter-button").click();
+      }
+    });
     
-   
-    
-   
     $(".sub-menu-container .search-bar .search-button").click(function() {
       var oSelected = $(".main-menu .menu-item.state-selected");
       var sId = oSelected.attr("id");
       
       if (sId == "image") {
-        oThisPage.fnGetImageList();
+        oThisPage.fnGetImageList('uploads', oThisPage.fnDisplayImageTabImages);
       }
       else if (sId == "tutor") {
         oThisPage.fnGetTutorList();
@@ -389,10 +479,12 @@ oThisPage = {
     });
     
     // default to image tab
-    $(".main-menu #image.menu-item").click();
+    setTimeout('$(".main-menu #lesson.menu-item").click()', 750);
   },
   'fnUpdateImage': function(aData) {
     
+  },
+  'fnGetLessonList': function() {
   },
   'fnGetPupilList': function() {
     $("#pupil.view .body .pupil-list").html("");
@@ -482,10 +574,90 @@ oThisPage = {
       }
     });
   },
-  'fnGetImageList': function() {
+  'fnDisplayImageTabImages': function(aData, textStatus, jqXHR) {
     $("#image.view .body .image-list").html("");
+    var i = 1;
+    
+    $.each(aData, function() {
+      var sHtml = 
+          '<div class="image">' + 
+            '<div class="icon">' +
+              '<img src="' + this.sUrl + '" />' +
+            '</div>' + 
+            '<div class="label">' +
+              this.sLabel +
+            '</div>' +
+          '</div>';
+      var oHtml = $(sHtml);
+      oHtml.data("aData", this);
+      
+      oHtml.find(".label").dblclick(function() {
+        // dblclick event on image label
+        var sOldValue = $.trim($(this).html());
+        $(this).data("sOldValue", sOldValue);
+        
+        var oImage = $(this).parents(".image");
+        var iWidth = oImage.width();
+        var sHtml = '<input type="text" value="' + sOldValue + '" />';
+        var oInput = $(sHtml);
+        oInput.width(iWidth);
+        
+        oInput.dblclick(function(event) {
+          event.stopPropagation();
+        });
+        
+        oInput.keypress(function(event) {
+          // keypress event on input used to edit label
+          var oLabel = $(this).parents(".label");
+          var oOldValue = oLabel.data("sOldValue");
+          
+          if (event.keyCode == $.KEY.ESC) {
+            var oImage = $(this).parents(".image");
+            var oLabel = oImage.find(".label");
+            oLabel.html(sOldValue);
+          }
+          else if (event.keyCode == $.KEY.RETURN) {
+            // on RETURN key
+            var sNewValue = $(this).val();
+            if (sNewValue != sOldValue) {
+              // new value is not the same as old value
+              var oImage = $(this).parents(".image");
+              var sHash = "image-" + $.fnGenerateHash(32);
+              oImage.attr("id", sHash);
+      
+              var aData = {
+                'sLabel': sNewValue,
+                'iId': oImage.data("aData").iId,
+                'sHash': sHash
+              }; 
+              // update database
+              $.ajax({
+                'data': aData,
+                'dataType': 'json',
+                'type': 'POST',
+                'url': "update/image",
+                'success': function(aData, textStatus, jqXHR) {
+                  if (aData.bSuccess == true) {
+                    var oImage = $("#image.view .body #" + aData.sHash + ".image");
+                    var oLabel = oImage.find(".label");
+                    oLabel.html(aData.sLabel);
+                  }
+                }
+              });
+            }
+          }
+        });
+        $(this).html(oInput);
+        oInput.focus();
+      });
+      
+      $("#image.view .body .image-list").append(oHtml);
+    });
+  },
+  'fnGetImageList': function(sFolder, fnCallback) {
     
     var aData = {
+      'sFolder': sFolder,
       'sSearch': $(".sub-menu-container .search-bar input").val()
     };
     
@@ -494,21 +666,8 @@ oThisPage = {
       'dataType': 'json',
       'type': 'POST',
       'url': "list/image.json",
-      'success': function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          var sHtml = 
-              '<div class="image">' + 
-                '<div class="icon">' +
-                  '<img src="' + this.sUrl + '" />' +
-                '</div>' + 
-                '<div class="label">' +
-                  this.sLabel +
-                '</div>' +
-              '</div>';
-          var oHtml = $(sHtml);
-          $("#image.view .body .image-list").append(oHtml);
-        });
-      }
+      'success': fnCallback
     });
   }
+
 };

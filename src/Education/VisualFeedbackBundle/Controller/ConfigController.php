@@ -66,22 +66,27 @@ class ConfigController extends Controller {
     }
     
     public function updateImageAction() {
-      $oResponse = new Response(json_encode(array('success' => true)));
       $oRequest = $this->getRequest();
-      $sLabel = $oRequest->get('sLabel');
-      $iId = intval($oRequest->get('iId'));
+      $aReturn = array();
+      $aReturn['sHash'] = $oRequest->get('sHash');
+      $aReturn['sLabel'] = $oRequest->get('sLabel');
+      $aReturn['iId'] = intval($oRequest->get('iId'));
+      
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       $oImage = $oEntityManager
         ->getRepository('EducationVisualFeedbackBundle:Image')
-        ->find($iId);
+        ->find($aReturn['iId']);
   
       if ( ! $oImage) {
           throw $this->createNotFoundException('No image found for id ' . $iId);
       }
       
-      $oImage->setLabel($sLabel);
+      $oImage->setLabel($aReturn['sLabel']);
       $oEntityManager->flush();
       
+      $aReturn['bSuccess'] = true;
+      
+      $oResponse = new Response(json_encode($aReturn));
       return $oResponse;
     }
     
@@ -91,25 +96,27 @@ class ConfigController extends Controller {
     public function listImageAction() {
       $oRequest = $this->getRequest();
       $sSearch = $oRequest->get('sSearch');
+      $sFolder = $oRequest->get('sFolder');
       
       
       $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oQueryBuilder = $oEntityManager->createQueryBuilder();
+      
+      $aRecordList = null;
       if (empty($sSearch)) {
-        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
-        $aRecordList = $oRepository->findAll();
-      }
-      else {
-        $sSql = 
-          'SELECT i ' +
-          'FROM EducationVisualFeedbackBundle:Image i ' + 
-          'WHERE i.label LIKE :label ' +
-            'OR i.name LIKE :name ' +
-          'ORDER BY i.name ASC';
-        
-        $oQueryBuilder = $oEntityManager->createQueryBuilder();
         $aRecordList = $oQueryBuilder
           ->select('i')
           ->from('EducationVisualFeedbackBundle:Image', 'i')
+          ->leftJoin('i.imagefolder', 'f')
+          ->where("f.name = '$sFolder'")
+          ->getQuery()
+          ->getResult();
+      }
+      else {
+        $aRecordList = $oQueryBuilder
+          ->select('i')
+          ->from('EducationVisualFeedbackBundle:Image', 'i')
+          ->leftJoin('i.imagefolder', 'f')
           ->where( 
             $oQueryBuilder->expr()
               ->like('i.filename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
@@ -118,25 +125,16 @@ class ConfigController extends Controller {
             $oQueryBuilder->expr()
               ->like('i.label', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
           )
+          ->andwhere("f.name = '$sFolder'")
           ->getQuery()
           ->getResult();
-        
-        
-        /*
-        $oQuery = $oEntityManager->createQuery($sSql)->setParameters(array(
-          'name' => $sSearch,
-          'label' => $sSearch
-        ));
-        
-        
-        $aRecordList = $oQuery->getResult();
-        */
       }
       
       $aImageList = array();
       foreach ($aRecordList as $oImage) {
         $oImageFolder = $oImage->getImagefolder();
         $aImageList[] = array(
+          'iId' => $oImage->getId(),
           'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
           'sLabel' => $oImage->getLabel()
         );

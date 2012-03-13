@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/bundles/visualfeedback/js/uploadify/uploadify.css" type="text/css">
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/jquery.uploadify.v2.1.4.min.js"></script>
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/swfobject.js"></script>
+<script type="text/javascript" src="/bundles/visualfeedback/js/crypto-js/crypto-md5/crypto-md5.js"></script>
 
 
 
@@ -115,9 +116,18 @@
       <div class="pupil-list"></div>
     </div>
   </div>
+  
+  <div id="lesson" class="view state-hide">
+    <div class="head">
+      <div class="title">Lessons</div>
+    </div>
+    <div class="body">
+      <div class="lesson-list"></div>
+    </div>
+  </div>
 </div>
 
-<div id="add-tutor-popup" class="add-person-popup state-hide">
+<div id="add-tutor-popup" class="add-popup add-person-popup state-hide">
   <div class="popup-view-container">
     <div id="main" class="popup-view">
       <div class="head">
@@ -184,7 +194,7 @@
   
 </div>
 
-<div id="add-pupil-popup" class="add-person-popup state-hide">
+<div id="add-pupil-popup" class="add-popup add-person-popup state-hide">
   <div class="popup-view-container">
     <div id="main" class="popup-view">
       <div class="head">
@@ -235,7 +245,7 @@
       <div class="foot">
         <span id="cancel-button" class="button">Cancel</span>
         <span id="create-button" class="button state-hide">Create Pupil</span>
-        <span id="update-button" class="button state-hide">Update Tutor</span>
+        <span id="update-button" class="button state-hide">Update Pupil</span>
       </div>
     </div>
     <div id="image-list" class="popup-view state-hide">
@@ -245,6 +255,47 @@
       </div>
       <div class="foot">
         <span id="return-button" class="button">Return</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="add-lesson-popup" class="add-popup state-hide">
+  <div class="popup-view-container">
+    <div id="main" class="popup-view">
+      <div class="head">
+        <span id="action">Add</span> Lesson
+      </div>
+      <div class="body">
+        <div class="input">
+          <div id="name" class="data-item">
+            <span class="label">
+              Lesson Name:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <input type="text" value="" />
+            </span>
+          </div>
+        </div>
+        <div class="label">Lesson Questions:</div>
+        <div class="selected-images">
+          <div class="drop-message">Drag & Drop Image Here</div>
+        </div>
+        
+        <div id="image-list-label" class="label">
+          <span class="text">Choose:</span>
+          <span class="filter">
+            <input type="text" />
+            <span id="filter-button" class="button">Search</span>
+          </span>
+        </div>
+        <div class="image-list"></div>
+      </div>
+      <div class="foot">
+        <span id="cancel-button" class="button">Cancel</span>
+        <span id="create-button" class="button state-hide">Create Lesson</span>
+        <span id="update-button" class="button state-hide">Update Lesson</span>
       </div>
     </div>
   </div>
