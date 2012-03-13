@@ -541,6 +541,7 @@ pre {
 }
 
 #add-lesson-popup .body {
+  width: 738px;
   height: 382px;
 }
 
@@ -581,6 +582,10 @@ pre {
   height: 64px;
 }
 
+#add-lesson-popup .body #image-list-label {
+  width: 718px;
+}
+
 
 #add-lesson-popup .body #image-list-label .filter {
   float: right;
@@ -607,6 +612,9 @@ pre {
   height: 64px;
 }
 
+#add-lesson-popup .body .image-list .image .label {
+  display: none;
+}
 
 
 

@@ -372,6 +372,9 @@ oThisPage = {
     });
     $("#lesson.sub-menu #add.menu-item").click(function() {
       var oPopup = $("#add-lesson-popup");
+      var oSelectedImages = oPopup.find(".selected-images");
+      oSelectedImages.find(".image").remove();
+      oSelectedImages.find("")
       oPopup.removeClass("state-hide");
       oPopup.find("#create-button").removeClass('state-hide');
       $.fnCenter(oPopup);
@@ -392,24 +395,35 @@ oThisPage = {
           var sHtml = 
           '<span class="image">' +
             '<img src="' + this.sUrl + '" />' +
+            '<div class="label">' + this.sLabel + '</div>' +
           '</span>';
           var oHtml = $(sHtml);
           oHtml.data("aData", this);
-          oHtml.draggable({
-            'containment': '#add-lesson-popup',
-            'cursor': 'move',
-            //snap: '#content',
-            //stack: true
-            'helper': function(event) {
-              return $(this).clone();
-            }
+          oHtml.dblclick(function() {
+            var oSelectedImages = $("#add-lesson-popup .body .selected-images");
+            oSelectedImages.find(".drop-message").addClass('state-hide');
+            
+            var oImage = $(this).clone();
+            oImage.data("aData", $(this).data("aData"));
+            oThisPage.fnLessonAppendImage(oImage);
           });
           
+          oHtml.draggable({
+            'connectToSortable': "#add-lesson-popup .body .selected-images",
+            //'containment': '#add-lesson-popup',
+            //'cursor': 'move',
+            //snap: '#content',
+            //stack: true
+            'helper': 'clone',
+            'revert': 'invalid'
+          });
+          oHtml.disableSelection();
           oImageList.append(oHtml);
         });
         
       });
     });
+    /*
     $("#add-lesson-popup .body .selected-images").droppable({
       'drop': function( event, ui ) {
         
@@ -418,12 +432,30 @@ oThisPage = {
         var draggable = ui.draggable;
         // append only if dropped from image-list 
         if (draggable.parent().hasClass("image-list")) {
-          $(this).append(draggable.clone());
+          var oImage = draggable.clone();
+          oImage.data("aData", draggable.data("aData"));
+          oThisPage.fnLessonAppendImage(oImage);
         }
       }
     });
+    */
     $("#add-lesson-popup .body .selected-images").sortable({
-      'placeholder': "image ui-state-highlight"
+      //'connectWith': ".image-drag-drop",
+      //'placeholder': "image ui-state-highlight",
+      //'containment': 'parent',
+      //'forcePlaceHolderSize': true,
+      //'helper': 'clone',
+      //'forceHelperSize': true,
+      //'grid': [64, 64],
+      //'cursorAt': { 'left': 32 },
+      //'delay': 250
+      //'refreshPositions': true,
+      //'items': '.image',
+      'revert': true,
+      'receive': function(event, ui) {
+        var tmp = '';
+      }
+      
     });
     $("#add-lesson-popup .body .selected-images").disableSelection();
     $("#add-lesson-popup #main.popup-view .foot #cancel-button").click(function() {
@@ -463,6 +495,12 @@ oThisPage = {
         $(this).parents(".filter").find("#filter-button").click();
       }
     });
+    /*
+    $("#add-lesson-popup .body .image-list").sortable({
+      'connectWith': ".image-drag-drop"
+    });
+    */
+    $("#add-lesson-popup .body .image-list").disableSelection();
     
     $(".sub-menu-container .search-bar .search-button").click(function() {
       var oSelected = $(".main-menu .menu-item.state-selected");
@@ -485,6 +523,16 @@ oThisPage = {
     
   },
   'fnGetLessonList': function() {
+  },
+  'fnLessonAppendImage': function(oImage) {
+    
+    var sHtml = 
+      '<div class="input">' +
+        oImage.data("aData").sLabel +  
+      '</div>';
+    var oHtml = $(sHtml);
+    //oImage.append(oHtml);
+    $("#add-lesson-popup .body .selected-images").append(oImage);
   },
   'fnGetPupilList': function() {
     $("#pupil.view .body .pupil-list").html("");

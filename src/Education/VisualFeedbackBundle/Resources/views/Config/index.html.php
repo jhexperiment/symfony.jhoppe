@@ -131,7 +131,7 @@
   <div class="popup-view-container">
     <div id="main" class="popup-view">
       <div class="head">
-        <span id="action">Add</span> Tutor
+        <span id="action">New</span> Tutor
       </div>
       <div class="body">
         <span class="left">
@@ -198,7 +198,7 @@
   <div class="popup-view-container">
     <div id="main" class="popup-view">
       <div class="head">
-        <span id="action">Add</span> Pupil
+        <span id="action">New</span> Pupil
       </div>
       <div class="body">
         <span class="left">
@@ -264,7 +264,7 @@
   <div class="popup-view-container">
     <div id="main" class="popup-view">
       <div class="head">
-        <span id="action">Add</span> Lesson
+        <span id="action">New</span> Lesson
       </div>
       <div class="body">
         <div class="input">
@@ -279,7 +279,7 @@
           </div>
         </div>
         <div class="label">Lesson Questions:</div>
-        <div class="selected-images">
+        <div class="selected-images image-drag-drop">
           <div class="drop-message">Drag & Drop Image Here</div>
         </div>
         
@@ -290,7 +290,7 @@
             <span id="filter-button" class="button">Search</span>
           </span>
         </div>
-        <div class="image-list"></div>
+        <div class="image-list image-drag-drop"></div>
       </div>
       <div class="foot">
         <span id="cancel-button" class="button">Cancel</span>
