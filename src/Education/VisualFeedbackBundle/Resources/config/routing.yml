@@ -18,6 +18,15 @@ config_pupil_list:
     pattern:  /config/list/pupil.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listPupil }
 
+config_pupil_icon_list:
+    pattern:  /config/list/pupil/icon.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listPupilIcon }
+
+config_pupil_create:
+    pattern:  /config/create/pupil
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:createPupil }
+
+
 
 
 config_tutor_list:

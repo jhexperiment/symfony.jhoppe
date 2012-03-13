@@ -97,6 +97,7 @@
       <div class="image-list"></div>
     </div>
   </div>
+  
   <div id="tutor" class="view state-hide">
     <div class="head">
       <div class="title">Tutors</div>
@@ -105,12 +106,23 @@
       <div class="tutor-list"></div>
     </div>
   </div>
+  
+  <div id="pupil" class="view state-hide">
+    <div class="head">
+      <div class="title">Pupils</div>
+    </div>
+    <div class="body">
+      <div class="pupil-list"></div>
+    </div>
+  </div>
 </div>
 
-<div id="add-teacher-popup" class="state-hide">
+<div id="add-tutor-popup" class="add-person-popup state-hide">
   <div class="popup-view-container">
     <div id="main" class="popup-view">
-      <div class="head">Add Tutor</div>
+      <div class="head">
+        <span id="action">Add</span> Tutor
+      </div>
       <div class="body">
         <span class="left">
           <div class="picture">
@@ -155,7 +167,75 @@
       </div>
       <div class="foot">
         <span id="cancel-button" class="button">Cancel</span>
-        <span id="create-button" class="button">Create Tutor</span>
+        <span id="create-button" class="button state-hide">Create Tutor</span>
+        <span id="update-button" class="button state-hide">Update Tutor</span>
+      </div>
+    </div>
+    <div id="image-list" class="popup-view state-hide">
+      <div class="head">Choose Existing</div>
+      <div class="body">
+        
+      </div>
+      <div class="foot">
+        <span id="return-button" class="button">Return</span>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<div id="add-pupil-popup" class="add-person-popup state-hide">
+  <div class="popup-view-container">
+    <div id="main" class="popup-view">
+      <div class="head">
+        <span id="action">Add</span> Pupil
+      </div>
+      <div class="body">
+        <span class="left">
+          <div class="picture">
+            <input type="hidden" id="image-id" value="" />
+            <img src="" />
+          </div>
+          <div class="upload">
+            <div class="label">Choose Photo:</div>
+            <div id="choose-button" class="button">Use Existing</div>
+            <div id="new-button" class="button">Upload New</div>
+            <div class="file-upload">
+              <input id="pupil-file-upload" type="file" name="pupil-file-upload" />
+            </div>
+          </div>
+        </span>
+        <span class="right">
+          <div id="first-name" class="data-item">
+            <span class="label">
+              First Name:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <input type="text" value="" />
+            </span>
+          </div>
+          <div id="middle-name" class="data-item">
+            <span class="label">Middle Name:</span>
+            <span class="value">
+              <input type="text" value="" />
+            </span>
+          </div>
+          <div id="last-name" class="data-item">
+            <span class="label">
+              Last Name:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <input type="text" value="" />
+            </span>
+          </div>
+        </span>
+      </div>
+      <div class="foot">
+        <span id="cancel-button" class="button">Cancel</span>
+        <span id="create-button" class="button state-hide">Create Pupil</span>
+        <span id="update-button" class="button state-hide">Update Tutor</span>
       </div>
     </div>
     <div id="image-list" class="popup-view state-hide">
