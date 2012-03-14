@@ -45,6 +45,13 @@ config_tutor_create:
 
 
 
+config_class_list:
+    pattern:  /config/list/class.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listClass }
+
+
+
+
 config_lesson_list:
     pattern:  /config/list/lesson.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listLesson }
@@ -53,9 +60,21 @@ config_lesson_get:
     pattern:  /config/get/lesson.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:getLesson }
 
+config_lesson_create:
+    pattern:  /config/create/lesson
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:createLesson }
+
+
+
+
+
 config_session_list:
     pattern:  /config/list/session.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listSession }
+
+
+
+
 
 tutor_index:
     pattern:  /tutor/index

@@ -13,6 +13,7 @@ use Education\VisualFeedbackBundle\Entity\Image;
 use Education\VisualFeedbackBundle\Entity\Imagefolder;
 use Education\VisualFeedbackBundle\Entity\Tutor;
 use Education\VisualFeedbackBundle\Entity\Pupil;
+use Education\VisualFeedbackBundle\Entity\Class;
 
 
 class ConfigController extends Controller {
@@ -64,7 +65,6 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-    
     public function updateImageAction() {
       $oRequest = $this->getRequest();
       $aReturn = array();
@@ -144,7 +144,6 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-    
     /**
      * @Route("/config/list/pupil.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
@@ -197,7 +196,6 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-
     public function createPupilAction() {
       $oRequest = Request::createFromGlobals();
       $oEntityManager = $this->getDoctrine()->getEntityManager();
@@ -218,7 +216,6 @@ class ConfigController extends Controller {
       $oResponse = new Response(json_encode(array('success' => true)));
       return $oResponse;
     }
-    
     /**
      * @Route("/config/list/pupil/icon.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
@@ -301,7 +298,6 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-    
     public function createTutorAction() {
       $oRequest = Request::createFromGlobals();
       $oEntityManager = $this->getDoctrine()->getEntityManager();
@@ -323,7 +319,6 @@ class ConfigController extends Controller {
       $oResponse = new Response(json_encode(array('success' => true)));
       return $oResponse;
     }
-    
     /**
      * @Route("/config/list/tutor/icon.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
@@ -355,6 +350,49 @@ class ConfigController extends Controller {
     }
 
     /**
+     * @Route("/config/list/class.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_tutor_list")
+     */
+    public function listClassAction() {
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
+      
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      if (empty($sSearch)) {
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Class');
+        $aRecordList = $oRepository->findAll();
+      }
+      else {
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aRecordList = $oQueryBuilder
+          ->select('c')
+          ->from('EducationVisualFeedbackBundle:Class', 'c')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('c.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->getQuery()
+          ->getResult();
+      }
+      
+      $aClassList = array();
+      foreach ($aRecordList as $oClass) {
+        $aClassList[] = array(
+          'iId' => $oClass->getId(),
+          'sName' => $oClass->getName()
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aClassList));
+      
+      return $oResponse;
+    }
+    
+    
+    
+    
+    
+    /**
      * @Route("/config/list/lesson.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
     public function listLessonAction() {
@@ -385,6 +423,28 @@ class ConfigController extends Controller {
       return $oResponse;
     }
 
+    public function createLessonAction() {
+      $oRequest = Request::createFromGlobals();
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
+      
+      $oLesson = new Lesson();
+      $oLesson->setName($oRequest->request->get('sName'));
+      $oEntityManager->persist($oLesson);
+      $oEntityManager->flush();
+      
+      
+      
+      $aQuestionList = $oRequest->request->get('aQuestionList');
+      foreach ($aQuestionList as $aQuestion) {
+        $oImage = $oRepository->find($aQuestion['iImageId']);
+      }
+      
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      return $oResponse;
+    }
+    
    /**
      * @Route("/config/list/lesson.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */

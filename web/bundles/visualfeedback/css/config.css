@@ -102,10 +102,10 @@ pre {
 .main-menu .menu-item {
   cursor: pointer;
   padding: 8px 8px;
-  width: 100px;
+  width: 110px;
   display: inline-block;
   float: left;
-  font-size: 20pt;
+  font-size: 16pt;
   text-align: center;
   color: #DDDDDD;
   
@@ -160,13 +160,18 @@ pre {
   position: relative;
   display: inline-block;
   float: right;
-  font-size: 14pt;
+  font-size: 12pt;
   text-align: center;
   color: #DDDDDD;
   
   background-color: #888888;
 }
 
+.sub-menu-container .search-bar .search-button .state-hover {
+  color: #000000;
+  
+  background-color: #AAAAAA;
+}
 
 .sub-menu {
   float: left;
@@ -179,7 +184,7 @@ pre {
   position: relative;
   display: inline-block;
   float: left;
-  font-size: 14pt;
+  font-size: 12pt;
   text-align: center;
   color: #DDDDDD;
   
@@ -553,7 +558,7 @@ pre {
   margin: 0px 8px 8px 8px;
   padding: 2px 0px 0px 0px;
   width: 700px;
-  min-height: 74px;
+  height: 96px;
   position: relative;
   display: inline-block;
   

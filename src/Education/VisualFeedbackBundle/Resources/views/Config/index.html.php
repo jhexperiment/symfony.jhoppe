@@ -26,19 +26,25 @@
 <div class="main-menu-container">
   <div class="main-menu state-hide">
     <span id="image" class="menu-item">
-      <span class="text">Image</span>
+      <span class="text">Images</span>
     </span>
     <span id="tutor" class="menu-item">
-      <span class="text">Tutor</span>
+      <span class="text">Tutors</span>
     </span>
     <span id="pupil" class="menu-item">
-      <span class="text">Pupil</span>
+      <span class="text">Pupils</span>
+    </span>
+    <span id="class" class="menu-item">
+      <span class="text">Classes</span>
+    </span>
+    <span id="lesson-plan" class="menu-item">
+      <span class="text">Lesson Plans</span>
     </span>
     <span id="lesson" class="menu-item">
-      <span class="text">Lesson</span>
+      <span class="text">Lessons</span>
     </span>
     <span id="session" class="menu-item">
-      <span class="text">Session</span>
+      <span class="text">Sessions</span>
     </span>
     <span id="setting" class="menu-item">
       <span class="text">Settings</span>
@@ -62,27 +68,37 @@
   </div>
   <div id="tutor" class="sub-menu state-hide">
     <span id="add" class="menu-item">
-      <span class="text">Add</span>
+      <span class="text">Create</span>
     </span>
   </div>
   <div id="pupil" class="sub-menu state-hide">
     <span id="add" class="menu-item">
-      <span class="text">Add</span>
+      <span class="text">Create</span>
+    </span>
+  </div>
+  <div id="class" class="sub-menu state-hide">
+    <span id="add" class="menu-item">
+      <span class="text">Create</span>
+    </span>
+  </div>
+  <div id="lesson-plan" class="sub-menu state-hide">
+    <span id="add" class="menu-item">
+      <span class="text">Create</span>
     </span>
   </div>
   <div id="lesson" class="sub-menu state-hide">
     <span id="add" class="menu-item">
-      <span class="text">Add</span>
+      <span class="text">Create</span>
     </span>
   </div>
   <div id="session" class="sub-menu state-hide">
     <span id="add" class="menu-item">
-      <span class="text">Add</span>
+      <span class="text">Create</span>
     </span>
   </div>
   <div id="setting" class="sub-menu state-hide">
-    <span id="add" class="menu-item">
-      <span class="text">Add</span>
+    <span id="blah" class="menu-item">
+      <span class="text">Blah??</span>
     </span>
   </div>
 </div>
@@ -114,6 +130,15 @@
     </div>
     <div class="body">
       <div class="pupil-list"></div>
+    </div>
+  </div>
+  
+  <div id="class" class="view state-hide">
+    <div class="head">
+      <div class="title">Classes</div>
+    </div>
+    <div class="body">
+      <div class="class-list"></div>
     </div>
   </div>
   

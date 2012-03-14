@@ -23,7 +23,7 @@ oThisPage = {
     
     var sHover = 
       ".main-menu .menu-item, " +
-      ".sub-menu .menu-item " + 
+      ".sub-menu .menu-item, " + 
       ".sub-menu-container .search-bar .search-button";
     $(sHover).hover(
       function() {
@@ -365,6 +365,18 @@ oThisPage = {
       oPopup.find("#main.popup-view").removeClass("state-hide");
     });
     
+    //Class
+    $(".main-menu #class.menu-item").click(function() {
+      oThisPage.fnGetClassList();
+    });
+    
+    
+    
+    
+    //Lesson Plan
+    
+    
+    
     
     //Lesson
     $(".main-menu #lesson.menu-item").click(function() {
@@ -394,6 +406,7 @@ oThisPage = {
         $.each(aData, function() {
           var sHtml = 
           '<span class="image">' +
+            '<input type="hidden" value="' + this.iId + '" />' + 
             '<img src="' + this.sUrl + '" />' +
             '<div class="label">' + this.sLabel + '</div>' +
           '</span>';
@@ -407,26 +420,57 @@ oThisPage = {
             oImage.data("aData", $(this).data("aData"));
             oThisPage.fnLessonAppendImage(oImage);
           });
-          
           oHtml.draggable({
-            'connectToSortable': "#add-lesson-popup .body .selected-images",
+            'connectToSortable': ".image-drag-drop",
             //'containment': '#add-lesson-popup',
             //'cursor': 'move',
             //snap: '#content',
             //stack: true
             'helper': 'clone',
-            'revert': 'invalid'
+            'revert': false
           });
           oHtml.disableSelection();
           oImageList.append(oHtml);
         });
         
+        oImageList.sortable({
+          'handle': '.image',
+          'connectWith': ".image-drag-drop",
+          'revert': false
+        });
+    
+        oImageList.disableSelection();
+        
       });
     });
+    $("#add-lesson-popup .body .selected-images").sortable({
+      //'appendTo': "#add-lesson-popup .body .image-list",
+      'connectWith': ".image-drag-drop",
+      //'placeholder': "image ui-state-highlight",
+      //'containment': 'parent',
+      //'forcePlaceHolderSize': true,
+      'helper': 'clone',
+      //'forceHelperSize': true,
+      //'grid': [64, 64],
+      //'cursorAt': { 'left': 32 },
+      //'delay': 250
+      //'refreshPositions': true,
+      //'items': '.image',
+      'tolerance': 'pointer',
+      'dropOnEmpty': true,
+      'revert': true,
+      'receive': function(event, ui) {
+        var tmp = '';
+        $(this).find(".drop-message").addClass('state-hide');
+      },
+      'stop': function(event, ui) {
+        var tmp = '';
+      }
+      
+    });
     /*
-    $("#add-lesson-popup .body .selected-images").droppable({
+    .droppable({
       'drop': function( event, ui ) {
-        
         $(this).find(".drop-message").addClass('state-hide');
         
         var draggable = ui.draggable;
@@ -439,24 +483,6 @@ oThisPage = {
       }
     });
     */
-    $("#add-lesson-popup .body .selected-images").sortable({
-      //'connectWith': ".image-drag-drop",
-      //'placeholder': "image ui-state-highlight",
-      //'containment': 'parent',
-      //'forcePlaceHolderSize': true,
-      //'helper': 'clone',
-      //'forceHelperSize': true,
-      //'grid': [64, 64],
-      //'cursorAt': { 'left': 32 },
-      //'delay': 250
-      //'refreshPositions': true,
-      //'items': '.image',
-      'revert': true,
-      'receive': function(event, ui) {
-        var tmp = '';
-      }
-      
-    });
     $("#add-lesson-popup .body .selected-images").disableSelection();
     $("#add-lesson-popup #main.popup-view .foot #cancel-button").click(function() {
       $(".modal").removeClass('state-show');
@@ -495,12 +521,35 @@ oThisPage = {
         $(this).parents(".filter").find("#filter-button").click();
       }
     });
-    /*
-    $("#add-lesson-popup .body .image-list").sortable({
-      'connectWith': ".image-drag-drop"
+    $("#add-lesson-popup #main.popup-view .foot #create-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      var aQuestionList = {};
+      $.each(oView.find(".selected-images .image"), function(iIndex) {
+        aQuestionList[iIndex] = {
+          'iImageId': $(this).find("input").val(),
+          'sText': $.trim($(this).find(".label").html())
+        };
+      });
+      
+      
+      var aData = {
+        'sName': oView.find(".body .input .value input").val(),
+        'aQuestionList': aQuestionList
+      }
+      $.ajax({
+        'data': aData,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "create/lesson",
+        'success': function(aData, textStatus, jqXHR) {
+          $(".modal").removeClass('state-show');
+          $("#add-lesson-popup").addClass('state-hide');
+        }
+      });
     });
-    */
-    $("#add-lesson-popup .body .image-list").disableSelection();
+    
     
     $(".sub-menu-container .search-bar .search-button").click(function() {
       var oSelected = $(".main-menu .menu-item.state-selected");
@@ -533,6 +582,35 @@ oThisPage = {
     var oHtml = $(sHtml);
     //oImage.append(oHtml);
     $("#add-lesson-popup .body .selected-images").append(oImage);
+  },
+  'fnGetClassList': function() {
+    $("#class.view .body .class-list").html("");
+    
+    var aData = {
+      'sSearch': $(".sub-menu-container .search-bar input").val()
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/class.json",
+      'success': function(aData, textStatus, jqXHR) {
+        $.each(aData, function() {
+          var sHtml = 
+              '<div class="class">' + 
+                '<input type="hidden" value="' + aData.iId + '" />' +
+                '<span class="sLabel">' +
+                  aData.sName + 
+                '</span>' + 
+              '</div>';
+          var oHtml = $(sHtml);
+          oHtml.data("aData", this);
+          
+          $("#class.view .body .class-list").append(oHtml);
+        });
+      }
+    });
   },
   'fnGetPupilList': function() {
     $("#pupil.view .body .pupil-list").html("");
