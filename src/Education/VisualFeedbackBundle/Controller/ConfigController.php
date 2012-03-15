@@ -13,13 +13,33 @@ use Education\VisualFeedbackBundle\Entity\Image;
 use Education\VisualFeedbackBundle\Entity\Imagefolder;
 use Education\VisualFeedbackBundle\Entity\Tutor;
 use Education\VisualFeedbackBundle\Entity\Pupil;
-use Education\VisualFeedbackBundle\Entity\Class;
+use Education\VisualFeedbackBundle\Entity\Subject;
+use Education\VisualFeedbackBundle\Entity\SubjectLessonplan;
+use Education\VisualFeedbackBundle\Entity\Lessonplan;
+use Education\VisualFeedbackBundle\Entity\LessonplanLesson;
+use Education\VisualFeedbackBundle\Entity\Lesson;
+use Education\VisualFeedbackBundle\Entity\Imagequestion;
+use Education\VisualFeedbackBundle\Entity\LessonImagequestion;
 
 
 class ConfigController extends Controller {
     
+    public function ieAction() {
+        
+      
+      
+      $aViewData = array(
+        'sWindowTitle' => 'Config'
+      );
+      
+      return $this->render('EducationVisualFeedbackBundle:Config:ie.html.php', $aViewData);
+    }
+    
     public function indexAction() {
         
+      if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+        return $this->redirect($this->generateUrl('config_ie'));
+      }
       
       
       $aViewData = array(
@@ -28,6 +48,8 @@ class ConfigController extends Controller {
       
       return $this->render('EducationVisualFeedbackBundle:Config:index.html.php', $aViewData);
     }
+    
+    // Image
     
     public function uploadImageAction() {
       
@@ -89,7 +111,6 @@ class ConfigController extends Controller {
       $oResponse = new Response(json_encode($aReturn));
       return $oResponse;
     }
-    
     /**
      * @Route("/config/list/image.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_image_list")
      */
@@ -144,6 +165,10 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
+    
+    
+    //Pupil
+    
     /**
      * @Route("/config/list/pupil.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
@@ -245,6 +270,9 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
+    
+    
+    //Tutor
     
     /**
      * @Route("/config/list/tutor.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_tutor_list")
@@ -349,48 +377,92 @@ class ConfigController extends Controller {
       return $oResponse;
     }
 
+    
+    //Subject
+    
     /**
      * @Route("/config/list/class.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_tutor_list")
      */
-    public function listClassAction() {
+    public function listSubjectAction() {
       $oRequest = $this->getRequest();
       $sSearch = $oRequest->get('sSearch');
       
       
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       if (empty($sSearch)) {
-        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Class');
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Subject');
         $aRecordList = $oRepository->findAll();
       }
       else {
         $oQueryBuilder = $oEntityManager->createQueryBuilder();
         $aRecordList = $oQueryBuilder
-          ->select('c')
-          ->from('EducationVisualFeedbackBundle:Class', 'c')
+          ->select('s')
+          ->from('EducationVisualFeedbackBundle:Subject', 's')
           ->where( 
             $oQueryBuilder->expr()
-              ->like('c.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+              ->like('s.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
           )
           ->getQuery()
           ->getResult();
       }
       
-      $aClassList = array();
-      foreach ($aRecordList as $oClass) {
-        $aClassList[] = array(
-          'iId' => $oClass->getId(),
-          'sName' => $oClass->getName()
+      $aSubjectList = array();
+      foreach ($aRecordList as $oSubject) {
+        $aSubjectList[] = array(
+          'iId' => $oSubject->getId(),
+          'sName' => $oSubject->getName()
         );
       }
       
-      $oResponse = new Response(json_encode($aClassList));
+      $oResponse = new Response(json_encode($aSubjectList));
       
       return $oResponse;
     }
     
     
+    //Lesson Plan
+    
+    /**
+     * @Route("/config/list/class.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_tutor_list")
+     */
+    public function listLessonPlanAction() {
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
+      
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      if (empty($sSearch)) {
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lessonplan');
+        $aRecordList = $oRepository->findAll();
+      }
+      else {
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aRecordList = $oQueryBuilder
+          ->select('lp')
+          ->from('EducationVisualFeedbackBundle:Subject', 'lp')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('lp.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->getQuery()
+          ->getResult();
+      }
+      
+      $aLessonPlanList = array();
+      foreach ($aRecordList as $oLessonPlan) {
+        $aLessonPlanList[] = array(
+          'iId' => $oLessonPlan->getId(),
+          'sName' => $oLessonPlan->getName()
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aLessonPlanList));
+      
+      return $oResponse;
+    }
     
     
+    //Lesson
     
     /**
      * @Route("/config/list/lesson.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
@@ -423,21 +495,54 @@ class ConfigController extends Controller {
       return $oResponse;
     }
 
+
     public function createLessonAction() {
       $oRequest = Request::createFromGlobals();
       $oEntityManager = $this->getDoctrine()->getEntityManager();
-      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Subject');
+      $oSubject = $oRepository->find($oRequest->request->get('iSubjectId'));
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lessonplan');
+      $oLessonPlan = $oRepository->find($oRequest->request->get('iLessonPlanId'));
+      
+      $oSubjectLessonPlan = new SubjectLessonplan();
+      $oSubjectLessonPlan->setSubject($oSubject);
+      $oSubjectLessonPlan->setLessonplan($oLessonPlan);
+      $oEntityManager->persist($oSubjectLessonPlan);
+      $oEntityManager->flush();
+      
       
       $oLesson = new Lesson();
       $oLesson->setName($oRequest->request->get('sName'));
       $oEntityManager->persist($oLesson);
       $oEntityManager->flush();
       
+      $oLessonPlanLesson = new LessonplanLesson();
+      $oLessonPlanLesson->setLesson($oLesson);
+      $oLessonPlanLesson->setSubjectLessonplan($oSubjectLessonPlan);
+      $oEntityManager->persist($oLessonPlanLesson);
+      $oEntityManager->flush();
       
       
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
       $aQuestionList = $oRequest->request->get('aQuestionList');
       foreach ($aQuestionList as $aQuestion) {
         $oImage = $oRepository->find($aQuestion['iImageId']);
+        
+        $oImageQuestion = new Imagequestion();
+        $oImageQuestion->setName($aQuestion['sText']);
+        $oImageQuestion->setText($aQuestion['sText']);
+        $oImageQuestion->setImage($oImage);
+        $oEntityManager->persist($oImageQuestion);
+        $oEntityManager->flush();
+        
+        $oLessonImageQuestion = new LessonImagequestion();
+        $oLessonImageQuestion->setOrderIndex($aQuestion['iIndex']);
+        $oLessonImageQuestion->setImageQuestion($oImageQuestion);
+        $oLessonImageQuestion->setLessonplanLesson($oLessonPlanLesson);
+        $oEntityManager->persist($oLessonImageQuestion);
+        $oEntityManager->flush();
       }
       
       
@@ -449,30 +554,43 @@ class ConfigController extends Controller {
      * @Route("/config/list/lesson.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
     public function getLessonAction() {
-      $aItem = array(
-        'id' => '8',
-        'lesson_name' => 'RadTadTootin',
-        'question_info_list' =>  array(
-          array(
-            'ImageQuestions_id' => '62',
-            'Lessons_id' => '8',
-            'LessonPlan_Lessons_id' => '8',
-            'Images_id' => '2',
-            'icon' => '/bundles/visualfeedback/images/tutor_icons/tutor_default.png',
-            'order_index' => '1',
-            'text' => 'tutor',
-            'Lesson_ImageQuestions_id' => '61'
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
+      
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      if (empty($sSearch)) {
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lesson');
+        $aRecordList = $oRepository->findAll();
+      }
+      else {
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aRecordList = $oQueryBuilder
+          ->select('l')
+          ->from('EducationVisualFeedbackBundle:Lesson', 'l')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('l.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
           )
-        )
-      );
-
+          ->getQuery()
+          ->getResult();
+      }
       
+      $aLessonList = array();
+      foreach ($aRecordList as $oLesson) {
+        $aLessonList[] = array(
+          'iId' => $oLesson->getId(),
+          'sName' => $oLesson->getName()
+        );
+      }
       
-      $oResponse = new Response(json_encode($aItem));
-      //$oResponse->headers->set('Content-Type', 'application/json');
+      $oResponse = new Response(json_encode($aLessonList));
       
       return $oResponse;
     }
+
+    
+    //Session
 
     /**
      * @Route("/config/list/session.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
@@ -543,3 +661,24 @@ class ConfigController extends Controller {
       return $oResponse;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

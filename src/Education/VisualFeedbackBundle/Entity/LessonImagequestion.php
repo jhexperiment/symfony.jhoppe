@@ -10,14 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 class LessonImagequestion
 {
     /**
-     * @var integer $orderIndex
-     */
-    private $orderIndex;
-
-    /**
      * @var integer $id
      */
     private $id;
+
+    /**
+     * @var integer $orderIndex
+     */
+    private $orderIndex;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Imagequestion
@@ -29,6 +29,16 @@ class LessonImagequestion
      */
     private $lessonplanLesson;
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set orderIndex
@@ -48,16 +58,6 @@ class LessonImagequestion
     public function getOrderIndex()
     {
         return $this->orderIndex;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

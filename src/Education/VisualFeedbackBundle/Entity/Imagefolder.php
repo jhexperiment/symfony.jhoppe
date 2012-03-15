@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Imagefolder
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $name
      */
     private $name;
@@ -19,11 +24,16 @@ class Imagefolder
      */
     private $rootPath;
 
-    /**
-     * @var integer $id
-     */
-    private $id;
 
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set name
@@ -63,15 +73,5 @@ class Imagefolder
     public function getRootPath()
     {
         return $this->rootPath;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

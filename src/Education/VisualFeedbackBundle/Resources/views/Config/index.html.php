@@ -34,8 +34,8 @@
     <span id="pupil" class="menu-item">
       <span class="text">Pupils</span>
     </span>
-    <span id="class" class="menu-item">
-      <span class="text">Classes</span>
+    <span id="subject" class="menu-item">
+      <span class="text">Subjects</span>
     </span>
     <span id="lesson-plan" class="menu-item">
       <span class="text">Lesson Plans</span>
@@ -76,7 +76,7 @@
       <span class="text">Create</span>
     </span>
   </div>
-  <div id="class" class="sub-menu state-hide">
+  <div id="subject" class="sub-menu state-hide">
     <span id="add" class="menu-item">
       <span class="text">Create</span>
     </span>
@@ -133,12 +133,21 @@
     </div>
   </div>
   
-  <div id="class" class="view state-hide">
+  <div id="subject" class="view state-hide">
     <div class="head">
-      <div class="title">Classes</div>
+      <div class="title">Subjects</div>
     </div>
     <div class="body">
-      <div class="class-list"></div>
+      <div class="subject-list"></div>
+    </div>
+  </div>
+  
+  <div id="lesson-plan" class="view state-hide">
+    <div class="head">
+      <div class="title">Lesson Plans</div>
+    </div>
+    <div class="body">
+      <div class="lesson-plan-list"></div>
     </div>
   </div>
   
@@ -293,17 +302,39 @@
       </div>
       <div class="body">
         <div class="input">
-          <div id="name" class="data-item">
+          <span id="name" class="data-item">
             <span class="label">
-              Lesson Name:
+              Name:
               <sup><span class="red">*</span></sup>
             </span>
             <span class="value">
               <input type="text" value="" />
             </span>
-          </div>
+          </span>
+          <span id="subject" class="data-item">
+            <span class="label">
+              Subject:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <select>
+                <option value="">Select</option>
+              </select>
+            </span>
+          </span>
+          <span id="lesson-plan" class="data-item">
+            <span class="label">
+              Lesson Plan:
+              <sup><span class="red">*</span></sup>
+            </span>
+            <span class="value">
+              <select>
+                <option value="">Select</option>
+              </select>
+            </span>
+          </span>
         </div>
-        <div class="label">Lesson Questions:</div>
+        <div class="label">Questions:</div>
         <div class="selected-images image-drag-drop">
           <div class="drop-message">Drag & Drop Image Here</div>
         </div>

@@ -15,14 +15,14 @@ class LessonplanLesson
     private $id;
 
     /**
+     * @var Education\VisualFeedbackBundle\Entity\SubjectLessonplan
+     */
+    private $subjectLessonplan;
+
+    /**
      * @var Education\VisualFeedbackBundle\Entity\Lesson
      */
     private $lesson;
-
-    /**
-     * @var Education\VisualFeedbackBundle\Entity\ClassLessonplan
-     */
-    private $classLessonplan;
 
 
     /**
@@ -33,6 +33,26 @@ class LessonplanLesson
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set subjectLessonplan
+     *
+     * @param Education\VisualFeedbackBundle\Entity\SubjectLessonplan $subjectLessonplan
+     */
+    public function setSubjectLessonplan(\Education\VisualFeedbackBundle\Entity\SubjectLessonplan $subjectLessonplan)
+    {
+        $this->subjectLessonplan = $subjectLessonplan;
+    }
+
+    /**
+     * Get subjectLessonplan
+     *
+     * @return Education\VisualFeedbackBundle\Entity\SubjectLessonplan 
+     */
+    public function getSubjectLessonplan()
+    {
+        return $this->subjectLessonplan;
     }
 
     /**
@@ -53,25 +73,5 @@ class LessonplanLesson
     public function getLesson()
     {
         return $this->lesson;
-    }
-
-    /**
-     * Set classLessonplan
-     *
-     * @param Education\VisualFeedbackBundle\Entity\ClassLessonplan $classLessonplan
-     */
-    public function setClassLessonplan(\Education\VisualFeedbackBundle\Entity\ClassLessonplan $classLessonplan)
-    {
-        $this->classLessonplan = $classLessonplan;
-    }
-
-    /**
-     * Get classLessonplan
-     *
-     * @return Education\VisualFeedbackBundle\Entity\ClassLessonplan 
-     */
-    public function getClassLessonplan()
-    {
-        return $this->classLessonplan;
     }
 }

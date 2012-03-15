@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Tutoringsession
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $hash
      */
     private $hash;
@@ -18,11 +23,6 @@ class Tutoringsession
      * @var string $displayContent
      */
     private $displayContent;
-
-    /**
-     * @var integer $id
-     */
-    private $id;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Pupil
@@ -44,6 +44,16 @@ class Tutoringsession
      */
     private $statuscode;
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set hash
@@ -83,16 +93,6 @@ class Tutoringsession
     public function getDisplayContent()
     {
         return $this->displayContent;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

@@ -1,6 +1,6 @@
-Education\VisualFeedbackBundle\Entity\Class:
+Education\VisualFeedbackBundle\Entity\Subject:
   type: entity
-  table: Class
+  table: Subject
   fields:
     id:
       id: true

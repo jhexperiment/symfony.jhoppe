@@ -59,7 +59,8 @@ oThisPage = {
     
     // Image
     $(".main-menu #image.menu-item").click(function() {
-      oThisPage.fnGetImageList('uploads', oThisPage.fnDisplayImageTabImages);
+      var sSearch = $(".sub-menu-container .search-bar input").val();
+      oThisPage.fnGetImageList(sSearch, 'uploads', oThisPage.fnDisplayImageTabImages);
     });
     $("#image.sub-menu .menu-item .input input").uploadify({
       'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
@@ -365,15 +366,50 @@ oThisPage = {
       oPopup.find("#main.popup-view").removeClass("state-hide");
     });
     
-    //Class
-    $(".main-menu #class.menu-item").click(function() {
-      oThisPage.fnGetClassList();
+    //Subject
+    $(".main-menu #subject.menu-item").click(function() {
+      var sSearch = $(".sub-menu-container .search-bar input").val();
+      $("#subject.view .body .subject-list").html("");
+      oThisPage.fnGetSubjectList(sSearch, function(aData, textStatus, jqXHR) {
+        $.each(aData, function() {
+          var sHtml = 
+              '<div class="subject">' + 
+                '<input type="hidden" value="' + this.iId + '" />' +
+                '<span class="sLabel">' +
+                  this.sName + 
+                '</span>' + 
+              '</div>';
+          var oHtml = $(sHtml);
+          oHtml.data("aData", this);
+          
+          $("#subject.view .body .subject-list").append(oHtml);
+        });
+      });
     });
     
     
     
     
     //Lesson Plan
+    $(".main-menu #lesson-plan.menu-item").click(function() {
+      var sSearch = $(".sub-menu-container .search-bar input").val();
+      $("#lesson-plan.view .body .lesson-plan-list").html("");
+      oThisPage.fnGetLessonPlanList(sSearch, function(aData, textStatus, jqXHR) {
+        $.each(aData, function() {
+          var sHtml = 
+              '<div class="lesson-plan">' + 
+                '<input type="hidden" value="' + this.iId + '" />' +
+                '<span class="sLabel">' +
+                  this.sName + 
+                '</span>' + 
+              '</div>';
+          var oHtml = $(sHtml);
+          oHtml.data("aData", this);
+          
+          $("#lesson-plan.view .body .lesson-plan-list").append(oHtml);
+        });
+      });
+    });
     
     
     
@@ -400,8 +436,39 @@ oThisPage = {
         //oPopup.removeAttr('style');
       });
       */
-     
-      oThisPage.fnGetImageList('uploads', function(aData, textStatus, jqXHR) {
+      
+      $("#subject.view .body .subject-list").html("");
+      oThisPage.fnGetSubjectList("", function(aData, textStatus, jqXHR) {
+        var oSelect = $("#add-lesson-popup .body .input #subject select");
+        oSelect.html('<option value="">Select</option>');
+        $.each(aData, function() {
+          var sHtml = 
+              '<option value="' + this.iId + '">' + 
+                 this.sName +
+              '</option>';
+          var oHtml = $(sHtml);
+          
+          oSelect.append(oHtml);
+        });
+      });
+    
+      $("#lesson-plan.view .body .lesson-plan-list").html("");
+      oThisPage.fnGetLessonPlanList("", function(aData, textStatus, jqXHR) {
+        var oSelect = $("#add-lesson-popup .body .input #lesson-plan select");
+        oSelect.html('<option value="">Select</option>');
+        $.each(aData, function() {
+          var sHtml = 
+              '<option value="' + this.iId + '">' + 
+                 this.sName +
+              '</option>';
+          var oHtml = $(sHtml);
+          
+          oSelect.append(oHtml);
+        });
+      });
+      
+      var sSearch = $(".sub-menu-container .search-bar input").val();
+      oThisPage.fnGetImageList(sSearch, 'uploads', function(aData, textStatus, jqXHR) {
         var oImageList = $("#add-lesson-popup .body .image-list");
         $.each(aData, function() {
           var sHtml = 
@@ -528,6 +595,7 @@ oThisPage = {
       var aQuestionList = {};
       $.each(oView.find(".selected-images .image"), function(iIndex) {
         aQuestionList[iIndex] = {
+          'iIndex': iIndex,
           'iImageId': $(this).find("input").val(),
           'sText': $.trim($(this).find(".label").html())
         };
@@ -536,6 +604,8 @@ oThisPage = {
       
       var aData = {
         'sName': oView.find(".body .input .value input").val(),
+        'iSubjectId': oView.find(".body .input #subject select").val(),
+        'iLessonPlanId': oView.find(".body .input #lesson-plan select").val(),
         'aQuestionList': aQuestionList
       }
       $.ajax({
@@ -556,7 +626,8 @@ oThisPage = {
       var sId = oSelected.attr("id");
       
       if (sId == "image") {
-        oThisPage.fnGetImageList('uploads', oThisPage.fnDisplayImageTabImages);
+        var sSearch = $(".sub-menu-container .search-bar input").val();
+        oThisPage.fnGetImageList(sSearch, 'uploads', oThisPage.fnDisplayImageTabImages);
       }
       else if (sId == "tutor") {
         oThisPage.fnGetTutorList();
@@ -571,7 +642,18 @@ oThisPage = {
   'fnUpdateImage': function(aData) {
     
   },
-  'fnGetLessonList': function() {
+  'fnGetLessonList': function(sSearch, fnCallback) {
+    var aData = {
+      'sSearch': sSearch
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/lesson.json",
+      'success': fnCallback
+    });
   },
   'fnLessonAppendImage': function(oImage) {
     
@@ -583,33 +665,31 @@ oThisPage = {
     //oImage.append(oHtml);
     $("#add-lesson-popup .body .selected-images").append(oImage);
   },
-  'fnGetClassList': function() {
-    $("#class.view .body .class-list").html("");
-    
+  'fnGetSubjectList': function(sSearch, fnCallback) {
     var aData = {
-      'sSearch': $(".sub-menu-container .search-bar input").val()
+      'sSearch': sSearch
     };
     
     $.ajax({
       'data': aData,
       'dataType': 'json',
       'type': 'POST',
-      'url': "list/class.json",
-      'success': function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          var sHtml = 
-              '<div class="class">' + 
-                '<input type="hidden" value="' + aData.iId + '" />' +
-                '<span class="sLabel">' +
-                  aData.sName + 
-                '</span>' + 
-              '</div>';
-          var oHtml = $(sHtml);
-          oHtml.data("aData", this);
-          
-          $("#class.view .body .class-list").append(oHtml);
-        });
-      }
+      'url': "list/subject.json",
+      'success': fnCallback
+    });
+  },
+  'fnGetLessonPlanList': function(sSearch, fnCallback) {
+    
+    var aData = {
+      'sSearch': sSearch
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/lessonplan.json",
+      'success': fnCallback
     });
   },
   'fnGetPupilList': function() {
@@ -780,11 +860,10 @@ oThisPage = {
       $("#image.view .body .image-list").append(oHtml);
     });
   },
-  'fnGetImageList': function(sFolder, fnCallback) {
-    
+  'fnGetImageList': function(sSearch, sFolder, fnCallback) {
     var aData = {
       'sFolder': sFolder,
-      'sSearch': $(".sub-menu-container .search-bar input").val()
+      'sSearch': sSearch
     };
     
     $.ajax({

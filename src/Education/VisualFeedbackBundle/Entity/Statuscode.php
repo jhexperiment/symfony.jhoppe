@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Statuscode
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $name
      */
     private $name;
@@ -19,11 +24,16 @@ class Statuscode
      */
     private $description;
 
-    /**
-     * @var integer $id
-     */
-    private $id;
 
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set name
@@ -63,15 +73,5 @@ class Statuscode
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

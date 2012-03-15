@@ -1,6 +1,6 @@
-Education\VisualFeedbackBundle\Entity\ClassLessonplan:
+Education\VisualFeedbackBundle\Entity\SubjectLessonplan:
   type: entity
-  table: Class_LessonPlan
+  table: Subject_LessonPlan
   fields:
     id:
       id: true
@@ -10,13 +10,13 @@ Education\VisualFeedbackBundle\Entity\ClassLessonplan:
       generator:
         strategy: IDENTITY
   oneToOne:
-    class:
-      targetEntity: Class
+    subject:
+      targetEntity: Subject
       cascade: {  }
       mappedBy: null
       inversedBy: null
       joinColumns:
-        Class_id:
+        Subject_id:
           referencedColumnName: id
       orphanRemoval: false
     lessonplan:

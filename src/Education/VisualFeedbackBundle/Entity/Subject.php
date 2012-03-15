@@ -5,20 +5,30 @@ namespace Education\VisualFeedbackBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Education\VisualFeedbackBundle\Entity\Class
+ * Education\VisualFeedbackBundle\Entity\Subject
  */
-class Class
+class Subject
 {
-    /**
-     * @var string $name
-     */
-    private $name;
-
     /**
      * @var integer $id
      */
     private $id;
 
+    /**
+     * @var string $name
+     */
+    private $name;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set name
@@ -38,15 +48,5 @@ class Class
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

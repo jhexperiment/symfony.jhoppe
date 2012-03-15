@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Image
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $label
      */
     private $label;
@@ -20,15 +25,20 @@ class Image
     private $filename;
 
     /**
-     * @var integer $id
-     */
-    private $id;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Imagefolder
      */
     private $imagefolder;
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set label
@@ -68,16 +78,6 @@ class Image
     public function getFilename()
     {
         return $this->filename;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

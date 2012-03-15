@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Imagequestion
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $name
      */
     private $name;
@@ -20,15 +25,20 @@ class Imagequestion
     private $text;
 
     /**
-     * @var integer $id
-     */
-    private $id;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Image
      */
     private $image;
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set name
@@ -68,16 +78,6 @@ class Imagequestion
     public function getText()
     {
         return $this->text;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

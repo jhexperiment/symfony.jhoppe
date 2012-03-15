@@ -554,6 +554,10 @@ pre {
   margin: 0px 0px 4px 0px;
 }
 
+#add-lesson-popup .body .input .data-item {
+  margin: 0px 8px 0px 0px;
+}
+
 #add-lesson-popup .body .selected-images {
   margin: 0px 8px 8px 8px;
   padding: 2px 0px 0px 0px;

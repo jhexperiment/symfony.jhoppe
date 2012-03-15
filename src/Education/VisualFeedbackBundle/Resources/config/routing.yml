@@ -1,3 +1,10 @@
+config_ie:
+    pattern:  /config/ie
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:ie }
+
+
+
+
 config_index:
     pattern:  /config/index
     defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
@@ -45,9 +52,15 @@ config_tutor_create:
 
 
 
-config_class_list:
-    pattern:  /config/list/class.{_format}
-    defaults: { _controller: EducationVisualFeedbackBundle:Config:listClass }
+config_subject_list:
+    pattern:  /config/list/subject.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listSubject }
+
+
+
+config_lesson_plan_list:
+    pattern:  /config/list/lessonplan.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listLessonPlan }
 
 
 
@@ -55,10 +68,6 @@ config_class_list:
 config_lesson_list:
     pattern:  /config/list/lesson.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listLesson }
-
-config_lesson_get:
-    pattern:  /config/get/lesson.{_format}
-    defaults: { _controller: EducationVisualFeedbackBundle:Config:getLesson }
 
 config_lesson_create:
     pattern:  /config/create/lesson

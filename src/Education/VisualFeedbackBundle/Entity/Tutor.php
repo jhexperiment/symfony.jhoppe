@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Tutor
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $firstName
      */
     private $firstName;
@@ -25,15 +30,20 @@ class Tutor
     private $lastName;
 
     /**
-     * @var integer $id
-     */
-    private $id;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Image
      */
     private $image;
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set firstName
@@ -93,16 +103,6 @@ class Tutor
     public function getLastName()
     {
         return $this->lastName;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

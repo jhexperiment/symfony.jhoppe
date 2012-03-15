@@ -5,9 +5,9 @@ namespace Education\VisualFeedbackBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Education\VisualFeedbackBundle\Entity\ClassLessonplan
+ * Education\VisualFeedbackBundle\Entity\SubjectLessonplan
  */
-class ClassLessonplan
+class SubjectLessonplan
 {
     /**
      * @var integer $id
@@ -15,9 +15,9 @@ class ClassLessonplan
     private $id;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\Class
+     * @var Education\VisualFeedbackBundle\Entity\Subject
      */
-    private $class;
+    private $subject;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Lessonplan
@@ -36,23 +36,23 @@ class ClassLessonplan
     }
 
     /**
-     * Set class
+     * Set subject
      *
-     * @param Education\VisualFeedbackBundle\Entity\Class $class
+     * @param Education\VisualFeedbackBundle\Entity\Subject $subject
      */
-    public function setClass(\Education\VisualFeedbackBundle\Entity\Class $class)
+    public function setSubject(\Education\VisualFeedbackBundle\Entity\Subject $subject)
     {
-        $this->class = $class;
+        $this->subject = $subject;
     }
 
     /**
-     * Get class
+     * Get subject
      *
-     * @return Education\VisualFeedbackBundle\Entity\Class 
+     * @return Education\VisualFeedbackBundle\Entity\Subject 
      */
-    public function getClass()
+    public function getSubject()
     {
-        return $this->class;
+        return $this->subject;
     }
 
     /**

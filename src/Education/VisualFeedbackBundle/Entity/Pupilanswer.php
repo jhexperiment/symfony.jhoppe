@@ -10,6 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Pupilanswer
 {
     /**
+     * @var integer $id
+     */
+    private $id;
+
+    /**
      * @var string $imageAnswer
      */
     private $imageAnswer;
@@ -25,11 +30,6 @@ class Pupilanswer
     private $timestamp;
 
     /**
-     * @var integer $id
-     */
-    private $id;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
      */
     private $tutoringsession;
@@ -39,6 +39,16 @@ class Pupilanswer
      */
     private $lessonImagequestion;
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set imageAnswer
@@ -98,16 +108,6 @@ class Pupilanswer
     public function getTimestamp()
     {
         return $this->timestamp;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

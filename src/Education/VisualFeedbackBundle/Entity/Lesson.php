@@ -10,15 +10,25 @@ use Doctrine\ORM\Mapping as ORM;
 class Lesson
 {
     /**
-     * @var string $name
-     */
-    private $name;
-
-    /**
      * @var integer $id
      */
     private $id;
 
+    /**
+     * @var string $name
+     */
+    private $name;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set name
@@ -38,15 +48,5 @@ class Lesson
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }
