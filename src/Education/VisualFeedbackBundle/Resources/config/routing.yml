@@ -56,11 +56,19 @@ config_subject_list:
     pattern:  /config/list/subject.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listSubject }
 
+config_subject_create:
+    pattern:  /config/create/subject
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:createSubject }
+
 
 
 config_lesson_plan_list:
     pattern:  /config/list/lessonplan.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listLessonPlan }
+
+config_lesson_plan_create:
+    pattern:  /config/create/lessonPlan
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:createLessonPlan }
 
 
 

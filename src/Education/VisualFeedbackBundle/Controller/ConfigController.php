@@ -49,7 +49,7 @@ class ConfigController extends Controller {
       return $this->render('EducationVisualFeedbackBundle:Config:index.html.php', $aViewData);
     }
     
-    // Image
+    //Image
     
     public function uploadImageAction() {
       
@@ -388,6 +388,53 @@ class ConfigController extends Controller {
       $sSearch = $oRequest->get('sSearch');
       
       
+      
+      $oConnection = $this->get('database_connection');
+      
+      $sSql = 
+        'SELECT DISTINCT(s.name) AS sName, s.id AS iId ' .
+        'FROM Subject AS s ' .
+        'WHERE 1 = 1 ';
+        
+      $oQueryBuilder = $oConnection->createQueryBuilder();
+      $oExp = $oQueryBuilder->expr();
+      $oQueryBuilder->select('s.*');
+      $oQueryBuilder->from('Subject', 's');
+      $oQueryBuilder->where('1 = 1');
+      
+      //$sSql .= 'ORDER BY s.name ASC, lp.name ASC';
+      $oQueryBuilder->orderBy('s.name', 'ASC');
+      $oQueryBuilder->andOrderBy('lp.name', 'ASC');
+      
+      $aLessonPlanList = array();
+      if ( ! empty($sSubjectId)) {
+        //$sSql .= "AND s.id = '$sSubjectId' ";
+        $oQueryBuilder->andWhere($oExp->eq('s.id', '?1'));
+        $oQueryBuilder->setParameter(1, $sSubjectId);
+      }
+      
+      if ( ! empty($sSearch)) {
+        //$sSql .= "AND s.name LIKE '%$sSearch%' ";
+        $oQueryBuilder->andWhere($oExp->like('s.name', '%?1%'));
+        $oQueryBuilder->setParameter(1, $sSearch);
+      }
+      
+      
+      echo $oQueryBuilder->getSql();
+      
+      $aSubjectList = $oConnection->fetchAll($oQueryBuilder->getSql()); 
+      
+      $oResponse = new Response(json_encode($aSubjectList));
+      
+      return $oResponse;
+      
+      
+      
+      
+      
+      
+      
+      
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       if (empty($sSearch)) {
         $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Subject');
@@ -418,7 +465,21 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-    
+    public function createSubjectAction() {
+      $oRequest = Request::createFromGlobals();
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      
+      
+      $oSubject = new Subject();
+      $oSubject->setName($oRequest->request->get('sName'));
+      
+      
+      $oEntityManager->persist($oSubject);
+      $oEntityManager->flush();
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      return $oResponse;
+    }
     
     //Lesson Plan
     
@@ -428,14 +489,55 @@ class ConfigController extends Controller {
     public function listLessonPlanAction() {
       $oRequest = $this->getRequest();
       $sSearch = $oRequest->get('sSearch');
+      $sSubjectId = $oRequest->get('iSubjectId');
+      
+      $oConnection = $this->get('database_connection');
+      
+      $sSql = 
+        'SELECT DISTINCT(lp.name) AS sName, lp.id AS iId, ' .
+          's.id AS iSubjectId, s.name AS sSubject ' .
+        'FROM LessonPlan AS lp ' .
+        'LEFT OUTER JOIN Subject_LessonPlan AS s_lp ON (lp.id = s_lp.LessonPlan_id) ' .
+        'LEFT OUTER JOIN Subject AS s ON (s.id = s_lp.Subject_id) ' .
+        'WHERE 1 = 1 ';
+      
+      $aLessonPlanList = array();
+      if ( ! empty($sSubjectId)) {
+        $sSql .= 
+          "AND s.id = '$sSubjectId' ";
+      }
+      
+      if ( ! empty($sSearch)) {
+        $sSql .= "AND lp.name LIKE '%$sSearch%' ";
+      }
+      
+      $sSql .= 'ORDER BY s.name ASC, lp.name ASC';
+      
+      $aLessonPlanList = $oConnection->fetchAll($sSql); 
+      
+      $oResponse = new Response(json_encode($aLessonPlanList));
+      
+      return $oResponse;
       
       
+      
+      
+      $aRecordList = array();
       $oEntityManager = $this->getDoctrine()->getEntityManager();
-      if (empty($sSearch)) {
+      if (empty($sSearch) && empty($sSubjectId)) {
         $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lessonplan');
         $aRecordList = $oRepository->findAll();
       }
-      else {
+      else if ( ! empty($sSubjectId)) {
+        $iSubjectId = intval($sSubjectId);  
+        
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:SubjectLessonplan');
+        $aTmpRecordList = $oRepository->findBySubject($iSubjectId);
+        foreach ($aTmpRecordList as $oSubjectLessonPlan) {
+          $aRecordList[] = $oSubjectLessonPlan->getLessonplan();
+        }
+      }
+      else if ( ! empty($sSearch)){
         $oQueryBuilder = $oEntityManager->createQueryBuilder();
         $aRecordList = $oQueryBuilder
           ->select('lp')
@@ -460,7 +562,28 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-    
+    public function createLessonPlanAction() {
+      $oRequest = Request::createFromGlobals();
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      
+      
+      $oLessonPlan = new Lessonplan();
+      $oLessonPlan->setName($oRequest->request->get('sName'));
+      $oEntityManager->persist($oLessonPlan);
+      $oEntityManager->flush();
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Subject');
+      $oSubject = $oRepository->find($oRequest->request->get('iSubjectId'));
+      
+      $oSubjectLessonPlan = new SubjectLessonplan;
+      $oSubjectLessonPlan->setSubject($oSubject);
+      $oSubjectLessonPlan->setLessonplan($oLessonPlan);
+      $oEntityManager->persist($oSubjectLessonPlan);
+      $oEntityManager->flush();
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      return $oResponse;
+    }
     
     //Lesson
     
@@ -484,15 +607,121 @@ class ConfigController extends Controller {
           )
         )
       );
-
-      $aList = array(
-        $aItem
-      );
       
-      $oResponse = new Response(json_encode($aList));
-      //$oResponse->headers->set('Content-Type', 'application/json');
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
+      $sSubjectId = $oRequest->get('iSubjectId');
+      $sLessonPlanId = $oRequest->get('iLessonPlanId');
+      $bQuestions = $oRequest->get('bQuestions');
+      
+      
+      
+      $oConnection = $this->get('database_connection');
+      
+      //$aRecordList = array();
+      //$oEntityManager = $this->getDoctrine()->getEntityManager();
+      
+      $sSql = 
+        'SELECT l.id AS iId, l.name AS sName, ' . 
+          's.name AS sSubject, s.id AS iSubjectId, ' .
+          'lp.name AS sLessonPlan, lp.id AS iLessonPlanId ' .
+        'FROM Lesson AS l ' .
+        'LEFT JOIN LessonPlan_Lesson AS lp_l ON (l.id = lp_l.Lesson_id) ' .
+        'LEFT JOIN Subject_LessonPlan AS s_lp ON (s_lp.id = lp_l.Subject_LessonPlan_id) ' .
+        'LEFT JOIN Subject AS s ON (s.id = s_lp.Subject_id) ' .
+        'LEFT JOIN LessonPlan AS lp ON (lp.id = s_lp.LessonPlan_id) ' .
+        'WHERE 1 = 1 ';
+      
+      $aLessonList = array();
+      if ( ! empty($sLessonPlanId)) {
+        $sSql .= "AND lp.id = '$sLessonPlanId' ";
+      }
+      
+      if ( ! empty($sSubjectId)) {
+        $sSql .= "AND s.id = '$sSubjectId' ";
+      }
+      
+      if ( ! empty($sSearch)) {
+        $sSql .= "AND l.name LIKE '%$sSearch%' ";
+      }
+      
+      $sSql .= 'ORDER BY s.name ASC, lp.name ASC';
+      
+      $aLessonList = $oConnection->fetchAll($sSql); 
+      
+      $oResponse = new Response(json_encode($aLessonList));
       
       return $oResponse;
+      
+      
+      
+      
+      
+      
+      if (empty($sSearch) && empty($sSubjectId) && empty($sLessonPlanId)) {
+        $aLessonList = $oConnection->fetchAll($sSql);  
+        
+        //$oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lesson');
+        //$aRecordList = $oRepository->findAll();
+      }
+      else if ( ! empty($sLessonPlanId) && empty($sSearch)) {
+        $iLessonPlanId = intval($sLessonPlanId);  
+        
+        $sSql .= "WHERE lp.id = '$iLessonPlanId' ";
+        $aLessonList = $oConnection->fetchAll($sSql);  
+        
+        /*
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:LessonplanLesson');
+        $aTmpRecordList = $oRepository->findByLesson($iLessonPlanId);
+        foreach ($aTmpRecordList as $oLessonPlanLesson) {
+          $aRecordList[] = $oLessonPlanLesson->getLesson();
+        }
+        */
+      }
+      else if ( ! empty($sSubjectId) && empty($sSearch)) {
+        $iSubjectId = intval($sSubjectId);  
+        $sSql .= "WHERE s.id = '$iSubjectId' ";
+        $aLessonList = $oConnection->fetchAll($sSql);  
+        
+        /*
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:SubjectLessonplan');
+        $aTmpRecordList = $oRepository->findBySubject($iSubjectId);
+        foreach ($aTmpRecordList as $oSubjectLessonPlan) {
+          $aRecordList[] = $oSubjectLessonPlan->getLessonplan()->getLesson();
+        }
+        */
+      }
+      else if ( ! empty($sSearch)) {
+        $sSql .= "WHERE l.name LIKE '%$sSearch%' ";
+        $aLessonList = $oConnection->fetchAll($sSql);
+        
+        /*
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aRecordList = $oQueryBuilder
+          ->select('l')
+          ->from('EducationVisualFeedbackBundle:Lesson', 'l')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('lp.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->getQuery()
+          ->getResult();
+         */
+      }
+      
+      /*
+      $aLessonList = array();
+      foreach ($aRecordList as $oLesson) {
+        
+        $aLessonList[] = array(
+          'iId' => $oLesson->getId(),
+          'sName' => $oLesson->getName()
+        );
+      }
+      */
+     
+      
+      
     }
 
 

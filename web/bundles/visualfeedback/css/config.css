@@ -109,10 +109,8 @@ pre {
   text-align: center;
   color: #DDDDDD;
   
-  
-  border-left: 1px solid #DDDDDD;
-  border-right: 1px solid #DDDDDD;
-  
+  border-top: 2px solid #FFFFFF;
+  border-right: 2px solid #FFFFFF;
   
   background-color: #888888;
 }
@@ -130,11 +128,11 @@ pre {
 }
 
 .main-menu .menu-item:first-child {
-  border-left: 0px solid #DDDDDD;
+  
 }
 
 .main-menu .menu-item:last-child {
-  border-right: 0px solid #DDDDDD;  
+    
 }
 
 .sub-menu-container {
@@ -171,6 +169,15 @@ pre {
   color: #000000;
   
   background-color: #AAAAAA;
+}
+
+.sub-menu-container .filter-list {
+  margin: 8px 0px 0px 0px;
+  float: right;
+}
+
+.sub-menu-container .filter-list .text {
+  margin: 0px 0px 0px 16px;
 }
 
 .sub-menu {
@@ -270,6 +277,26 @@ pre {
   width: 100%;
   display: inline-block;
   float: left;
+}
+
+.view .body table {
+  border-collapse: collapse;
+}
+
+.view .body table th {
+  border: 1px solid #000000;
+}
+
+.view .body table td {
+  border: 1px solid #000000;
+}
+
+.view .body table .id {
+  display: none;
+}
+
+.view .body table td {
+  padding: 4px;
 }
 
 #image.view .search-bar {
@@ -536,6 +563,13 @@ pre {
   float: right;
 }
 
+#add-lesson-plan-popup #create-button {
+  width: 140px;
+}
+
+#add-lesson-plan-popup #update-button {
+  width: 140px;
+}
 
 #add-lesson-popup {
   padding: 24px;

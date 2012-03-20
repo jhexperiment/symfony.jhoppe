@@ -28,6 +28,9 @@
     <span id="image" class="menu-item">
       <span class="text">Images</span>
     </span>
+    <span id="audio" class="menu-item">
+      <span class="text">Audio Clips</span>
+    </span>
     <span id="tutor" class="menu-item">
       <span class="text">Tutors</span>
     </span>
@@ -57,12 +60,36 @@
     <input type="text" />
     <span class="search-button button">Search</span>
   </div>
+  <span class="filter-list">
+    <span class="text">Filter:</span>
+    <span id="subject">
+      <span class="text">Subject:</span>
+      <select>
+        <option value="">All</option>
+      </select>
+    </span>
+    <span id="lesson-plan">
+      <span class="text">Lesson Plan:</span>
+      <select>
+        <option value="">All</option>
+      </select>
+    </span>
+    <span class="text">Name:</span>
+  </span>
   
   <div id="image" class="sub-menu state-hide">
     <span id="add" class="menu-item">
       <span class="text">Add</span>
       <span class="input state-hide">
         <input id="image-file-upload" type="file" name="image-file-upload" />
+      </span>
+    </span>
+  </div>
+  <div id="audio" class="sub-menu state-hide">
+    <span id="add" class="menu-item">
+      <span class="text">Add</span>
+      <span class="input state-hide">
+        <input id="audio-file-upload" type="file" name="audio-file-upload" />
       </span>
     </span>
   </div>
@@ -138,7 +165,17 @@
       <div class="title">Subjects</div>
     </div>
     <div class="body">
-      <div class="subject-list"></div>
+      <table class="subject-list">
+        <thead>
+          <tr>
+            <th class="id">ID</th>
+            <th class="subject">Subject</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
     </div>
   </div>
   
@@ -147,16 +184,40 @@
       <div class="title">Lesson Plans</div>
     </div>
     <div class="body">
-      <div class="lesson-plan-list"></div>
+      <table class="lesson-plan-list">
+        <thead>
+          <tr>
+            <th class="id">ID</th>
+            <th class="subject">Subject</th>
+            <th class="lesson-plan">Lesson Plan</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
     </div>
   </div>
   
   <div id="lesson" class="view state-hide">
     <div class="head">
       <div class="title">Lessons</div>
+      
     </div>
     <div class="body">
-      <div class="lesson-list"></div>
+      <table class="lesson-list">
+        <thead>
+          <tr>
+            <th class="id">ID</th>
+            <th class="subject">Subject</th>
+            <th class="lesson-plan">Lesson Plan</th>
+            <th class="lesson">Lesson</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -289,6 +350,69 @@
       </div>
       <div class="foot">
         <span id="return-button" class="button">Return</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="add-subject-popup" class="add-popup state-hide">
+  <div class="popup-view-container">
+    <div id="main" class="popup-view">
+      <div class="head">
+        <span id="action">New</span> Subject
+      </div>
+      <div class="body">
+        <div id="name" class="data-item">
+          <span class="label">
+            Name:
+            <sup><span class="red">*</span></sup>
+          </span>
+          <span class="value">
+            <input type="text" value="" />
+          </span>
+        </div>
+      </div>
+      <div class="foot">
+        <span id="cancel-button" class="button">Cancel</span>
+        <span id="create-button" class="button state-hide">Create Subject</span>
+        <span id="update-button" class="button state-hide">Update Subject</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="add-lesson-plan-popup" class="add-popup state-hide">
+  <div class="popup-view-container">
+    <div id="main" class="popup-view">
+      <div class="head">
+        <span id="action">New</span> Lesson Plan
+      </div>
+      <div class="body">
+        <div id="subject" class="data-item">
+          <span class="label">
+            Subject:
+            <sup><span class="red">*</span></sup>
+          </span>
+          <span class="value">
+            <select>
+              
+            </select>
+          </span>
+        </div>
+        <div id="name" class="data-item">
+          <span class="label">
+            Name:
+            <sup><span class="red">*</span></sup>
+          </span>
+          <span class="value">
+            <input type="text" value="" />
+          </span>
+        </div>
+      </div>
+      <div class="foot">
+        <span id="cancel-button" class="button">Cancel</span>
+        <span id="create-button" class="button state-hide">Create Lesson Plan</span>
+        <span id="update-button" class="button state-hide">Update Lesson Plan</span>
       </div>
     </div>
   </div>
