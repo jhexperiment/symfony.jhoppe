@@ -659,5 +659,18 @@ pre {
   display: none;
 }
 
+#setting.view .button {
+  cursor: pointer;
+  padding: 4px 0px;
+  width: 80px;
+  display: inline-block;
+  text-align: center;
+  
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  
+  background-color: #DDDDDD;
+}
 
 

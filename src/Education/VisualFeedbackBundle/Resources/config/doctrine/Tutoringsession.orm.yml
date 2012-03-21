@@ -21,24 +21,6 @@ Education\VisualFeedbackBundle\Entity\Tutoringsession:
       nullable: false
       column: display_content
   oneToOne:
-    pupil:
-      targetEntity: Pupil
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        Pupil_id:
-          referencedColumnName: id
-      orphanRemoval: false
-    tutor:
-      targetEntity: Tutor
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        Tutor_id:
-          referencedColumnName: id
-      orphanRemoval: false
     lessonImagequestion:
       targetEntity: LessonImagequestion
       cascade: {  }
@@ -48,6 +30,15 @@ Education\VisualFeedbackBundle\Entity\Tutoringsession:
         Lesson_ImageQuestion_id:
           referencedColumnName: id
       orphanRemoval: false
+    pupil:
+      targetEntity: Pupil
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Pupil_id:
+          referencedColumnName: id
+      orphanRemoval: false
     statuscode:
       targetEntity: Statuscode
       cascade: {  }
@@ -55,6 +46,15 @@ Education\VisualFeedbackBundle\Entity\Tutoringsession:
       inversedBy: null
       joinColumns:
         StatusCode_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    tutor:
+      targetEntity: Tutor
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Tutor_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

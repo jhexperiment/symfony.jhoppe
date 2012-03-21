@@ -8,6 +8,13 @@
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/swfobject.js"></script>
 <script type="text/javascript" src="/bundles/visualfeedback/js/crypto-js/crypto-md5/crypto-md5.js"></script>
 
+<?
+foreach ($aPath as $sName => $sValue) {
+?>
+<input id="<?=$sName?>" type="hidden" value="<?=$sValue?>"/>
+<?
+}
+?>
 
 
 
@@ -218,6 +225,31 @@
           
         </tbody>
       </table>
+    </div>
+  </div>
+  
+  <div id="setting" class="view state-hide">
+    <div class="head">
+      <div class="title">Settings</div>
+      
+    </div>
+    <div class="body">
+<?
+foreach ($aPath as $sName => $sValue) {
+?>
+      <div id="<?=$sName?>" class="setting-item">
+        <span class="label"><?=$sName?>:</span>
+        <span class="value">
+          <input type="text" value="<?=$sValue?>" />
+        </span>
+      </div>
+  
+<?
+}
+?>
+      <div class="action-list">
+        <span id="save-button" class="button">Save</span>
+      </div>
     </div>
   </div>
 </div>
@@ -483,3 +515,5 @@
 </div>
 
 <div class="modal"></div>
+
+<pre><?=print_r($aPath, true)?></pre>

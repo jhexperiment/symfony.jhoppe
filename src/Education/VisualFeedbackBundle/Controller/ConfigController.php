@@ -20,12 +20,13 @@ use Education\VisualFeedbackBundle\Entity\LessonplanLesson;
 use Education\VisualFeedbackBundle\Entity\Lesson;
 use Education\VisualFeedbackBundle\Entity\Imagequestion;
 use Education\VisualFeedbackBundle\Entity\LessonImagequestion;
+use Education\VisualFeedbackBundle\Entity\Setting;
 
 
 class ConfigController extends Controller {
     
     public function ieAction() {
-        
+      
       
       
       $aViewData = array(
@@ -36,14 +37,71 @@ class ConfigController extends Controller {
     }
     
     public function indexAction() {
+      error_reporting(E_ALL ^ E_NOTICE);
+      
         
       if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
         return $this->redirect($this->generateUrl('config_ie'));
       }
       
+      $aPath = array();
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Setting');
+      $oSetting = $oRepository->findOneByName('root-web-folder');
+      if (empty($oSetting)) {
+        $oSetting = new Setting();
+        $oSetting->setName('root-web-folder');
+        $oSetting->setValue('/bundles/visualfeedback');
+        $oEntityManager->persist($oSetting);
+        $oEntityManager->flush();
+      }
+      $aPath['root-web-folder'] = $oSetting->getValue();
+      
+      $oSetting = $oRepository->findOneByName('image-upload-folder');
+      if (empty($oSetting)) {
+        $oSetting = new Setting();
+        $oSetting->setName('image-upload-folder');
+        $oSetting->setValue('/images/uploads');
+        $oEntityManager->persist($oSetting);
+        $oEntityManager->flush();
+      }
+      $aPath['image-upload-folder'] = $oSetting->getValue();
+      
+      $oSetting = $oRepository->findOneByName('audio-upload-folder');
+      if (empty($oSetting)) {
+        $oSetting = new Setting();
+        $oSetting->setName('audio-upload-folder');
+        $oSetting->setValue('/audio/uploads');
+        $oEntityManager->persist($oSetting);
+        $oEntityManager->flush();
+      }
+      $aPath['audio-upload-folder'] = $oSetting->getValue();
+      
+      $oSetting = $oRepository->findOneByName('tutor-upload-folder');
+      if (empty($oSetting)) {
+        $oSetting = new Setting();
+        $oSetting->setName('tutor-upload-folder');
+        $oSetting->setValue('/tutor_icons');
+        $oEntityManager->persist($oSetting);
+        $oEntityManager->flush();
+      }
+      $aPath['tutor-upload-folder'] = $oSetting->getValue();
+      
+      $oSetting = $oRepository->findOneByName('pupil-upload-folder');
+      if (empty($oSetting)) {
+        $oSetting = new Setting();
+        $oSetting->setName('pupil-upload-folder');
+        $oSetting->setValue('/pupil_icons');
+        $oEntityManager->persist($oSetting);
+        $oEntityManager->flush();
+      }
+      $aPath['pupil-upload-folder'] = $oSetting->getValue();
       
       $aViewData = array(
+        'aPath' => $aPath,
         'sWindowTitle' => 'Config'
+        
       );
       
       return $this->render('EducationVisualFeedbackBundle:Config:index.html.php', $aViewData);
@@ -387,40 +445,25 @@ class ConfigController extends Controller {
       $oRequest = $this->getRequest();
       $sSearch = $oRequest->get('sSearch');
       
-      
-      
       $oConnection = $this->get('database_connection');
       
-      $sSql = 
-        'SELECT DISTINCT(s.name) AS sName, s.id AS iId ' .
-        'FROM Subject AS s ' .
-        'WHERE 1 = 1 ';
-        
       $oQueryBuilder = $oConnection->createQueryBuilder();
       $oExp = $oQueryBuilder->expr();
-      $oQueryBuilder->select('s.*');
+      $oQueryBuilder->select('s.id AS iId, s.name AS sName');
       $oQueryBuilder->from('Subject', 's');
       $oQueryBuilder->where('1 = 1');
       
-      //$sSql .= 'ORDER BY s.name ASC, lp.name ASC';
-      $oQueryBuilder->orderBy('s.name', 'ASC');
-      $oQueryBuilder->andOrderBy('lp.name', 'ASC');
-      
-      $aLessonPlanList = array();
       if ( ! empty($sSubjectId)) {
-        //$sSql .= "AND s.id = '$sSubjectId' ";
         $oQueryBuilder->andWhere($oExp->eq('s.id', '?1'));
         $oQueryBuilder->setParameter(1, $sSubjectId);
       }
       
       if ( ! empty($sSearch)) {
-        //$sSql .= "AND s.name LIKE '%$sSearch%' ";
         $oQueryBuilder->andWhere($oExp->like('s.name', '%?1%'));
         $oQueryBuilder->setParameter(1, $sSearch);
       }
       
-      
-      echo $oQueryBuilder->getSql();
+      $oQueryBuilder->orderBy('s.name', 'ASC');
       
       $aSubjectList = $oConnection->fetchAll($oQueryBuilder->getSql()); 
       
@@ -428,42 +471,6 @@ class ConfigController extends Controller {
       
       return $oResponse;
       
-      
-      
-      
-      
-      
-      
-      
-      $oEntityManager = $this->getDoctrine()->getEntityManager();
-      if (empty($sSearch)) {
-        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Subject');
-        $aRecordList = $oRepository->findAll();
-      }
-      else {
-        $oQueryBuilder = $oEntityManager->createQueryBuilder();
-        $aRecordList = $oQueryBuilder
-          ->select('s')
-          ->from('EducationVisualFeedbackBundle:Subject', 's')
-          ->where( 
-            $oQueryBuilder->expr()
-              ->like('s.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
-          )
-          ->getQuery()
-          ->getResult();
-      }
-      
-      $aSubjectList = array();
-      foreach ($aRecordList as $oSubject) {
-        $aSubjectList[] = array(
-          'iId' => $oSubject->getId(),
-          'sName' => $oSubject->getName()
-        );
-      }
-      
-      $oResponse = new Response(json_encode($aSubjectList));
-      
-      return $oResponse;
     }
     public function createSubjectAction() {
       $oRequest = Request::createFromGlobals();
@@ -885,11 +892,35 @@ class ConfigController extends Controller {
       );
       
       $oResponse = new Response(json_encode($aList));
-      //$oResponse->headers->set('Content-Type', 'application/json');
+      
       
       return $oResponse;
     }
-}
+
+    //Setting
+    public function listSettingAction() {
+      
+    }
+    
+    public function updateSettingAction() {
+      $oRequest = $this->getRequest();
+      $aSettingList = $oRequest->get('aSettingList');
+      print_r($aSettingList);
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Setting');
+      foreach ($aSettingList as $aSetting) {
+        $oSetting = $oRepository->findOneByName($aSetting['sName']);
+        $oSetting->setValue($aSetting['sValue']);
+        $oEntityManager->persist($oSetting);
+        $oEntityManager->flush();
+      }
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      $oResponse->headers->set('Content-Type', 'application/json');
+      return $oResponse;
+      
+    }
+} 
 
 
 

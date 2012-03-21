@@ -1,0 +1,22 @@
+Education\VisualFeedbackBundle\Entity\Setting:
+  type: entity
+  table: Setting
+  fields:
+    id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+    name:
+      type: string
+      length: 256
+      fixed: false
+      nullable: false
+    value:
+      type: string
+      length: 1024
+      fixed: false
+      nullable: true
+  lifecycleCallbacks: {  }

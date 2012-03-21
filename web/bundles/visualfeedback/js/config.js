@@ -9,7 +9,19 @@ $(document).ready(function() {
 });
 
 oThisPage = {
+  'sRootWebFolder': null,
+  'sImageUploadFolder': null,
+  'sAudioUploadFolder': null,
+  'sTutorUploadFolder': null,
+  'sPupilUploadFolder': null,
   'fnInit': function() {
+    oThisPage.sRootWebUrl = $("#root-web-folder").val();
+    oThisPage.sImageUploadFolder = $("#image-upload-folder").val();
+    oThisPage.sAudioUploadFolder = $("#action-upload-folder").val();
+    oThisPage.sTutorUploadFolder = $("#tutor-upload-folder").val();
+    oThisPage.sPupilUploadFolder = $("#pupil-upload-folder").val();
+    
+    
     var oMainMenu = $(".main-menu")
     oMainMenu.removeClass('state-hide');
     var iWidth = oMainMenu.width();
@@ -59,14 +71,16 @@ oThisPage = {
     
     // Image
     $(".main-menu #image.menu-item").click(function() {
+      $(".sub-menu-container .filter-list").addClass('state-hide');
+      
       var sSearch = $(".sub-menu-container .search-bar input").val();
       oThisPage.fnGetImageList(sSearch, 'uploads', oThisPage.fnDisplayImageTabImages);
     });
     $("#image.sub-menu .menu-item .input input").uploadify({
-      'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
+      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
-      'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
-      'folder' : '/bundles/visualfeedback/images/uploads',
+      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'folder' : oThisPage.sRootWebUrl + oThisPage.sImageUploadFolder,
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
       'fileDesc' : 'Image Files',
       'multi' : true,
@@ -103,6 +117,8 @@ oThisPage = {
     
     // Tutor
     $(".main-menu #tutor.menu-item").click(function() {
+      $(".sub-menu-container .filter-list").addClass('state-hide');
+      
       oThisPage.fnGetTutorList();
     });
     $("#tutor.sub-menu #add.menu-item").click(function() {
@@ -122,10 +138,10 @@ oThisPage = {
       */
     });
     $("#add-tutor-popup .upload input").uploadify({
-      'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
+      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
-      'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
-      'folder' : '/bundles/visualfeedback/images/tutor_icons',
+      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'folder' : oThisPage.sRootWebUrl + oThisPage.sTutorUploadFolder,
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
       'fileDesc' : 'Image Files',
       'multi' : false,
@@ -236,6 +252,8 @@ oThisPage = {
     
     //Pupil
     $(".main-menu #pupil.menu-item").click(function() {
+      $(".sub-menu-container .filter-list").addClass('state-hide');
+      
       oThisPage.fnGetPupilList();
     });
     $("#pupil.sub-menu #add.menu-item").click(function() {
@@ -255,10 +273,10 @@ oThisPage = {
       */
     });
     $("#add-pupil-popup .upload input").uploadify({
-      'uploader' : '/bundles/visualfeedback/js/uploadify/uploadify.swf',
+      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
       'script' : 'upload/image',
-      'cancelImg' : '/bundles/visualfeedback/js/uploadify/cancel.png',
-      'folder' : '/bundles/visualfeedback/images/pupil_icons',
+      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'folder' : oThisPage.sRootWebUrl + oThisPage.sPupilUploadFolder,
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
       'fileDesc' : 'Image Files',
       'multi' : false,
@@ -368,6 +386,8 @@ oThisPage = {
     
     //Subject
     $(".main-menu #subject.menu-item").click(function() {
+      $(".sub-menu-container .filter-list").addClass('state-hide');
+      
       var aPost = {
         'sSearch': $(".sub-menu-container .search-bar input").val()
       }
@@ -428,6 +448,9 @@ oThisPage = {
     
     //Lesson Plan
     $(".main-menu #lesson-plan.menu-item").click(function() {
+      var oFilterList = $(".sub-menu-container .filter-list");
+      oFilterList.removeClass('state-hide');
+      oFilterList.find("#lesson-plan").addClass('state-hide');
       var sSearch = $(".sub-menu-container .search-bar input").val();
       $("#lesson-plan.view .body table.lesson-plan-list tbody").html("");
       var aPost = {
@@ -504,6 +527,10 @@ oThisPage = {
     
     //Lesson
     $(".main-menu #lesson.menu-item").click(function() {
+      var oFilterList = $(".sub-menu-container .filter-list");
+      oFilterList.removeClass('state-hide');
+      oFilterList.find("#lesson-plan").removeClass('state-hide');
+      
       var aPost = {
         'sSearch' : $(".sub-menu-container .search-bar input").val()
       }
@@ -735,8 +762,13 @@ oThisPage = {
       });
     });
     
-    
-    
+    //Setting 
+    $(".main-menu #setting.menu-item").click(function() {
+      $(".sub-menu-container .filter-list").addClass('state-hide');
+    });
+    $("#setting.view .body .action-list #save-button").click(function() {
+      oThisPage.fnUpdateAllSettings();
+    });
     
     
     $(".sub-menu-container .search-bar input").keypress(function(event) {
@@ -762,7 +794,6 @@ oThisPage = {
         oThisPage.fnGetTutorList();
       }
       else if (sId == "lesson") {
-        
         aPost['iSubjectId'] = oFilterList.find("#subject select").val();
         aPost['iLessonPlanId'] = oFilterList.find("#lesson-plan select").val();
         oThisPage.fnGetLessonList(aPost, function(aData, textStatus, jqXHR) {
@@ -772,9 +803,20 @@ oThisPage = {
           });
         });
       }
+      else if (sId == "lesson-plan") {
+        aPost['iSubjectId'] = oFilterList.find("#subject select").val();
+        oThisPage.fnGetLessonPlanList(aPost, function(aData, textStatus, jqXHR) {
+          $("#lesson-plan.view .body table.lesson-plan-list tbody").html("");
+          $.each(aData, function() {
+            oThisPage.fnRenderLessonPlanRow(this);
+          });
+        });
+      }
       
     });
     $(".sub-menu-container .filter-list #subject select").change(function() {
+      $(".sub-menu-container .search-bar .search-button").click();
+      
       var aPost = {
         'iSubjectId': $(this).val()
       };
@@ -794,16 +836,43 @@ oThisPage = {
         
         $(".sub-menu-container .search-bar .search-button").click();
       });
+      
     });
     $(".sub-menu-container .filter-list #lesson-plan select").change(function() {
       $(".sub-menu-container .search-bar .search-button").click();
     });
     
     // default to image tab
-    setTimeout('$(".main-menu #lesson.menu-item").click()', 750);
+    setTimeout('$(".main-menu #setting.menu-item").click()', 750);
   },
   'fnUpdateImage': function(aData) {
     
+  },
+  'fnUpdateAllSettings': function() {
+    var aItemList = $("#setting.view .body .setting-item");
+    var aSettingList = {};
+    $.each(aItemList, function() {
+      var sName = $(this).attr("id");
+      var sValue = $(this).find("input").val();
+      aSettingList[sName] = {
+        'sName': sName,
+        'sValue': sValue
+      };
+    });
+    
+    var aPost = {
+      'aSettingList': aSettingList
+    };
+    
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "update/setting",
+      'success': function(aData, textStatus, jqXHR) {
+        
+      }
+    });
   },
   'fnRenderSubjectRow': function(aSubject) {
     var sHtml = 

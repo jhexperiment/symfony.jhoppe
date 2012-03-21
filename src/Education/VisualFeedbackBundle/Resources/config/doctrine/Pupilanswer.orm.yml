@@ -26,15 +26,6 @@ Education\VisualFeedbackBundle\Entity\Pupilanswer:
       unsigned: false
       nullable: false
   oneToOne:
-    tutoringsession:
-      targetEntity: Tutoringsession
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        TutoringSession_id:
-          referencedColumnName: id
-      orphanRemoval: false
     lessonImagequestion:
       targetEntity: LessonImagequestion
       cascade: {  }
@@ -42,6 +33,15 @@ Education\VisualFeedbackBundle\Entity\Pupilanswer:
       inversedBy: null
       joinColumns:
         Lesson_ImageQuestion_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    tutoringsession:
+      targetEntity: Tutoringsession
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        TutoringSession_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

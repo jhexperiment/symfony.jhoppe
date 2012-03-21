@@ -10,15 +10,6 @@ Education\VisualFeedbackBundle\Entity\LessonplanLesson:
       generator:
         strategy: IDENTITY
   oneToOne:
-    subjectLessonplan:
-      targetEntity: SubjectLessonplan
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        Subject_LessonPlan_id:
-          referencedColumnName: id
-      orphanRemoval: false
     lesson:
       targetEntity: Lesson
       cascade: {  }
@@ -26,6 +17,15 @@ Education\VisualFeedbackBundle\Entity\LessonplanLesson:
       inversedBy: null
       joinColumns:
         Lesson_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    subjectLessonplan:
+      targetEntity: SubjectLessonplan
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Subject_LessonPlan_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

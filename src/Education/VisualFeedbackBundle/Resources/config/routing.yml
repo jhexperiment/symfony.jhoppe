@@ -90,6 +90,9 @@ config_session_list:
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listSession }
 
 
+config_setting_update:
+    pattern:  /config/update/setting
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:updateSetting }
 
 
 
