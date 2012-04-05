@@ -1,0 +1,22 @@
+Education\VisualFeedbackBundle\Entity\Audio:
+  type: entity
+  table: Audio
+  fields:
+    id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+    label:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
+    filename:
+      type: string
+      length: 256
+      fixed: false
+      nullable: true
+  lifecycleCallbacks: {  }
