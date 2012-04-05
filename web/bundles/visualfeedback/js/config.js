@@ -9,6 +9,7 @@ $(document).ready(function() {
 });
 
 oThisPage = {
+  'aTmpData': null,
   'sRootWebFolder': null,
   'sImageUploadFolder': null,
   'sAudioUploadFolder': null,
@@ -17,7 +18,7 @@ oThisPage = {
   'fnInit': function() {
     oThisPage.sRootWebUrl = $("#root-web-folder").val();
     oThisPage.sImageUploadFolder = $("#image-upload-folder").val();
-    oThisPage.sAudioUploadFolder = $("#action-upload-folder").val();
+    oThisPage.sAudioUploadFolder = $("#audio-upload-folder").val();
     oThisPage.sTutorUploadFolder = $("#tutor-upload-folder").val();
     oThisPage.sPupilUploadFolder = $("#pupil-upload-folder").val();
     
@@ -69,6 +70,17 @@ oThisPage = {
       });
     });
     
+    
+    $(document).keypress(function(event) {
+      if (event.keyCode == $.KEY.ESCAPE) {
+        $.each($(".add-popup"), function() {
+          if ( ! $(this).hasClass("state-hide")) {
+            $(this).find(".foot #cancel-button").click();
+          }
+        });
+      }
+    });
+    
     // Image
     $(".main-menu #image.menu-item").click(function() {
       $(".sub-menu-container .filter-list").addClass('state-hide');
@@ -113,6 +125,50 @@ oThisPage = {
       });
     });
     
+    
+    // Audio
+    $(".main-menu #audio.menu-item").click(function() {
+      $(".sub-menu-container .filter-list").addClass('state-hide');
+      
+      var sSearch = $(".sub-menu-container .search-bar input").val();
+      oThisPage.fnGetAudioList(sSearch, 'uploads', oThisPage.fnDisplayAudioTabFiles);
+    });
+    $("#audio.sub-menu .menu-item .input input").uploadify({
+      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
+      'script' : 'upload/audio',
+      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'folder' : oThisPage.sRootWebUrl + oThisPage.sAudioUploadFolder,
+      'fileExt' : '*.mp3;*.m4a;*.oga;',
+      'fileDesc' : 'Audio Files',
+      'multi' : true,
+      'simUploadLimit': 10,
+      'auto' : true,
+      'onAllComplete' : function(event, ID, fileObj, response, data) {
+        var oInput = $("#audio.sub-menu .menu-item .input");
+        oInput.animate({
+          'width': 0
+        }, 250, function() {
+          oInput.addClass('state-hide');
+          oInput.width(oInput.data("original-width"));
+          oInput.removeAttr("style");
+        });
+      },
+      'onUploadError' : function(event,ID,fileObj,errorObj) {
+        var tmp = '';
+      }
+    });
+    $("#audio.sub-menu #add.menu-item").click(function() {
+      var oInput = $(this).parent().find(".input");
+      oInput.data("original-width", oInput.width());
+      oInput.width(0);
+      oInput.removeClass("state-hide");
+      
+      oInput.animate({
+        'width': oInput.data("original-width")
+      }, 250, function() {
+        oInput.css("width", "auto");
+      });
+    });
     
     
     // Tutor
@@ -555,89 +611,17 @@ oThisPage = {
       });
     });
     $("#lesson.sub-menu #add.menu-item").click(function() {
-      var oPopup = $("#add-lesson-popup");
-      var oSelectedImages = oPopup.find(".selected-images");
-      oSelectedImages.find(".image").remove();
-      oSelectedImages.find("")
-      oPopup.removeClass("state-hide");
-      oPopup.find("#create-button").removeClass('state-hide');
-      $.fnCenter(oPopup);
-      $(".modal").addClass('state-show');
-      /*
-      oPopup.css('opacity', 0.0);
-      
-      oPopup.animate({
-        'opacity': 1.0
-      }, 1000, function() {
-        //oPopup.removeAttr('style');
-      });
-      */
-      
-      $("#subject.view .body .subject-list").html("");
-      var aPost = {};
-      oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
-        var oSelect = $("#add-lesson-popup .body .input #subject select");
-        oSelect.html('<option value="">Select</option>');
-        $.each(aData, function() {
-          var sHtml = 
-              '<option value="' + this.iId + '">' + 
-                 this.sName +
-              '</option>';
-          var oHtml = $(sHtml);
-          
-          oSelect.append(oHtml);
-        });
-      });
-      
-      var sSearch = $(".sub-menu-container .search-bar input").val();
-      oThisPage.fnGetImageList(sSearch, 'uploads', function(aData, textStatus, jqXHR) {
-        var oImageList = $("#add-lesson-popup .body .image-list");
-        $.each(aData, function() {
-          var sHtml = 
-          '<span class="image">' +
-            '<input type="hidden" value="' + this.iId + '" />' + 
-            '<img src="' + this.sUrl + '" />' +
-            '<div class="label">' + this.sLabel + '</div>' +
-          '</span>';
-          var oHtml = $(sHtml);
-          oHtml.data("aData", this);
-          oHtml.dblclick(function() {
-            var oSelectedImages = $("#add-lesson-popup .body .selected-images");
-            oSelectedImages.find(".drop-message").addClass('state-hide');
-            
-            var oImage = $(this).clone();
-            oImage.data("aData", $(this).data("aData"));
-            oThisPage.fnLessonAppendImage(oImage);
-          });
-          oHtml.draggable({
-            'connectToSortable': ".image-drag-drop",
-            //'containment': '#add-lesson-popup',
-            //'cursor': 'move',
-            //snap: '#content',
-            //stack: true
-            'helper': 'clone',
-            'revert': false
-          });
-          oHtml.disableSelection();
-          oImageList.append(oHtml);
-        });
-        
-        oImageList.sortable({
-          'handle': '.image',
-          'connectWith': ".image-drag-drop",
-          'revert': false
-        });
-    
-        oImageList.disableSelection();
-        
-      });
+      oThisPage.fnShowLessonPopup();
     });
-    $("#add-lesson-popup .body .selected-images").sortable({
+    $("#add-lesson-popup").draggable({
+      'handle': '.move-handle'
+    });
+    $("#add-lesson-popup .body .selected-images .wrapper").sortable({
       //'appendTo': "#add-lesson-popup .body .image-list",
       'connectWith': ".image-drag-drop",
-      //'placeholder': "image ui-state-highlight",
+      'placeholder': "ui-state-highlight image",
       //'containment': 'parent',
-      //'forcePlaceHolderSize': true,
+      'forcePlaceHolderSize': true,
       'helper': 'clone',
       //'forceHelperSize': true,
       //'grid': [64, 64],
@@ -645,18 +629,22 @@ oThisPage = {
       //'delay': 250
       //'refreshPositions': true,
       //'items': '.image',
+      'axis': 'x',
       'tolerance': 'pointer',
       'dropOnEmpty': true,
-      'revert': true,
+      'revert': false,
+      'delay': 100,
+      'opacity': 0.8,
       'receive': function(event, ui) {
-        var tmp = '';
+        oThisPage.fnReorderLessonImages(ui.item.clone());
         $(this).find(".drop-message").addClass('state-hide');
+        oThisPage.fnResizeLessonImageList(ui.item);
       },
       'stop': function(event, ui) {
-        var tmp = '';
+        oThisPage.fnReorderLessonImages(ui.item);
       }
       
-    });
+    }).sortable("refresh");
     /*
     .droppable({
       'drop': function( event, ui ) {
@@ -672,7 +660,7 @@ oThisPage = {
       }
     });
     */
-    $("#add-lesson-popup .body .selected-images").disableSelection();
+    $("#add-lesson-popup .body .selected-images .wrapper").disableSelection();
     $("#add-lesson-popup #main.popup-view .foot #cancel-button").click(function() {
       $(".modal").removeClass('state-show');
       var oPopup = $("#add-lesson-popup");
@@ -710,37 +698,6 @@ oThisPage = {
         $(this).parents(".filter").find("#filter-button").click();
       }
     });
-    $("#add-lesson-popup #main.popup-view .foot #create-button").click(function() {
-      var oView = $(this).parents(".popup-view");
-      var oContainer = oView.find(".body .right");
-      
-      var aQuestionList = {};
-      $.each(oView.find(".selected-images .image"), function(iIndex) {
-        aQuestionList[iIndex] = {
-          'iIndex': iIndex,
-          'iImageId': $(this).find("input").val(),
-          'sText': $.trim($(this).find(".label").html())
-        };
-      });
-      
-      
-      var aData = {
-        'sName': oView.find(".body .input .value input").val(),
-        'iSubjectId': oView.find(".body .input #subject select").val(),
-        'iLessonPlanId': oView.find(".body .input #lesson-plan select").val(),
-        'aQuestionList': aQuestionList
-      }
-      $.ajax({
-        'data': aData,
-        'dataType': 'json',
-        'type': 'POST',
-        'url': "create/lesson",
-        'success': function(aData, textStatus, jqXHR) {
-          $(".modal").removeClass('state-show');
-          $("#add-lesson-popup").addClass('state-hide');
-        }
-      });
-    });
     $("#add-lesson-popup #main.popup-view #subject select").change(function() {
       
       var aPost = {
@@ -751,16 +708,96 @@ oThisPage = {
         var oSelect = $("#add-lesson-popup .body .input #lesson-plan select");
         oSelect.html('<option value="">Select</option>');
         $.each(aData, function() {
+          var sSelected = '';
+          if ( ! $.fnIsEmpty(oThisPage.aTmpData) && ! $.fnIsEmpty(oThisPage.aTmpData.iLessonPlanId)) {
+            if (oThisPage.aTmpData.iLessonPlanId == this.iId) {
+              sSelected = 'selected="selected"';
+            }
+          }
           var sHtml = 
-              '<option value="' + this.iId + '">' + 
+              '<option value="' + this.iId + '" ' + sSelected + '>' + 
                  this.sName +
               '</option>';
           var oHtml = $(sHtml);
           
           oSelect.append(oHtml);
         });
+        
+        if ( ! $.fnIsEmpty(oThisPage.aTmpData)) {
+          oThisPage.aTmpData = null;
+        }
+      
       });
     });
+    $("#add-lesson-popup #main.popup-view .foot #create-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      var aQuestionList = {};
+      var iCount = 0;
+      $.each(oView.find(".selected-images .image"), function(iIndex) {
+        aQuestionList[iIndex] = {
+          'iIndex': iIndex,
+          'iImageId': $(this).find("input").val(),
+          'sText': $.trim($(this).find(".label").html())
+        };
+        iCount++;
+      });
+      
+      var bValid = iCount > 0;
+      if ( ! bValid) {
+        oView.find(".selected-images").addClass('state-error');
+      }
+      else {
+        oView.find(".selected-images").removeClass('state-error');
+      }
+      
+      var aRequiredItems = oView.find(".required");
+      if (oThisPage.fnValidateRequiredItems(aRequiredItems) && bValid) {
+        var aData = {
+          'sName': oView.find(".body .input .value input").val(),
+          'iSubjectId': oView.find(".body .input #subject select").val(),
+          'iLessonPlanId': oView.find(".body .input #lesson-plan select").val(),
+          'aQuestionList': aQuestionList
+        }
+        $.ajax({
+          'data': aData,
+          'dataType': 'json',
+          'type': 'POST',
+          'url': "create/lesson",
+          'success': function(aData, textStatus, jqXHR) {
+            $(".modal").removeClass('state-show');
+            $("#add-lesson-popup").addClass('state-hide');
+          }
+        });
+      }
+      
+      
+    });
+    $("#add-lesson-popup #main.popup-view .foot #update-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      var aPost = {
+        'iId': oView.find(".head #lesson-id").val(),
+        'sName': oView.find(".body .input .value input").val(),
+        'iSubjectId': oView.find(".body .input #subject select").val(),
+        'iLessonPlanId': oView.find(".body .input #lesson-plan select").val(),
+        'aQuestionList': oThisPage.fnReadLessonPopupImageList(oView)
+      }
+      $.ajax({
+        'data': aPost,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "update/lesson",
+        'success': function(aData, textStatus, jqXHR) {
+          $(".modal").removeClass('state-show');
+          $("#add-lesson-popup").addClass('state-hide');
+        }
+      });
+    });
+    
+    
     
     //Setting 
     $(".main-menu #setting.menu-item").click(function() {
@@ -843,83 +880,45 @@ oThisPage = {
     });
     
     // default to image tab
-    setTimeout('$(".main-menu #setting.menu-item").click()', 750);
+    setTimeout('$(".main-menu #session.menu-item").click()', 750);
   },
-  'fnUpdateImage': function(aData) {
-    
+  // General
+  'fnPreload': function() {
+    var oImg = new Image(16,16);
+    oImg.src = "/bundles/visualfeedback/images/chalkboard.med.png";
   },
-  'fnUpdateAllSettings': function() {
-    var aItemList = $("#setting.view .body .setting-item");
-    var aSettingList = {};
-    $.each(aItemList, function() {
-      var sName = $(this).attr("id");
-      var sValue = $(this).find("input").val();
-      aSettingList[sName] = {
-        'sName': sName,
-        'sValue': sValue
-      };
+  'fnValidateRequiredItems': function(aRequiredItems) {
+    var bValid = true;
+    $.each(aRequiredItems, function() {
+      // process each input for required item
+      $.each($(this).find("input, select"), function() {
+        var sValue = $(this).val();
+        $(this).removeClass("state-error");
+        if (sValue == "" && ( ! $(this).hasClass('state-hide'))) {
+          // value is required, mark as error
+          $(this).addClass("state-error");
+          bValid = false;
+        }
+        else {
+          // value exists, check if valid
+          var aValidationReturn = $(this).fnIsValid();
+          if ( ! aValidationReturn.bValid ) {
+            $(this).addClass("state-error");
+            $(this).attr("title", aValidationReturn.sError);
+            bValid = false;
+          }
+          else {
+            $(this).removeClass("state-error");
+            $(this).removeAttr("title");
+          }
+        }
+      });
     });
     
-    var aPost = {
-      'aSettingList': aSettingList
-    };
-    
-    $.ajax({
-      'data': aPost,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "update/setting",
-      'success': function(aData, textStatus, jqXHR) {
-        
-      }
-    });
+    return bValid;
   },
-  'fnRenderSubjectRow': function(aSubject) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aSubject.iId + '</td>' +
-          '<td class="subject">' +
-            aSubject.sName + 
-          '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    
-    $("#subject.view .body table.subject-list tbody").append(oHtml);
-  },
-  'fnRenderLessonPlanRow': function(aLessonPlan) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aLessonPlan.iId + '</td>' +
-          '<td class="subject">' +
-            '<input type="hidden" value="' + aLessonPlan.iSubjectId + '" />' +
-            aLessonPlan.sSubject + 
-          '</td>' +
-          '<td class="lesson-plan">' + 
-            aLessonPlan.sName + 
-          '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    
-    $("#lesson-plan.view .body table.lesson-plan-list tbody").append(oHtml);
-  },
-  'fnRenderLessonRow': function(aLesson) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aLesson.iId + '</td>' +
-          '<td class="subject">' +
-            '<input type="hidden" value="' + aLesson.iSubjectId + '" />' +
-            aLesson.sSubject + 
-          '</td>' +
-          '<td class="lesson-plan">' + 
-            '<input type="hidden" value="' + aLesson.iLessonPlanId + '" />' +
-            aLesson.sLessonPlan + 
-          '</td>' +
-          '<td class="lesson">' + aLesson.sName + '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    
-    $("#lesson.view .body table.lesson-list tbody").append(oHtml);
-  },
+  
+  // Lesson
   'fnGetLessonList': function(sSearch, fnCallback) {
     var aData = {
       'sSearch': sSearch
@@ -933,24 +932,244 @@ oThisPage = {
       'success': fnCallback
     });
   },
-  'fnLessonAppendImage': function(oImage) {
+  'fnReorderLessonImages': function(oImage) {
+    if ($.fnIsEmpty(oImage)) {
+      return false;
+    }
     
+    var oLeft = oImage.prev();
+    var iIndex = 0;
+    if ( (! $.fnIsEmpty(oLeft))  && oLeft.hasClass('image')) {
+      iIndex = parseInt($.trim(oLeft.find('.index').html()));
+    }
+    iIndex += 1;
+    
+    if (oImage.find(".index").length == 0) {
+      oImage.append('<span class="index">' + iIndex + '</span>');
+    }
+    
+    if (oImage.find(".remove").length == 0) {
+      var oRemove = $('<span class="remove">x</span>');
+      oRemove.click(function() {
+        var oRight = $(this).parents(".image").next();
+        $(this).parents(".image").remove();
+        
+        if ( ! $.fnIsEmpty(oRight)) {
+          oThisPage.fnReorderLessonImages(oRight);
+          oThisPage.fnResizeLessonImageList(oRight);
+        }
+        
+        
+      });
+      oImage.append(oRemove);
+    }
+    
+    while ( ! $.fnIsEmpty(oImage)) {
+      oImage.find('.index').html(iIndex++);
+      oImage = oImage.next();
+    }
+  },
+  'fnReadLessonPopupImageList':function(oView) {
+    var aQuestionList = {};
+    $.each(oView.find(".selected-images .image"), function(iIndex) {
+      aQuestionList[iIndex] = {
+        'iIndex': parseInt($.trim($(this).find(".index").html())),
+        'iImageId': $(this).find("input").val(),
+        'sText': $.trim($(this).find(".label").html())
+      };
+    });
+    
+    return aQuestionList;
+  },
+  'fnShowLessonPopup': function() {
+    var oPopup = $("#add-lesson-popup");
+    oPopup.find(".head #action").html("Add");
+    oPopup.find(".foot #update-button").addClass("state-hide");
+    oPopup.find(".foot #create-button").removeClass("state-hide");
+    oPopup.find("input, select").val("");
+    var oSelectedImages = oPopup.find(".selected-images .wrapper");
+    oSelectedImages.find(".image").remove();
+    oPopup.removeClass("state-hide");
+    oPopup.find("#create-button").removeClass('state-hide');
+    $.fnCenter(oPopup);
+    $(".modal").addClass('state-show');
+    /*
+    oPopup.css('opacity', 0.0);
+    
+    oPopup.animate({
+      'opacity': 1.0
+    }, 1000, function() {
+      //oPopup.removeAttr('style');
+    });
+    */
+    
+    //$("#add-lesson-popup .body .image-list").html("");
+    var aPost = {};
+    oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
+      var oSelect = $("#add-lesson-popup .body .input #subject select");
+      oSelect.html('<option value="">Select</option>');
+      $.each(aData, function() {
+        var sSelected = '';
+        if ( ! $.fnIsEmpty(oThisPage.aTmpData) && ! $.fnIsEmpty(oThisPage.aTmpData.iSubjectId)) {
+          if (oThisPage.aTmpData.iSubjectId == this.iId) {
+            sSelected = 'selected="selected"';
+          }
+        }
+        
+        var sHtml = 
+            '<option value="' + this.iId + '" ' + sSelected + '>' + 
+               this.sName +
+            '</option>';
+        var oHtml = $(sHtml);
+        
+        oSelect.append(oHtml);
+      });
+      
+      oSelect.change();
+      
+      if ( ! $.fnIsEmpty(oThisPage.aTmpData)) {
+        oThisPage.aTmpData.iSubjectId = null;
+      }
+    });
+    
+    var sSearch = $(".sub-menu-container .search-bar input").val();
+    oThisPage.fnGetImageList(sSearch, 'uploads', function(aData, textStatus, jqXHR) {
+      var oImageList = $("#add-lesson-popup .body .image-list");
+      oImageList.html("");
+      $.each(aData, function() {
+        var sHtml = 
+        '<span class="image">' +
+          '<input type="hidden" value="' + this.iId + '" />' + 
+          '<img src="' + this.sUrl + '" />' +
+          '<div class="label">' + this.sLabel + '</div>' +
+        '</span>';
+        var oHtml = $(sHtml);
+        oHtml.data("aData", this);
+        oHtml.dblclick(function() {
+          var oSelectedImages = $("#add-lesson-popup .body .selected-images .wrapper");
+          oSelectedImages.find(".drop-message").addClass('state-hide');
+          
+          var oImage = $(this).clone();
+          oImage.data("aData", $(this).data("aData"));
+          oThisPage.fnLessonAppendImage(oImage);
+        });
+        oHtml.draggable({
+          'connectToSortable': ".image-drag-drop",
+          //'containment': '#add-lesson-popup',
+          //'cursor': 'move',
+          //snap: '#content',
+          //stack: true
+          'helper': 'clone',
+          'revert': false
+        });
+        oHtml.disableSelection();
+        oImageList.append(oHtml);
+      });
+      
+      oImageList.sortable({
+        'disabled': true,
+        'handle': '.image',
+        'connectWith': ".image-drag-drop",
+        'revert': false,
+        'receive': function(event, ui) {
+          event.stopPropagation();
+          return false;
+        }
+      });
+      
+      oImageList.disableSelection();
+      
+    });
+  },
+  'fnRenderLessonRow': function(aLesson) {
+    var sHtml = 
+        '<tr>' + 
+          '<td class="id">' + aLesson.iId + '</td>' +
+          '<td class="subject">' +
+            '<input type="hidden" value="' + aLesson.iSubjectId + '" />' +
+            aLesson.sSubject + 
+          '</td>' +
+          '<td class="lesson-plan">' + 
+            '<input type="hidden" value="' + aLesson.iLessonPlanId + '" />' +
+            aLesson.sLessonPlan + 
+          '</td>' +
+          '<td class="lesson">' +
+            '<span class="text">' + 
+              aLesson.sName +
+            '</span>' + 
+          '</td>' +
+        '</tr>';
+    var oHtml = $(sHtml);
+    oHtml.find(".lesson .text").hover(
+      function() {
+        $(this).addClass('state-hover');
+      },
+      function() {
+        $(this).removeClass('state-hover');
+      }
+    ).click(function() {
+      var oTr = $(this).parents('tr');
+      var iSubjectId = oTr.find("td.subject input").val();
+      var iLessonPlanId = oTr.find("td.lesson-plan input").val();
+      var sLessonName = $.trim(oTr.find("td.lesson .text").html());
+      var iLessonId = parseInt($.trim(oTr.find("td.id").html()));
+      
+      oThisPage.aTmpData = {
+        'iSubjectId': iSubjectId,
+        'iLessonPlanId': iLessonPlanId
+      }
+      oThisPage.fnShowLessonPopup();
+      
+      var oPopup = $("#add-lesson-popup");
+      oPopup.find("#lesson-id").val(iLessonId);
+      oPopup.find("#name input").val(sLessonName);
+      oPopup.find(".popup-view .head #action").html('Edit');
+      oPopup.find(".popup-view .foot #create-button").addClass('state-hide');
+      oPopup.find(".popup-view .foot #update-button").removeClass('state-hide');
+      
+      var aPost = {
+        'sId': $.trim(oTr.find("td.id").html())
+      };
+      
+      $.ajax({
+        'data': aPost,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "list/lessonImage.json",
+        'success': function(aData, textStatus, jqXHR) {
+          $("#add-lesson-popup .body .selected-images .drop-message").addClass('state-hide');
+          $.each(aData, function() {
+            if ($.fnIsEmpty(aData) || $.fnIsEmpty(aData[0].iImageQuestionId)) {
+              return false;
+            }
+            var sHtml = 
+              '<span class="image">' +
+                '<input type="hidden" value="' + this.iImageQuestionId + '" />' +
+                '<span class="index">' + this.iIndex + '</span>' + 
+                '<img src="' + this.sUrl + '" />' +
+                '<div class="label">' + this.sLabel + '</div>' +
+              '</span>';
+            var oHtml = $(sHtml);
+            oHtml.data("aData", this);
+            oThisPage.fnLessonAppendImage(oHtml);
+          });
+        }
+      });
+    });
+    
+    $("#lesson.view .body table.lesson-list tbody").append(oHtml);
+  },
+  'fnLessonAppendImage': function(oImage) {
     var sHtml = 
       '<div class="input">' +
         oImage.data("aData").sLabel +  
       '</div>';
     var oHtml = $(sHtml);
     //oImage.append(oHtml);
-    $("#add-lesson-popup .body .selected-images").append(oImage);
-  },
-  'fnGetSubjectList': function(aPost, fnCallback) {
-    $.ajax({
-      'data': aPost,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "list/subject.json",
-      'success': fnCallback
-    });
+    var oSelectedImages = $("#add-lesson-popup .body .selected-images .wrapper");
+    oSelectedImages.append(oImage);
+    oThisPage.fnReorderLessonImages(oImage);
+    oThisPage.fnResizeLessonImageList(oImage);
   },
   'fnGetLessonList': function(aPost, fnCallback) {
     $.ajax({
@@ -961,103 +1180,20 @@ oThisPage = {
       'success': fnCallback
     });
   },
-  'fnGetLessonPlanList': function(aPost, fnCallback) {
-    
-    $.ajax({
-      'data': aPost,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "list/lessonplan.json",
-      'success': fnCallback
-    });
+  'fnResizeLessonImageList': function(oImage) {
+    var oSelectedImages = $("#add-lesson-popup .body .selected-images .wrapper");
+    var iWidth = oImage.width();
+    iWidth += parseInt(oImage.css("padding-left").replace('px', ''));
+    iWidth += parseInt(oImage.css("padding-right").replace('px', ''));
+    iWidth += parseInt(oImage.css("margin-left").replace('px', ''));
+    iWidth += parseInt(oImage.css("margin-right").replace('px', ''));
+    var iCount = oSelectedImages.find(".image").length;
+    oSelectedImages.width(iWidth * (iCount + 2));
   },
-  'fnGetPupilList': function() {
-    $("#pupil.view .body .pupil-list").html("");
+  
+  // Image
+  'fnUpdateImage': function(aData) {
     
-    var aData = {
-      'sSearch': $(".sub-menu-container .search-bar input").val()
-    };
-    
-    $.ajax({
-      'data': aData,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "list/pupil.json",
-      'success': function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          var sHtml = 
-              '<div class="image">' + 
-                '<div class="icon">' +
-                  '<img src="' + this.sImageUrl + '" />' +
-                '</div>' + 
-                '<div class="label">' +
-                  $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
-                '</div>' +
-              '</div>';
-          var oHtml = $(sHtml);
-          oHtml.data("aData", this);
-          oHtml.click(function() {
-            var aData = $(this).data("aData");
-            var oPopup = $("#add-pupil-popup");
-            $(".modal").addClass('state-show');
-            oPopup.removeClass('state-hide');
-            oPopup.find(".head #action").html("Edit");
-            oPopup.find("#create-button").addClass("state-hide");
-            oPopup.find("#update-button").removeClass("state-hide");
-            oPopup.find(".picture img").attr('src', aData.sImageUrl);
-            oPopup.find(".picture #image-id").val(aData.iImageId);
-            oPopup.find("#first-name input").val(aData.sFirstName);
-            oPopup.find("#middle-name input").val(aData.sMiddleName);
-            oPopup.find("#last-name input").val(aData.sLastName);
-          });
-          $("#pupil.view .body .pupil-list").append(oHtml);
-        });
-      }
-    });
-  },
-  'fnGetTutorList': function() {
-    $("#tutor.view .body .tutor-list").html("");
-    
-    var aData = {
-      'sSearch': $(".sub-menu-container .search-bar input").val()
-    };
-    
-    $.ajax({
-      'data': aData,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "list/tutor.json",
-      'success': function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          var sHtml = 
-              '<div class="image">' + 
-                '<div class="icon">' +
-                  '<img src="' + this.sImageUrl + '" />' +
-                '</div>' + 
-                '<div class="label">' +
-                  $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
-                '</div>' +
-              '</div>';
-          var oHtml = $(sHtml);
-          oHtml.data("aData", this);
-          oHtml.click(function() {
-            var aData = $(this).data("aData");
-            var oPopup = $("#add-tutor-popup");
-            $(".modal").addClass('state-show');
-            oPopup.removeClass('state-hide');
-            oPopup.find(".head #action").html("Edit");
-            oPopup.find("#create-button").addClass("state-hide");
-            oPopup.find("#update-button").removeClass("state-hide");
-            oPopup.find(".picture img").attr('src', aData.sImageUrl);
-            oPopup.find(".picture #image-id").val(aData.iImageId);
-            oPopup.find("#first-name input").val(aData.sFirstName);
-            oPopup.find("#middle-name input").val(aData.sMiddleName);
-            oPopup.find("#last-name input").val(aData.sLastName);
-          });
-          $("#tutor.view .body .tutor-list").append(oHtml);
-        });
-      }
-    });
   },
   'fnDisplayImageTabImages': function(aData, textStatus, jqXHR) {
     $("#image.view .body .image-list").html("");
@@ -1150,6 +1286,271 @@ oThisPage = {
       'dataType': 'json',
       'type': 'POST',
       'url': "list/image.json",
+      'success': fnCallback
+    });
+  },
+  
+  'fnUpdateAllSettings': function() {
+    var aItemList = $("#setting.view .body .setting-item");
+    var aSettingList = {};
+    $.each(aItemList, function() {
+      var sName = $(this).attr("id");
+      var sValue = $(this).find("input").val();
+      aSettingList[sName] = {
+        'sName': sName,
+        'sValue': sValue
+      };
+    });
+    
+    var aPost = {
+      'aSettingList': aSettingList
+    };
+    
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "update/setting",
+      'success': function(aData, textStatus, jqXHR) {
+        
+      }
+    });
+  },
+  
+  // Subject
+  'fnRenderSubjectRow': function(aSubject) {
+    var sHtml = 
+        '<tr>' + 
+          '<td class="id">' + aSubject.iId + '</td>' +
+          '<td class="subject">' +
+            aSubject.sName + 
+          '</td>' +
+        '</tr>';
+    var oHtml = $(sHtml);
+    
+    $("#subject.view .body table.subject-list tbody").append(oHtml);
+  },
+  'fnGetSubjectList': function(aPost, fnCallback) {
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/subject.json",
+      'success': fnCallback
+    });
+  },
+  
+  // LessonPlan
+  'fnRenderLessonPlanRow': function(aLessonPlan) {
+    var sHtml = 
+        '<tr>' + 
+          '<td class="id">' + aLessonPlan.iId + '</td>' +
+          '<td class="subject">' +
+            '<input type="hidden" value="' + aLessonPlan.iSubjectId + '" />' +
+            aLessonPlan.sSubject + 
+          '</td>' +
+          '<td class="lesson-plan">' + 
+            aLessonPlan.sName + 
+          '</td>' +
+        '</tr>';
+    var oHtml = $(sHtml);
+    
+    $("#lesson-plan.view .body table.lesson-plan-list tbody").append(oHtml);
+  },
+  'fnGetLessonPlanList': function(aPost, fnCallback) {
+    
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/lessonplan.json",
+      'success': fnCallback
+    });
+  },
+  
+  // Pupil
+  'fnGetPupilList': function() {
+    $("#pupil.view .body .pupil-list").html("");
+    
+    var aData = {
+      'sSearch': $(".sub-menu-container .search-bar input").val()
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/pupil.json",
+      'success': function(aData, textStatus, jqXHR) {
+        $.each(aData, function() {
+          var sHtml = 
+              '<div class="image">' + 
+                '<div class="icon">' +
+                  '<img src="' + this.sImageUrl + '" />' +
+                '</div>' + 
+                '<div class="label">' +
+                  $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
+                '</div>' +
+              '</div>';
+          var oHtml = $(sHtml);
+          oHtml.data("aData", this);
+          oHtml.click(function() {
+            var aData = $(this).data("aData");
+            var oPopup = $("#add-pupil-popup");
+            $(".modal").addClass('state-show');
+            oPopup.removeClass('state-hide');
+            oPopup.find(".head #action").html("Edit");
+            oPopup.find("#create-button").addClass("state-hide");
+            oPopup.find("#update-button").removeClass("state-hide");
+            oPopup.find(".picture img").attr('src', aData.sImageUrl);
+            oPopup.find(".picture #image-id").val(aData.iImageId);
+            oPopup.find("#first-name input").val(aData.sFirstName);
+            oPopup.find("#middle-name input").val(aData.sMiddleName);
+            oPopup.find("#last-name input").val(aData.sLastName);
+          });
+          $("#pupil.view .body .pupil-list").append(oHtml);
+        });
+      }
+    });
+  },
+  
+  // Tutor
+  'fnGetTutorList': function() {
+    $("#tutor.view .body .tutor-list").html("");
+    
+    var aData = {
+      'sSearch': $(".sub-menu-container .search-bar input").val()
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/tutor.json",
+      'success': function(aData, textStatus, jqXHR) {
+        $.each(aData, function() {
+          var sHtml = 
+              '<div class="image">' + 
+                '<div class="icon">' +
+                  '<img src="' + this.sImageUrl + '" />' +
+                '</div>' + 
+                '<div class="label">' +
+                  $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
+                '</div>' +
+              '</div>';
+          var oHtml = $(sHtml);
+          oHtml.data("aData", this);
+          oHtml.click(function() {
+            var aData = $(this).data("aData");
+            var oPopup = $("#add-tutor-popup");
+            $(".modal").addClass('state-show');
+            oPopup.removeClass('state-hide');
+            oPopup.find(".head #action").html("Edit");
+            oPopup.find("#create-button").addClass("state-hide");
+            oPopup.find("#update-button").removeClass("state-hide");
+            oPopup.find(".picture img").attr('src', aData.sImageUrl);
+            oPopup.find(".picture #image-id").val(aData.iImageId);
+            oPopup.find("#first-name input").val(aData.sFirstName);
+            oPopup.find("#middle-name input").val(aData.sMiddleName);
+            oPopup.find("#last-name input").val(aData.sLastName);
+          });
+          $("#tutor.view .body .tutor-list").append(oHtml);
+        });
+      }
+    });
+  },
+  
+  // Audio
+  'fnDisplayAudioTabFiles': function(aData, textStatus, jqXHR) {
+    $("#audio.view .body .audio-list").html("");
+    var i = 1;
+    
+    $.each(aData, function() {
+      var sHtml = 
+          '<div class="audio">' + 
+            '<div class="icon">' +
+              '<img src="/bundles/visualfeedback/images/audio-file.png" />' +
+            '</div>' + 
+            '<div class="label">' +
+              this.sLabel +
+            '</div>' +
+          '</div>';
+      var oHtml = $(sHtml);
+      oHtml.data("aData", this);
+      
+      oHtml.find(".label").dblclick(function() {
+        // dblclick event on image label
+        var sOldValue = $.trim($(this).html());
+        $(this).data("sOldValue", sOldValue);
+        
+        var oAudio = $(this).parents(".audio");
+        var iWidth = oAudio.width();
+        var sHtml = '<input type="text" value="' + sOldValue + '" />';
+        var oInput = $(sHtml);
+        oInput.width(iWidth);
+        
+        oInput.dblclick(function(event) {
+          event.stopPropagation();
+        });
+        
+        oInput.keypress(function(event) {
+          // keypress event on input used to edit label
+          var oLabel = $(this).parents(".label");
+          var oOldValue = oLabel.data("sOldValue");
+          
+          if (event.keyCode == $.KEY.ESC) {
+            var oAudio = $(this).parents(".audio");
+            var oLabel = oAudio.find(".label");
+            oLabel.html(sOldValue);
+          }
+          else if (event.keyCode == $.KEY.RETURN) {
+            // on RETURN key
+            var sNewValue = $(this).val();
+            if (sNewValue != sOldValue) {
+              // new value is not the same as old value
+              var oAudio = $(this).parents(".audio");
+              var sHash = "image-" + $.fnGenerateHash(32);
+              oAudio.attr("id", sHash);
+      
+              var aData = {
+                'sLabel': sNewValue,
+                'iId': oAudio.data("aData").iId,
+                'sHash': sHash
+              }; 
+              // update database
+              $.ajax({
+                'data': aData,
+                'dataType': 'json',
+                'type': 'POST',
+                'url': "update/audio",
+                'success': function(aData, textStatus, jqXHR) {
+                  if (aData.bSuccess == true) {
+                    var oAudio = $("#audio.view .body #" + aData.sHash + ".audio");
+                    var oLabel = oAudio.find(".label");
+                    oLabel.html(aData.sLabel);
+                  }
+                }
+              });
+            }
+          }
+        });
+        $(this).html(oInput);
+        oInput.focus();
+      });
+      
+      $("#audio.view .body .audio-list").append(oHtml);
+    });
+  },
+  'fnGetAudioList': function(sSearch, sFolder, fnCallback) {
+    var aData = {
+      'sSearch': sSearch
+    };
+    
+    $.ajax({
+      'data': aData,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "list/audio.json",
       'success': fnCallback
     });
   }

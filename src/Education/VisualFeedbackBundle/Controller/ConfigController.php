@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Education\VisualFeedbackBundle\Entity\Image;
 use Education\VisualFeedbackBundle\Entity\Imagefolder;
+use Education\VisualFeedbackBundle\Entity\Audio;
 use Education\VisualFeedbackBundle\Entity\Tutor;
 use Education\VisualFeedbackBundle\Entity\Pupil;
 use Education\VisualFeedbackBundle\Entity\Subject;
@@ -120,7 +121,7 @@ class ConfigController extends Controller {
         move_uploaded_file($tempFile,$targetFile);
         $sReturn = str_replace($_SERVER['DOCUMENT_ROOT'],'',$targetFile);
         
-        $em = $this->getDoctrine()->getEntityManager();
+        $oEntityManager = $this->getDoctrine()->getEntityManager();
         
         $repository = $em->getRepository('EducationVisualFeedbackBundle:Imagefolder');
         $oImageFolder = $repository->findOneByRootPath($_REQUEST['folder']);
@@ -128,8 +129,8 @@ class ConfigController extends Controller {
           $oImageFolder = new Imagefolder();
           $oImageFolder->setName(str_replace('/bundles/visualfeedback/images/', '', $_REQUEST['folder']));
           $oImageFolder->setRootPath($_REQUEST['folder']);
-          $em->persist($oImageFolder);
-          $em->flush();
+          $oEntityManager->persist($oImageFolder);
+          $oEntityManager->flush();
         }
         
         $oImage = new Image();
@@ -137,8 +138,8 @@ class ConfigController extends Controller {
         $oImage->setFilename($_FILES['Filedata']['name']);
         $oImage->setImagefolder($oImageFolder);
         
-        $em->persist($oImage);
-        $em->flush();
+        $oEntityManager->persist($oImage);
+        $oEntityManager->flush();
         
         return new Response(json_encode($sReturn));
       }
@@ -224,7 +225,108 @@ class ConfigController extends Controller {
       return $oResponse;
     }
     
+    //Audio
     
+    public function uploadAudioAction() {
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      
+      if ( ! empty($_FILES)) {
+        $tempFile = $_FILES['Filedata']['tmp_name'];
+        $targetPath = $_SERVER['DOCUMENT_ROOT'] . $_REQUEST['folder'] . '/';
+        $targetFile =  str_replace('//','/',$targetPath) . $_FILES['Filedata']['name'];
+        move_uploaded_file($tempFile,$targetFile);
+        $sReturn = str_replace($_SERVER['DOCUMENT_ROOT'],'',$targetFile);
+        
+        $oEntityManager = $this->getDoctrine()->getEntityManager();
+        
+        $oAudio = new Audio();
+        $oAudio->setLabel($_FILES['Filedata']['name']);
+        $oAudio->setFilename($_FILES['Filedata']['name']);
+        
+        $oEntityManager->persist($oAudio);
+        $oEntityManager->flush();
+        
+        return new Response(json_encode($sReturn));
+      }
+      
+      return $oResponse;
+    }
+    public function updateAudioAction() {
+      $oRequest = $this->getRequest();
+      $aReturn = array();
+      $aReturn['sHash'] = $oRequest->get('sHash');
+      $aReturn['sLabel'] = $oRequest->get('sLabel');
+      $aReturn['iId'] = intval($oRequest->get('iId'));
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oAudio = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Audio')
+        ->find($aReturn['iId']);
+  
+      if ( ! $oAudio) {
+          throw $this->createNotFoundException('No audio file found for id ' . $iId);
+      }
+      
+      $oAudio->setLabel($aReturn['sLabel']);
+      $oEntityManager->flush();
+      
+      $aReturn['bSuccess'] = true;
+      
+      $oResponse = new Response(json_encode($aReturn));
+      return $oResponse;
+    }
+    /**
+     * @Route("/config/list/image.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_image_list")
+     */
+    public function listAudioAction() {
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
+      
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oQueryBuilder = $oEntityManager->createQueryBuilder();
+      
+      $aRecordList = null;
+      if (empty($sSearch)) {
+        $aRecordList = $oQueryBuilder
+          ->select('a')
+          ->from('EducationVisualFeedbackBundle:Audio', 'a')
+          ->getQuery()
+          ->getResult();
+      }
+      else {
+        $aRecordList = $oQueryBuilder
+          ->select('a')
+          ->from('EducationVisualFeedbackBundle:Audio', 'a')
+          ->where( 
+            $oQueryBuilder->expr()
+              ->like('a.filename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->orwhere( 
+            $oQueryBuilder->expr()
+              ->like('a.label', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
+          )
+          ->getQuery()
+          ->getResult();
+      }
+      
+      $aAudioList = array();
+      foreach ($aRecordList as $oAudio) {
+        $aAudioList[] = array(
+          'iId' => $oAudio->getId(),
+          'sUrl' => '/bundles/visualfeedback/audio/uploads/' . $oAudio->getFilename(),
+          'sLabel' => $oAudio->getLabel()
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aAudioList));
+      
+      return $oResponse;
+    }
+
+
+
     //Pupil
     
     /**
@@ -598,23 +700,6 @@ class ConfigController extends Controller {
      * @Route("/config/list/lesson.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
     public function listLessonAction() {
-      $aItem = array(
-        'id' => '8',
-        'lesson_name' => 'RadTadTootin',
-        'question_info_list' =>  array(
-          array(
-            'ImageQuestions_id' => '62',
-            'Lessons_id' => '8',
-            'LessonPlan_Lessons_id' => '8',
-            'Images_id' => '2',
-            'icon' => '/bundles/visualfeedback/images/tutor_icons/tutor_default.png',
-            'order_index' => '1',
-            'text' => 'tutor',
-            'Lesson_ImageQuestions_id' => '61'
-          )
-        )
-      );
-      
       $oRequest = $this->getRequest();
       $sSearch = $oRequest->get('sSearch');
       $sSubjectId = $oRequest->get('iSubjectId');
@@ -659,79 +744,35 @@ class ConfigController extends Controller {
       $oResponse = new Response(json_encode($aLessonList));
       
       return $oResponse;
-      
-      
-      
-      
-      
-      
-      if (empty($sSearch) && empty($sSubjectId) && empty($sLessonPlanId)) {
-        $aLessonList = $oConnection->fetchAll($sSql);  
-        
-        //$oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lesson');
-        //$aRecordList = $oRepository->findAll();
-      }
-      else if ( ! empty($sLessonPlanId) && empty($sSearch)) {
-        $iLessonPlanId = intval($sLessonPlanId);  
-        
-        $sSql .= "WHERE lp.id = '$iLessonPlanId' ";
-        $aLessonList = $oConnection->fetchAll($sSql);  
-        
-        /*
-        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:LessonplanLesson');
-        $aTmpRecordList = $oRepository->findByLesson($iLessonPlanId);
-        foreach ($aTmpRecordList as $oLessonPlanLesson) {
-          $aRecordList[] = $oLessonPlanLesson->getLesson();
-        }
-        */
-      }
-      else if ( ! empty($sSubjectId) && empty($sSearch)) {
-        $iSubjectId = intval($sSubjectId);  
-        $sSql .= "WHERE s.id = '$iSubjectId' ";
-        $aLessonList = $oConnection->fetchAll($sSql);  
-        
-        /*
-        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:SubjectLessonplan');
-        $aTmpRecordList = $oRepository->findBySubject($iSubjectId);
-        foreach ($aTmpRecordList as $oSubjectLessonPlan) {
-          $aRecordList[] = $oSubjectLessonPlan->getLessonplan()->getLesson();
-        }
-        */
-      }
-      else if ( ! empty($sSearch)) {
-        $sSql .= "WHERE l.name LIKE '%$sSearch%' ";
-        $aLessonList = $oConnection->fetchAll($sSql);
-        
-        /*
-        $oQueryBuilder = $oEntityManager->createQueryBuilder();
-        $aRecordList = $oQueryBuilder
-          ->select('l')
-          ->from('EducationVisualFeedbackBundle:Lesson', 'l')
-          ->where( 
-            $oQueryBuilder->expr()
-              ->like('lp.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
-          )
-          ->getQuery()
-          ->getResult();
-         */
-      }
-      
-      /*
-      $aLessonList = array();
-      foreach ($aRecordList as $oLesson) {
-        
-        $aLessonList[] = array(
-          'iId' => $oLesson->getId(),
-          'sName' => $oLesson->getName()
-        );
-      }
-      */
-     
-      
-      
+       
     }
-
-
+    public function listLessonImageAction() {
+      $oRequest = $this->getRequest();
+      $sId = $oRequest->get('sId');
+      
+      $oConnection = $this->get('database_connection');
+      
+      $sSql = 
+        'SELECT l_iq.order_index AS iIndex, ' .
+        'iq.id AS iImageQuestionId, iq.name AS sLabel, iq.text AS sText, ' .
+        'i.filename AS sFileName, f.root_path AS sRootPath, ' .
+        "CONCAT(f.root_path, '/', i.filename) AS sUrl " .
+        'FROM Lesson AS l ' .
+        'LEFT JOIN LessonPlan_Lesson AS lp_l ON (l.id = lp_l.Lesson_id) ' .
+        'LEFT JOIN Lesson_ImageQuestion AS l_iq ON (lp_l.id = l_iq.LessonPlan_Lesson_id) ' .
+        'LEFT JOIN ImageQuestion AS iq ON (iq.id = l_iq.ImageQuestion_id) ' .
+        'LEFT JOIN Image AS i ON (i.id = iq.Image_id) ' .
+        'LEFT JOIN ImageFolder AS f ON (f.id = i.ImageFolder_id) ' .
+        "WHERE l.id = $sId " .
+        'ORDER BY l_iq.order_index';
+      
+      $aLessonImageList = $oConnection->fetchAll($sSql); 
+      
+      $oResponse = new Response(json_encode($aLessonImageList));
+      
+      return $oResponse;
+       
+    }
     public function createLessonAction() {
       $oRequest = Request::createFromGlobals();
       $oEntityManager = $this->getDoctrine()->getEntityManager();
@@ -774,7 +815,7 @@ class ConfigController extends Controller {
         $oEntityManager->flush();
         
         $oLessonImageQuestion = new LessonImagequestion();
-        $oLessonImageQuestion->setOrderIndex($aQuestion['iIndex']);
+        $oLessonImageQuestion->setOrderIndex(intval($aQuestion['iIndex']) + 1);
         $oLessonImageQuestion->setImageQuestion($oImageQuestion);
         $oLessonImageQuestion->setLessonplanLesson($oLessonPlanLesson);
         $oEntityManager->persist($oLessonImageQuestion);
@@ -785,7 +826,46 @@ class ConfigController extends Controller {
       $oResponse = new Response(json_encode(array('success' => true)));
       return $oResponse;
     }
-    
+    public function updateLessonAction() {
+      $oRequest = $this->getRequest();
+      $aReturn = array();
+      $aReturn['iId'] = intval($oRequest->get('iId'));
+      $aReturn['sName'] = $oRequest->get('sName');
+      $aReturn['iSubjectId'] = intval($oRequest->get('iSubjectId'));
+      $aReturn['iLessonPlanId'] = intval($oRequest->get('iLessonPlanId'));
+      
+      $aQuestionList = $oRequest->get('aQuestionList');
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oLesson = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Lesson')
+        ->find($aReturn['iId']);
+      
+      $oSubject = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Subject')
+        ->find($aReturn['iSubjectId']);
+      
+        
+      $oLessonPlanLesson = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:LessonplanLesson')
+        ->findByLesson($aReturn['iId']);
+  
+      
+      print_r($aQuestionList);
+      
+      /*
+      if ( ! $oImage) {
+          throw $this->createNotFoundException('No lesson found for id ' . $iId);
+      }
+      
+      $oImage->setLabel($aReturn['sLabel']);
+      $oEntityManager->flush();
+      */
+      $aReturn['bSuccess'] = true;
+      
+      $oResponse = new Response(json_encode($aReturn));
+      return $oResponse;
+    }
    /**
      * @Route("/config/list/lesson.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */

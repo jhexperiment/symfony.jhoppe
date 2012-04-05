@@ -16,6 +16,11 @@ pre {
   position: absolute;
 }
 
+input.state-error,
+select.state-error {
+  outline: 2px solid #FF0000;
+}
+
 .state-hide {
   display: none !important;
 }
@@ -221,7 +226,8 @@ pre {
   vertical-align: top;
 }
 
-#image.sub-menu .input {
+#image.sub-menu .input,
+#audio.sub-menu .input {
   padding: 8px;
   left: 75px;
   top: 0px;
@@ -237,11 +243,13 @@ pre {
   background-color: #DDDDDD;
 }
 
-#image.sub-menu .input object {
+#image.sub-menu .input object,
+#audio.sub-menu .input object {
   float: left;
 }
 
-#image.sub-menu .input .uploadifyQueue {
+#image.sub-menu .input .uploadifyQueue,
+#audio.sub-menu .input .uploadifyQueue {
   float: left;
 }
 
@@ -342,6 +350,28 @@ pre {
   height: 64px;
 }
 
+#audio.view .body .audio {
+  cursor: pointer;
+  margin: 16px;
+  
+  display: inline-block;
+  float: left;
+  
+  text-align: center;
+  
+}
+
+#audio.view .body .audio .label {
+  cursor: text;
+  display: inline-block;
+  font-size: 8pt;
+}
+
+#audio.view .body .audio .icon img {
+  width: 64px;
+  height: 64px;
+}
+
 #tutor.view .body .image {
   cursor: pointer;
   margin: 16px;
@@ -384,6 +414,16 @@ pre {
   height: 64px;
 }
 
+#lesson.view .body .lesson-list td.lesson .text {
+  cursor: pointer;
+  color: blue;
+  
+}
+
+#lesson.view .body .lesson-list td.lesson .text.state-hover {
+  text-decoration: underline;
+}
+
 .add-popup {
   z-index: 1999;
   padding: 24px;
@@ -394,16 +434,54 @@ pre {
   position: fixed;
   display: inline-block;
   
-  font-family: chalkboard;
-  font-size: 16pt;
+  
+  font-size: 12pt;
   color: #FFFFFF;
   
   background: url('/bundles/visualfeedback/images/chalkboard.med.png');
 }
 
+.add-popup .popup-view-container {
+  position: relative;
+  display: inline-block;
+}
+
+.add-popup .popup-view-container .move-handle {
+  cursor: move;
+  position: absolute;
+  display: inline-block;
+}
+
+.add-popup .popup-view-container #top-move-handle {
+  left: -24px;
+  top: -24px;
+  width: 766px;
+  height: 24px;
+}
+
+.add-popup .popup-view-container #bottom-move-handle {
+  left: -24px;
+  bottom: -24px;
+  width: 766px;
+  height: 24px;
+}
+
+.add-popup .popup-view-container #left-move-handle {
+  left: -24px;
+  top: -24px;
+  width: 24px;
+  height: 498px;
+}
+
+.add-popup .popup-view-container #right-move-handle {
+  right: -6px;
+  top: -24px;
+  width: 24px;
+  height: 498px;
+}
+
 .add-popup .button {
   cursor: pointer;
-  margin: 4px 0px;
   padding: 4px 0px;
   width: 100px;
   position: relative;
@@ -427,6 +505,7 @@ pre {
 }
 
 .add-popup .popup-view .head {
+  margin: 0px 0px 2px 0px;
   font-size: 20pt;
   text-decoration: underline;
   text-align: center;
@@ -435,7 +514,7 @@ pre {
 
 .add-popup .popup-view .body {
   width: 100%;
-  height: 300px;
+  height: 292px;
   display: inline-block;
   float: left;
   overflow-y: auto;
@@ -450,7 +529,7 @@ pre {
 }
 
 .add-popup .popup-view .foot .button {
-  margin: 0px 16px;
+  margin: 0px 24px;
   float: right;
 }
 
@@ -511,13 +590,14 @@ pre {
 }
 
 .add-person-popup #main.popup-view .body .right .data-item {
+  margin: 8px 0px;
   width: 100%;
   display: inline-block;
   float: left;
 }
 
 .add-person-popup #main.popup-view .body .right .data-item .label {
-  width: 100px;
+  width: 120px;
   display: inline-block;
 }
 
@@ -581,11 +661,11 @@ pre {
 
 #add-lesson-popup .body {
   width: 738px;
-  height: 382px;
+  height: 378px;
 }
 
 #add-lesson-popup .body .input {
-  margin: 0px 0px 4px 0px;
+  margin: 0px;
 }
 
 #add-lesson-popup .body .input .data-item {
@@ -593,14 +673,27 @@ pre {
 }
 
 #add-lesson-popup .body .selected-images {
-  margin: 0px 8px 8px 8px;
+  margin: 0px 8px;
   padding: 2px 0px 0px 0px;
   width: 700px;
-  height: 96px;
+  height: 122px;
   position: relative;
   display: inline-block;
+  overflow-x: auto;
   
   border: 2px solid #FFFFFF;
+}
+
+#add-lesson-popup .body .selected-images.state-error {
+  outline: 2px solid #FF0000;
+}
+
+#add-lesson-popup .body .selected-images .wrapper {
+  height: 94%;
+  min-width: 700px;
+  display: inline-block;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 #add-lesson-popup .body .selected-images .drop-message {
@@ -615,18 +708,75 @@ pre {
 
 #add-lesson-popup .body .selected-images .image {
   z-index: 2999;
+  margin: 4px;
+  padding: 2px;
   cursor: move;
   min-height: 64px;
   min-width: 64px;
+  position: relative;
   display: inline-block;
+  
+  border: 1px dashed #FFFFFF;
+}
+
+#add-lesson-popup .body .selected-images .image .index {
+  width: 16px;
+  left: 1px;
+  top: 1px;
+  position: absolute;
+  display: inline-block;
+  
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: center;
+  
+  border: 1px solid #FFFFFF;
+  
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  
+  background-color: #000000;
+  opacity: 0.5; 
+}
+
+#add-lesson-popup .body .selected-images .image .remove {
+  cursor: pointer;
+  width: 16px;
+  line-height: 16px;
+  right: -4px;
+  top: -4px;
+  position: absolute;
+  display: inline-block;
+  
+  font-size: 10pt;
+  font-weight: bold;
+  text-align: center;
+  color: #FF0000;
+  
+  border: 1px solid #FF0000;
+  
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  
+  background-color: #FFBFBF;
+  opacity: 0.9; 
 }
 
 #add-lesson-popup .body .selected-images .image img {
   height: 64px;
 }
 
+#add-lesson-popup .body .selected-images .image .label {
+  font-size: 10pt;
+  text-align: center;
+}
+
 #add-lesson-popup .body #image-list-label {
-  width: 718px;
+  margin: 0px 0px 4px 0px;
+  width: 704px;
+  height: 30px;
 }
 
 
@@ -635,7 +785,7 @@ pre {
 }
 
 #add-lesson-popup .body .image-list {
-  margin: 0px 8px 8px 8px;
+  margin: 0px 8px;
   padding: 4px 2px;
   width: 696px;
   height: 144px;
@@ -648,7 +798,11 @@ pre {
 #add-lesson-popup .body .image-list .image {
   z-index: 2999;
   cursor: move;
+  margin: 4px;
+  padding: 2px;
   display: inline-block;
+  
+  border: 1px dashed #FFFFFF;
 }
 
 #add-lesson-popup .body .image-list .image img {
@@ -656,7 +810,8 @@ pre {
 }
 
 #add-lesson-popup .body .image-list .image .label {
-  display: none;
+  font-size: 10pt;
+  text-align: center;
 }
 
 #setting.view .button {

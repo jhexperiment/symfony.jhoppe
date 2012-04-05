@@ -30,14 +30,14 @@ class Pupilanswer
     private $timestamp;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
-     */
-    private $tutoringsession;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\LessonImagequestion
      */
     private $lessonImagequestion;
+
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
+     */
+    private $tutoringsession;
 
 
     /**
@@ -111,26 +111,6 @@ class Pupilanswer
     }
 
     /**
-     * Set tutoringsession
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession
-     */
-    public function setTutoringsession(\Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession)
-    {
-        $this->tutoringsession = $tutoringsession;
-    }
-
-    /**
-     * Get tutoringsession
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Tutoringsession 
-     */
-    public function getTutoringsession()
-    {
-        return $this->tutoringsession;
-    }
-
-    /**
      * Set lessonImagequestion
      *
      * @param Education\VisualFeedbackBundle\Entity\LessonImagequestion $lessonImagequestion
@@ -148,5 +128,25 @@ class Pupilanswer
     public function getLessonImagequestion()
     {
         return $this->lessonImagequestion;
+    }
+
+    /**
+     * Set tutoringsession
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession
+     */
+    public function setTutoringsession(\Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession)
+    {
+        $this->tutoringsession = $tutoringsession;
+    }
+
+    /**
+     * Get tutoringsession
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Tutoringsession 
+     */
+    public function getTutoringsession()
+    {
+        return $this->tutoringsession;
     }
 }

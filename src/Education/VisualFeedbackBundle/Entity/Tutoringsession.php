@@ -25,24 +25,24 @@ class Tutoringsession
     private $displayContent;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\Pupil
-     */
-    private $pupil;
-
-    /**
-     * @var Education\VisualFeedbackBundle\Entity\Tutor
-     */
-    private $tutor;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\LessonImagequestion
      */
     private $lessonImagequestion;
 
     /**
+     * @var Education\VisualFeedbackBundle\Entity\Pupil
+     */
+    private $pupil;
+
+    /**
      * @var Education\VisualFeedbackBundle\Entity\Statuscode
      */
     private $statuscode;
+
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Tutor
+     */
+    private $tutor;
 
 
     /**
@@ -96,46 +96,6 @@ class Tutoringsession
     }
 
     /**
-     * Set pupil
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Pupil $pupil
-     */
-    public function setPupil(\Education\VisualFeedbackBundle\Entity\Pupil $pupil)
-    {
-        $this->pupil = $pupil;
-    }
-
-    /**
-     * Get pupil
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Pupil 
-     */
-    public function getPupil()
-    {
-        return $this->pupil;
-    }
-
-    /**
-     * Set tutor
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Tutor $tutor
-     */
-    public function setTutor(\Education\VisualFeedbackBundle\Entity\Tutor $tutor)
-    {
-        $this->tutor = $tutor;
-    }
-
-    /**
-     * Get tutor
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Tutor 
-     */
-    public function getTutor()
-    {
-        return $this->tutor;
-    }
-
-    /**
      * Set lessonImagequestion
      *
      * @param Education\VisualFeedbackBundle\Entity\LessonImagequestion $lessonImagequestion
@@ -156,6 +116,26 @@ class Tutoringsession
     }
 
     /**
+     * Set pupil
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Pupil $pupil
+     */
+    public function setPupil(\Education\VisualFeedbackBundle\Entity\Pupil $pupil)
+    {
+        $this->pupil = $pupil;
+    }
+
+    /**
+     * Get pupil
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Pupil 
+     */
+    public function getPupil()
+    {
+        return $this->pupil;
+    }
+
+    /**
      * Set statuscode
      *
      * @param Education\VisualFeedbackBundle\Entity\Statuscode $statuscode
@@ -173,5 +153,25 @@ class Tutoringsession
     public function getStatuscode()
     {
         return $this->statuscode;
+    }
+
+    /**
+     * Set tutor
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Tutor $tutor
+     */
+    public function setTutor(\Education\VisualFeedbackBundle\Entity\Tutor $tutor)
+    {
+        $this->tutor = $tutor;
+    }
+
+    /**
+     * Get tutor
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Tutor 
+     */
+    public function getTutor()
+    {
+        return $this->tutor;
     }
 }

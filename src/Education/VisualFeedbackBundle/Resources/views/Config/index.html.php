@@ -33,7 +33,7 @@ foreach ($aPath as $sName => $sValue) {
 <div class="main-menu-container">
   <div class="main-menu state-hide">
     <span id="image" class="menu-item">
-      <span class="text">Images</span>
+      <span class="text">Image Bank</span>
     </span>
     <span id="audio" class="menu-item">
       <span class="text">Audio Clips</span>
@@ -141,11 +141,21 @@ foreach ($aPath as $sName => $sValue) {
 <div class="view-container">
   <div id="image" class="view state-hide">
     <div class="head">
-      <div class="title">Images</div>
+      <div class="title">Image Bank</div>
       
     </div>
     <div class="body">
       <div class="image-list"></div>
+    </div>
+  </div>
+  
+  <div id="audio" class="view state-hide">
+    <div class="head">
+      <div class="title">Audio Files</div>
+      
+    </div>
+    <div class="body">
+      <div class="audio-list"></div>
     </div>
   </div>
   
@@ -452,22 +462,27 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-lesson-popup" class="add-popup state-hide">
   <div class="popup-view-container">
+    <div id="top-move-handle" class="move-handle"></div>
+    <div id="right-move-handle" class="move-handle"></div>
+    <div id="bottom-move-handle" class="move-handle"></div>
+    <div id="left-move-handle" class="move-handle"></div>
     <div id="main" class="popup-view">
       <div class="head">
+        <input id="lesson-id" type="hidden" value="" />
         <span id="action">New</span> Lesson
       </div>
       <div class="body">
         <div class="input">
-          <span id="name" class="data-item">
+          <span id="name" class="data-item required">
             <span class="label">
-              Name:
+              Lesson:
               <sup><span class="red">*</span></sup>
             </span>
             <span class="value">
               <input type="text" value="" />
             </span>
           </span>
-          <span id="subject" class="data-item">
+          <span id="subject" class="data-item required">
             <span class="label">
               Subject:
               <sup><span class="red">*</span></sup>
@@ -478,7 +493,7 @@ foreach ($aPath as $sName => $sValue) {
               </select>
             </span>
           </span>
-          <span id="lesson-plan" class="data-item">
+          <span id="lesson-plan" class="data-item required">
             <span class="label">
               Lesson Plan:
               <sup><span class="red">*</span></sup>
@@ -491,8 +506,10 @@ foreach ($aPath as $sName => $sValue) {
           </span>
         </div>
         <div class="label">Questions:</div>
-        <div class="selected-images image-drag-drop">
-          <div class="drop-message">Drag & Drop Image Here</div>
+        <div class="selected-images">
+          <div class="wrapper image-drag-drop">
+            <div class="drop-message">Drag & Drop Image Here</div>
+          </div>
         </div>
         
         <div id="image-list-label" class="label">
@@ -516,4 +533,3 @@ foreach ($aPath as $sName => $sValue) {
 
 <div class="modal"></div>
 
-<pre><?=print_r($aPath, true)?></pre>

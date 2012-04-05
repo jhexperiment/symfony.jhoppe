@@ -9,6 +9,10 @@ config_index:
     pattern:  /config/index
     defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
 
+
+
+
+
 config_image_update:
     pattern:  /config/update/image
     defaults: { _controller: EducationVisualFeedbackBundle:Config:updateImage }
@@ -20,6 +24,21 @@ config_image_upload:
 config_image_list:
     pattern:  /config/list/image.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listImage }
+
+
+
+
+config_audio_update:
+    pattern:  /config/update/audio
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:updateAudio }
+
+config_audio_upload:
+    pattern:  /config/upload/audio
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:uploadAudio }
+
+config_audio_list:
+    pattern:  /config/list/audio.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listAudio }
 
 
 
@@ -77,9 +96,17 @@ config_lesson_list:
     pattern:  /config/list/lesson.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listLesson }
 
+config_lesson_image_list:
+    pattern:  /config/list/lessonImage.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listLessonImage }
+
 config_lesson_create:
     pattern:  /config/create/lesson
     defaults: { _controller: EducationVisualFeedbackBundle:Config:createLesson }
+
+config_lesson_update:
+    pattern:  /config/update/lesson
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:updateLesson }
 
 
 
