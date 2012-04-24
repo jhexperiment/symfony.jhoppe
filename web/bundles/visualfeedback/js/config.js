@@ -779,7 +779,7 @@ oThisPage = {
       var oContainer = oView.find(".body .right");
       
       var aPost = {
-        'iId': oView.find(".head #lesson-id").val(),
+        'iLessonId': oView.find(".head #lesson-id").val(),
         'sName': oView.find(".body .input .value input").val(),
         'iSubjectId': oView.find(".body .input #subject select").val(),
         'iLessonPlanId': oView.find(".body .input #lesson-plan select").val(),
@@ -972,11 +972,14 @@ oThisPage = {
   'fnReadLessonPopupImageList':function(oView) {
     var aQuestionList = {};
     $.each(oView.find(".selected-images .image"), function(iIndex) {
+      var oInput = $(this).find("input");
       aQuestionList[iIndex] = {
         'iIndex': parseInt($.trim($(this).find(".index").html())),
-        'iImageId': $(this).find("input").val(),
         'sText': $.trim($(this).find(".label").html())
       };
+      
+      aQuestionList[iIndex][oInput.attr('id')] = oInput.val();
+      
     });
     
     return aQuestionList;
@@ -1039,7 +1042,7 @@ oThisPage = {
       $.each(aData, function() {
         var sHtml = 
         '<span class="image">' +
-          '<input type="hidden" value="' + this.iId + '" />' + 
+          '<input id="iImageId" type="hidden" value="' + this.iId + '" />' + 
           '<img src="' + this.sUrl + '" />' +
           '<div class="label">' + this.sLabel + '</div>' +
         '</span>';
@@ -1144,7 +1147,7 @@ oThisPage = {
             }
             var sHtml = 
               '<span class="image">' +
-                '<input type="hidden" value="' + this.iImageQuestionId + '" />' +
+                '<input id="iImageQuestionId" type="hidden" value="' + this.iImageQuestionId + '" />' +
                 '<span class="index">' + this.iIndex + '</span>' + 
                 '<img src="' + this.sUrl + '" />' +
                 '<div class="label">' + this.sLabel + '</div>' +

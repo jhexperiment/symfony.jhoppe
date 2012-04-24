@@ -1,6 +1,6 @@
-Education\VisualFeedbackBundle\Entity\SubjectLessonplan:
+Education\VisualFeedbackBundle\Entity\Receptivevocabquestion:
   type: entity
-  table: Subject_LessonPlan
+  table: ReceptiveVocabQuestion
   fields:
     id:
       id: true
@@ -9,23 +9,28 @@ Education\VisualFeedbackBundle\Entity\SubjectLessonplan:
       nullable: false
       generator:
         strategy: IDENTITY
+    name:
+      type: string
+      length: 45
+      fixed: false
+      nullable: true
   oneToOne:
-    subject:
-      targetEntity: Subject
+    lesson:
+      targetEntity: Lesson
       cascade: {  }
       mappedBy: null
       inversedBy: null
       joinColumns:
-        Subject_id:
+        Lesson_id:
           referencedColumnName: id
       orphanRemoval: false
-    lessonplan:
-      targetEntity: Lessonplan
+    audio:
+      targetEntity: Audio
       cascade: {  }
       mappedBy: null
       inversedBy: null
       joinColumns:
-        LessonPlan_id:
+        Audio_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

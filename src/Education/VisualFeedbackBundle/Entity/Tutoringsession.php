@@ -25,9 +25,9 @@ class Tutoringsession
     private $displayContent;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\LessonImagequestion
+     * @var integer $lessonImagequestionId
      */
-    private $lessonImagequestion;
+    private $lessonImagequestionId;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Pupil
@@ -35,14 +35,14 @@ class Tutoringsession
     private $pupil;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\Statuscode
-     */
-    private $statuscode;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Tutor
      */
     private $tutor;
+
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Statuscode
+     */
+    private $statuscode;
 
 
     /**
@@ -96,23 +96,23 @@ class Tutoringsession
     }
 
     /**
-     * Set lessonImagequestion
+     * Set lessonImagequestionId
      *
-     * @param Education\VisualFeedbackBundle\Entity\LessonImagequestion $lessonImagequestion
+     * @param integer $lessonImagequestionId
      */
-    public function setLessonImagequestion(\Education\VisualFeedbackBundle\Entity\LessonImagequestion $lessonImagequestion)
+    public function setLessonImagequestionId($lessonImagequestionId)
     {
-        $this->lessonImagequestion = $lessonImagequestion;
+        $this->lessonImagequestionId = $lessonImagequestionId;
     }
 
     /**
-     * Get lessonImagequestion
+     * Get lessonImagequestionId
      *
-     * @return Education\VisualFeedbackBundle\Entity\LessonImagequestion 
+     * @return integer 
      */
-    public function getLessonImagequestion()
+    public function getLessonImagequestionId()
     {
-        return $this->lessonImagequestion;
+        return $this->lessonImagequestionId;
     }
 
     /**
@@ -136,26 +136,6 @@ class Tutoringsession
     }
 
     /**
-     * Set statuscode
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Statuscode $statuscode
-     */
-    public function setStatuscode(\Education\VisualFeedbackBundle\Entity\Statuscode $statuscode)
-    {
-        $this->statuscode = $statuscode;
-    }
-
-    /**
-     * Get statuscode
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Statuscode 
-     */
-    public function getStatuscode()
-    {
-        return $this->statuscode;
-    }
-
-    /**
      * Set tutor
      *
      * @param Education\VisualFeedbackBundle\Entity\Tutor $tutor
@@ -173,5 +153,25 @@ class Tutoringsession
     public function getTutor()
     {
         return $this->tutor;
+    }
+
+    /**
+     * Set statuscode
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Statuscode $statuscode
+     */
+    public function setStatuscode(\Education\VisualFeedbackBundle\Entity\Statuscode $statuscode)
+    {
+        $this->statuscode = $statuscode;
+    }
+
+    /**
+     * Get statuscode
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Statuscode 
+     */
+    public function getStatuscode()
+    {
+        return $this->statuscode;
     }
 }

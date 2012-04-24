@@ -1,6 +1,6 @@
-Education\VisualFeedbackBundle\Entity\LessonImagequestion:
+Education\VisualFeedbackBundle\Entity\Expressivevocabquestion:
   type: entity
-  table: Lesson_ImageQuestion
+  table: ExpressiveVocabQuestion
   fields:
     id:
       id: true
@@ -12,25 +12,35 @@ Education\VisualFeedbackBundle\Entity\LessonImagequestion:
     orderIndex:
       type: integer
       unsigned: false
-      nullable: false
+      nullable: true
       column: order_index
+    name:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
+    text:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
   oneToOne:
-    imagequestion:
-      targetEntity: Imagequestion
+    image:
+      targetEntity: Image
       cascade: {  }
       mappedBy: null
       inversedBy: null
       joinColumns:
-        ImageQuestion_id:
+        Image_id:
           referencedColumnName: id
       orphanRemoval: false
-    lessonplanLesson:
-      targetEntity: LessonplanLesson
+    lesson:
+      targetEntity: Lesson
       cascade: {  }
       mappedBy: null
       inversedBy: null
       joinColumns:
-        LessonPlan_Lesson_id:
+        Lesson_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

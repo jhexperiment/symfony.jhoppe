@@ -44,10 +44,10 @@ foreach ($aPath as $sName => $sValue) {
     <span id="pupil" class="menu-item">
       <span class="text">Pupils</span>
     </span>
-    <span id="subject" class="menu-item">
+    <span id="subject" class="menu-item state-hide">
       <span class="text">Subjects</span>
     </span>
-    <span id="lesson-plan" class="menu-item">
+    <span id="lesson-plan" class="menu-item state-hide">
       <span class="text">Lesson Plans</span>
     </span>
     <span id="lesson" class="menu-item">
@@ -505,7 +505,7 @@ foreach ($aPath as $sName => $sValue) {
             </span>
           </span>
         </div>
-        <div class="label">Questions:</div>
+        <div class="label">Lesson Order:</div>
         <div class="selected-images">
           <div class="wrapper image-drag-drop">
             <div class="drop-message">Drag & Drop Image Here</div>
@@ -513,7 +513,7 @@ foreach ($aPath as $sName => $sValue) {
         </div>
         
         <div id="image-list-label" class="label">
-          <span class="text">Choose:</span>
+          <span class="text">Choose from Image Bank:</span>
           <span class="filter">
             <input type="text" />
             <span id="filter-button" class="button">Search</span>

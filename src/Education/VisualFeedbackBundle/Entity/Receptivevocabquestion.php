@@ -5,9 +5,9 @@ namespace Education\VisualFeedbackBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Education\VisualFeedbackBundle\Entity\LessonplanLesson
+ * Education\VisualFeedbackBundle\Entity\Receptivevocabquestion
  */
-class LessonplanLesson
+class Receptivevocabquestion
 {
     /**
      * @var integer $id
@@ -15,14 +15,19 @@ class LessonplanLesson
     private $id;
 
     /**
+     * @var string $name
+     */
+    private $name;
+
+    /**
      * @var Education\VisualFeedbackBundle\Entity\Lesson
      */
     private $lesson;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\SubjectLessonplan
+     * @var Education\VisualFeedbackBundle\Entity\Audio
      */
-    private $subjectLessonplan;
+    private $audio;
 
 
     /**
@@ -33,6 +38,26 @@ class LessonplanLesson
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -56,22 +81,22 @@ class LessonplanLesson
     }
 
     /**
-     * Set subjectLessonplan
+     * Set audio
      *
-     * @param Education\VisualFeedbackBundle\Entity\SubjectLessonplan $subjectLessonplan
+     * @param Education\VisualFeedbackBundle\Entity\Audio $audio
      */
-    public function setSubjectLessonplan(\Education\VisualFeedbackBundle\Entity\SubjectLessonplan $subjectLessonplan)
+    public function setAudio(\Education\VisualFeedbackBundle\Entity\Audio $audio)
     {
-        $this->subjectLessonplan = $subjectLessonplan;
+        $this->audio = $audio;
     }
 
     /**
-     * Get subjectLessonplan
+     * Get audio
      *
-     * @return Education\VisualFeedbackBundle\Entity\SubjectLessonplan 
+     * @return Education\VisualFeedbackBundle\Entity\Audio 
      */
-    public function getSubjectLessonplan()
+    public function getAudio()
     {
-        return $this->subjectLessonplan;
+        return $this->audio;
     }
 }

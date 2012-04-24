@@ -5,9 +5,9 @@ namespace Education\VisualFeedbackBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Education\VisualFeedbackBundle\Entity\Imagequestion
+ * Education\VisualFeedbackBundle\Entity\Receptivevocabimage
  */
-class Imagequestion
+class Receptivevocabimage
 {
     /**
      * @var integer $id
@@ -15,14 +15,9 @@ class Imagequestion
     private $id;
 
     /**
-     * @var string $name
+     * @var Education\VisualFeedbackBundle\Entity\Receptivevocabquestion
      */
-    private $name;
-
-    /**
-     * @var string $text
-     */
-    private $text;
+    private $receptivevocabquestion;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Image
@@ -41,43 +36,23 @@ class Imagequestion
     }
 
     /**
-     * Set name
+     * Set receptivevocabquestion
      *
-     * @param string $name
+     * @param Education\VisualFeedbackBundle\Entity\Receptivevocabquestion $receptivevocabquestion
      */
-    public function setName($name)
+    public function setReceptivevocabquestion(\Education\VisualFeedbackBundle\Entity\Receptivevocabquestion $receptivevocabquestion)
     {
-        $this->name = $name;
+        $this->receptivevocabquestion = $receptivevocabquestion;
     }
 
     /**
-     * Get name
+     * Get receptivevocabquestion
      *
-     * @return string 
+     * @return Education\VisualFeedbackBundle\Entity\Receptivevocabquestion 
      */
-    public function getName()
+    public function getReceptivevocabquestion()
     {
-        return $this->name;
-    }
-
-    /**
-     * Set text
-     *
-     * @param string $text
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-    }
-
-    /**
-     * Get text
-     *
-     * @return string 
-     */
-    public function getText()
-    {
-        return $this->text;
+        return $this->receptivevocabquestion;
     }
 
     /**

@@ -1,6 +1,6 @@
-Education\VisualFeedbackBundle\Entity\Imagequestion:
+Education\VisualFeedbackBundle\Entity\Receptivevocabimage:
   type: entity
-  table: ImageQuestion
+  table: ReceptiveVocabImage
   fields:
     id:
       id: true
@@ -9,17 +9,16 @@ Education\VisualFeedbackBundle\Entity\Imagequestion:
       nullable: false
       generator:
         strategy: IDENTITY
-    name:
-      type: string
-      length: 128
-      fixed: false
-      nullable: true
-    text:
-      type: string
-      length: 128
-      fixed: false
-      nullable: true
   oneToOne:
+    receptivevocabquestion:
+      targetEntity: Receptivevocabquestion
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        ReceptiveVocabQuestion_id:
+          referencedColumnName: id
+      orphanRemoval: false
     image:
       targetEntity: Image
       cascade: {  }

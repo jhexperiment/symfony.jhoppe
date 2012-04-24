@@ -38,7 +38,7 @@ class ConfigController extends Controller {
     }
     
     public function indexAction() {
-      error_reporting(E_ALL ^ E_NOTICE);
+      //error_reporting(E_ALL ^ E_NOTICE);
       
         
       if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
@@ -50,6 +50,7 @@ class ConfigController extends Controller {
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Setting');
       $oSetting = $oRepository->findOneByName('root-web-folder');
+      
       if (empty($oSetting)) {
         $oSetting = new Setting();
         $oSetting->setName('root-web-folder');
@@ -123,8 +124,8 @@ class ConfigController extends Controller {
         
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         
-        $repository = $em->getRepository('EducationVisualFeedbackBundle:Imagefolder');
-        $oImageFolder = $repository->findOneByRootPath($_REQUEST['folder']);
+        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Imagefolder');
+        $oImageFolder = $oRepository->findOneByRootPath($_REQUEST['folder']);
         if (empty($oImageFolder)) {
           $oImageFolder = new Imagefolder();
           $oImageFolder->setName(str_replace('/bundles/visualfeedback/images/', '', $_REQUEST['folder']));
@@ -815,7 +816,7 @@ class ConfigController extends Controller {
         $oEntityManager->flush();
         
         $oLessonImageQuestion = new LessonImagequestion();
-        $oLessonImageQuestion->setOrderIndex(intval($aQuestion['iIndex']) + 1);
+        $oLessonImageQuestion->setOrderIndex(intval($aQuestion['iIndex']));
         $oLessonImageQuestion->setImageQuestion($oImageQuestion);
         $oLessonImageQuestion->setLessonplanLesson($oLessonPlanLesson);
         $oEntityManager->persist($oLessonImageQuestion);
@@ -829,7 +830,7 @@ class ConfigController extends Controller {
     public function updateLessonAction() {
       $oRequest = $this->getRequest();
       $aReturn = array();
-      $aReturn['iId'] = intval($oRequest->get('iId'));
+      $aReturn['iLessonId'] = intval($oRequest->get('iLessonId'));
       $aReturn['sName'] = $oRequest->get('sName');
       $aReturn['iSubjectId'] = intval($oRequest->get('iSubjectId'));
       $aReturn['iLessonPlanId'] = intval($oRequest->get('iLessonPlanId'));
@@ -839,19 +840,60 @@ class ConfigController extends Controller {
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       $oLesson = $oEntityManager
         ->getRepository('EducationVisualFeedbackBundle:Lesson')
-        ->find($aReturn['iId']);
+        ->findOneById($aReturn['iLessonId']);
       
       $oSubject = $oEntityManager
         ->getRepository('EducationVisualFeedbackBundle:Subject')
-        ->find($aReturn['iSubjectId']);
+        ->findOneById($aReturn['iSubjectId']);
       
         
       $oLessonPlanLesson = $oEntityManager
         ->getRepository('EducationVisualFeedbackBundle:LessonplanLesson')
-        ->findByLesson($aReturn['iId']);
+        ->findOneByLesson($aReturn['iLessonId']);
   
+      /*
+      $aIdList = array();
+      foreach ($aQuestionList as $aQuestion) {
+        $aIdList[] = $aQuestion['iImageQuestionId'];
+      }
       
-      print_r($aQuestionList);
+      $sIdList = implode(',', $aIdList);
+      */
+      $iId = $oLessonPlanLesson->getId();
+      $sSql = "
+        DELETE FROM Lesson_ImageQuestion 
+        WHERE LessonPlan_Lesson_id = $iId
+      ";
+      
+      $oConnection = $this->get('database_connection');
+      $oConnection->query($sSql);
+      
+      
+      $oImageRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
+      $oImageQuestionRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Imagequestion');
+      foreach ($aQuestionList as $aQuestion) {
+        $oImageQuestion = null;
+        if (empty($aQuestion['iImageQuestionId'])) {
+          $oImage = $oImageRepository->find($aQuestion['iImageId']);
+          $oImageQuestion = new Imagequestion();
+          $oImageQuestion->setName($aQuestion['sText']);
+          $oImageQuestion->setText($aQuestion['sText']);
+          $oImageQuestion->setImage($oImage);
+          $oEntityManager->persist($oImageQuestion);
+          $oEntityManager->flush();
+        }
+        else {
+          $oImageQuestion = $oImageQuestionRepository->find($aQuestion['iImageQuestionId']);
+        }
+        
+        
+        $oLessonImageQuestion = new LessonImagequestion();
+        $oLessonImageQuestion->setOrderIndex(intval($aQuestion['iIndex']));
+        $oLessonImageQuestion->setImageQuestion($oImageQuestion);
+        $oLessonImageQuestion->setLessonplanLesson($oLessonPlanLesson);
+        $oEntityManager->persist($oLessonImageQuestion);
+        $oEntityManager->flush();
+      }
       
       /*
       if ( ! $oImage) {

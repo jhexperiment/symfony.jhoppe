@@ -14,4 +14,20 @@ Education\VisualFeedbackBundle\Entity\Lesson:
       length: 128
       fixed: false
       nullable: true
+    type:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
+    lessonPlan:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
+      column: lesson_plan
+    subject:
+      type: string
+      length: 128
+      fixed: false
+      nullable: true
   lifecycleCallbacks: {  }

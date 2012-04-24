@@ -30,9 +30,9 @@ class Pupilanswer
     private $timestamp;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\LessonImagequestion
+     * @var integer $lessonImagequestionId
      */
-    private $lessonImagequestion;
+    private $lessonImagequestionId;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
@@ -111,23 +111,23 @@ class Pupilanswer
     }
 
     /**
-     * Set lessonImagequestion
+     * Set lessonImagequestionId
      *
-     * @param Education\VisualFeedbackBundle\Entity\LessonImagequestion $lessonImagequestion
+     * @param integer $lessonImagequestionId
      */
-    public function setLessonImagequestion(\Education\VisualFeedbackBundle\Entity\LessonImagequestion $lessonImagequestion)
+    public function setLessonImagequestionId($lessonImagequestionId)
     {
-        $this->lessonImagequestion = $lessonImagequestion;
+        $this->lessonImagequestionId = $lessonImagequestionId;
     }
 
     /**
-     * Get lessonImagequestion
+     * Get lessonImagequestionId
      *
-     * @return Education\VisualFeedbackBundle\Entity\LessonImagequestion 
+     * @return integer 
      */
-    public function getLessonImagequestion()
+    public function getLessonImagequestionId()
     {
-        return $this->lessonImagequestion;
+        return $this->lessonImagequestionId;
     }
 
     /**
