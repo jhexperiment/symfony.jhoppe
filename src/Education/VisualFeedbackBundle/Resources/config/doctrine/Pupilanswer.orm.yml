@@ -25,11 +25,6 @@ Education\VisualFeedbackBundle\Entity\Pupilanswer:
       type: integer
       unsigned: false
       nullable: false
-    lessonImagequestionId:
-      type: integer
-      unsigned: false
-      nullable: false
-      column: Lesson_ImageQuestion_id
   oneToOne:
     tutoringsession:
       targetEntity: Tutoringsession

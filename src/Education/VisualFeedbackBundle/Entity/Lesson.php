@@ -20,9 +20,9 @@ class Lesson
     private $name;
 
     /**
-     * @var string $type
+     * @var string $subject
      */
-    private $type;
+    private $subject;
 
     /**
      * @var string $lessonPlan
@@ -30,9 +30,9 @@ class Lesson
     private $lessonPlan;
 
     /**
-     * @var string $subject
+     * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
      */
-    private $subject;
+    private $tutoringsession;
 
 
     /**
@@ -66,23 +66,23 @@ class Lesson
     }
 
     /**
-     * Set type
+     * Set subject
      *
-     * @param string $type
+     * @param string $subject
      */
-    public function setType($type)
+    public function setSubject($subject)
     {
-        $this->type = $type;
+        $this->subject = $subject;
     }
 
     /**
-     * Get type
+     * Get subject
      *
      * @return string 
      */
-    public function getType()
+    public function getSubject()
     {
-        return $this->type;
+        return $this->subject;
     }
 
     /**
@@ -106,22 +106,22 @@ class Lesson
     }
 
     /**
-     * Set subject
+     * Set tutoringsession
      *
-     * @param string $subject
+     * @param Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession
      */
-    public function setSubject($subject)
+    public function setTutoringsession(\Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession)
     {
-        $this->subject = $subject;
+        $this->tutoringsession = $tutoringsession;
     }
 
     /**
-     * Get subject
+     * Get tutoringsession
      *
-     * @return string 
+     * @return Education\VisualFeedbackBundle\Entity\Tutoringsession 
      */
-    public function getSubject()
+    public function getTutoringsession()
     {
-        return $this->subject;
+        return $this->tutoringsession;
     }
 }

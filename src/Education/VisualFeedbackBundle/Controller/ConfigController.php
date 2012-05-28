@@ -10,17 +10,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 
 use Education\VisualFeedbackBundle\Entity\Image;
-use Education\VisualFeedbackBundle\Entity\Imagefolder;
 use Education\VisualFeedbackBundle\Entity\Audio;
 use Education\VisualFeedbackBundle\Entity\Tutor;
 use Education\VisualFeedbackBundle\Entity\Pupil;
-use Education\VisualFeedbackBundle\Entity\Subject;
-use Education\VisualFeedbackBundle\Entity\SubjectLessonplan;
-use Education\VisualFeedbackBundle\Entity\Lessonplan;
-use Education\VisualFeedbackBundle\Entity\LessonplanLesson;
 use Education\VisualFeedbackBundle\Entity\Lesson;
-use Education\VisualFeedbackBundle\Entity\Imagequestion;
-use Education\VisualFeedbackBundle\Entity\LessonImagequestion;
 use Education\VisualFeedbackBundle\Entity\Setting;
 
 
@@ -124,23 +117,18 @@ class ConfigController extends Controller {
         
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         
-        $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Imagefolder');
-        $oImageFolder = $oRepository->findOneByRootPath($_REQUEST['folder']);
-        if (empty($oImageFolder)) {
-          $oImageFolder = new Imagefolder();
-          $oImageFolder->setName(str_replace('/bundles/visualfeedback/images/', '', $_REQUEST['folder']));
-          $oImageFolder->setRootPath($_REQUEST['folder']);
-          $oEntityManager->persist($oImageFolder);
-          $oEntityManager->flush();
-        }
+        print_r($oImage->toArray());
         
         $oImage = new Image();
         $oImage->setLabel($_FILES['Filedata']['name']);
         $oImage->setFilename($_FILES['Filedata']['name']);
-        $oImage->setImagefolder($oImageFolder);
+        $oImage->setLocalPath($_REQUEST['folder']);
+        $oImage->setWebPath(str_replace('/bundles/visualfeedback/images/', '', $_REQUEST['folder']));
         
         $oEntityManager->persist($oImage);
         $oEntityManager->flush();
+        
+        
         
         return new Response(json_encode($sReturn));
       }
@@ -188,8 +176,6 @@ class ConfigController extends Controller {
         $aRecordList = $oQueryBuilder
           ->select('i')
           ->from('EducationVisualFeedbackBundle:Image', 'i')
-          ->leftJoin('i.imagefolder', 'f')
-          ->where("f.name = '$sFolder'")
           ->getQuery()
           ->getResult();
       }
@@ -197,7 +183,6 @@ class ConfigController extends Controller {
         $aRecordList = $oQueryBuilder
           ->select('i')
           ->from('EducationVisualFeedbackBundle:Image', 'i')
-          ->leftJoin('i.imagefolder', 'f')
           ->where( 
             $oQueryBuilder->expr()
               ->like('i.filename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
@@ -206,18 +191,18 @@ class ConfigController extends Controller {
             $oQueryBuilder->expr()
               ->like('i.label', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
           )
-          ->andwhere("f.name = '$sFolder'")
           ->getQuery()
           ->getResult();
       }
       
       $aImageList = array();
       foreach ($aRecordList as $oImage) {
-        $oImageFolder = $oImage->getImagefolder();
+        $aImageInfo = $oImage->toArray();
         $aImageList[] = array(
-          'iId' => $oImage->getId(),
-          'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
-          'sLabel' => $oImage->getLabel()
+          'iId' => $aImageInfo['Id'],
+          'sUrl' => "{$aImageInfo['WebPath']}/{$aImageInfo['Filename']}",
+          'sLabel' => $aImageInfo['Label'],
+          'sType' => $aImageInfo['Type']
         );
       }
       

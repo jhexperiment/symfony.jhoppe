@@ -30,11 +30,6 @@ class Pupilanswer
     private $timestamp;
 
     /**
-     * @var integer $lessonImagequestionId
-     */
-    private $lessonImagequestionId;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
      */
     private $tutoringsession;
@@ -108,26 +103,6 @@ class Pupilanswer
     public function getTimestamp()
     {
         return $this->timestamp;
-    }
-
-    /**
-     * Set lessonImagequestionId
-     *
-     * @param integer $lessonImagequestionId
-     */
-    public function setLessonImagequestionId($lessonImagequestionId)
-    {
-        $this->lessonImagequestionId = $lessonImagequestionId;
-    }
-
-    /**
-     * Get lessonImagequestionId
-     *
-     * @return integer 
-     */
-    public function getLessonImagequestionId()
-    {
-        return $this->lessonImagequestionId;
     }
 
     /**

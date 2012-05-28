@@ -1,3 +1,7 @@
+#JHWorkoutBundle:
+#    resource: "@JHWorkoutBundle/Resources/config/routing.yml"
+#    prefix:   /
+
 EducationVisualFeedbackBundle:
     resource: "@EducationVisualFeedbackBundle/Resources/config/routing.yml"
     prefix:   /

@@ -89,16 +89,20 @@ oThisPage = {
       oThisPage.fnGetImageList(sSearch, 'uploads', oThisPage.fnDisplayImageTabImages);
     });
     $("#image.sub-menu .menu-item .input input").uploadify({
-      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
-      'script' : 'upload/image',
-      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
-      'folder' : oThisPage.sRootWebUrl + oThisPage.sImageUploadFolder,
-      'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
-      'fileDesc' : 'Image Files',
+      'swf' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
+      'uploader' : '/app.php/config/upload/image',
+      'buttonClass': 'uploader-button',
+      'buttonText' : 'BROWSE...',
+      'fileTypeExts' : '*.jpg;*.gif;*.png;*.jpeg',
+      'fileTypeDesc' : 'Image Files',
       'multi' : true,
-      'simUploadLimit': 10,
+      'uploadLimit': 10,
       'auto' : true,
-      'onAllComplete' : function(event, ID, fileObj, response, data) {
+      'method'   : 'post',
+      'formData' : { 
+        'folder' : oThisPage.sRootWebUrl + oThisPage.sAudioUploadFolder, 
+      },
+      'onQueueComplete' : function(event, ID, fileObj, response, data) {
         var oInput = $("#image.sub-menu .menu-item .input");
         oInput.animate({
           'width': 0
@@ -108,8 +112,11 @@ oThisPage = {
           oInput.removeAttr("style");
         });
       },
-      'onUploadError' : function(event,ID,fileObj,errorObj) {
+      'onUploadError' : function(file, errorCode, errorMsg, errorString) {
         var tmp = '';
+      },
+      'onUploadSuccess' : function(file, data, response) {
+        alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
       }
     });
     $("#image.sub-menu #add.menu-item").click(function() {
@@ -134,16 +141,17 @@ oThisPage = {
       oThisPage.fnGetAudioList(sSearch, 'uploads', oThisPage.fnDisplayAudioTabFiles);
     });
     $("#audio.sub-menu .menu-item .input input").uploadify({
-      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
-      'script' : 'upload/audio',
-      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'swf' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
+      'uploader' : 'upload/image',
+      'buttonClass': 'uploader-button',
+      'buttonText' : 'BROWSE...',
       'folder' : oThisPage.sRootWebUrl + oThisPage.sAudioUploadFolder,
       'fileExt' : '*.mp3;*.m4a;*.oga;',
       'fileDesc' : 'Audio Files',
       'multi' : true,
-      'simUploadLimit': 10,
+      'uploadLimit': 10,
       'auto' : true,
-      'onAllComplete' : function(event, ID, fileObj, response, data) {
+      'onQueueComplete' : function(event, ID, fileObj, response, data) {
         var oInput = $("#audio.sub-menu .menu-item .input");
         oInput.animate({
           'width': 0
@@ -194,9 +202,10 @@ oThisPage = {
       */
     });
     $("#add-tutor-popup .upload input").uploadify({
-      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
-      'script' : 'upload/image',
-      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'swf' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
+      'uploader' : 'upload/image',
+      'buttonClass': 'uploader-button',
+      'buttonText' : 'BROWSE...',
       'folder' : oThisPage.sRootWebUrl + oThisPage.sTutorUploadFolder,
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
       'fileDesc' : 'Image Files',
@@ -204,7 +213,7 @@ oThisPage = {
       'auto' : true,
       'hideButton': true,
       'wmode': 'transparent',
-      'onAllComplete' : function(event, ID, fileObj, response, data) {
+      'onQueueComplete' : function(event, ID, fileObj, response, data) {
        var tmp = '';
       },
       'onComplete' : function(event, ID, fileObj, response, data) {
@@ -329,9 +338,10 @@ oThisPage = {
       */
     });
     $("#add-pupil-popup .upload input").uploadify({
-      'uploader' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
-      'script' : 'upload/image',
-      'cancelImg' : oThisPage.sRootWebUrl + '/js/uploadify/cancel.png',
+      'swf' : oThisPage.sRootWebUrl + '/js/uploadify/uploadify.swf',
+      'uploader' : 'upload/image',
+      'buttonClass': 'uploader-button',
+      'buttonText' : 'BROWSE...',
       'folder' : oThisPage.sRootWebUrl + oThisPage.sPupilUploadFolder,
       'fileExt' : '*.jpg;*.gif;*.png;*.jpeg',
       'fileDesc' : 'Image Files',
@@ -339,7 +349,7 @@ oThisPage = {
       'auto' : true,
       'hideButton': true,
       'wmode': 'transparent',
-      'onAllComplete' : function(event, ID, fileObj, response, data) {
+      'onQueueComplete' : function(event, ID, fileObj, response, data) {
        var tmp = '';
       },
       'onComplete' : function(event, ID, fileObj, response, data) {

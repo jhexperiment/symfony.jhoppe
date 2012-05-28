@@ -20,29 +20,19 @@ class Tutoringsession
     private $hash;
 
     /**
-     * @var string $displayContent
+     * @var string $status
      */
-    private $displayContent;
+    private $status;
 
     /**
-     * @var integer $lessonImagequestionId
+     * @var integer $tutorId
      */
-    private $lessonImagequestionId;
+    private $tutorId;
 
     /**
      * @var Education\VisualFeedbackBundle\Entity\Pupil
      */
     private $pupil;
-
-    /**
-     * @var Education\VisualFeedbackBundle\Entity\Tutor
-     */
-    private $tutor;
-
-    /**
-     * @var Education\VisualFeedbackBundle\Entity\Statuscode
-     */
-    private $statuscode;
 
 
     /**
@@ -76,43 +66,43 @@ class Tutoringsession
     }
 
     /**
-     * Set displayContent
+     * Set status
      *
-     * @param string $displayContent
+     * @param string $status
      */
-    public function setDisplayContent($displayContent)
+    public function setStatus($status)
     {
-        $this->displayContent = $displayContent;
+        $this->status = $status;
     }
 
     /**
-     * Get displayContent
+     * Get status
      *
      * @return string 
      */
-    public function getDisplayContent()
+    public function getStatus()
     {
-        return $this->displayContent;
+        return $this->status;
     }
 
     /**
-     * Set lessonImagequestionId
+     * Set tutorId
      *
-     * @param integer $lessonImagequestionId
+     * @param integer $tutorId
      */
-    public function setLessonImagequestionId($lessonImagequestionId)
+    public function setTutorId($tutorId)
     {
-        $this->lessonImagequestionId = $lessonImagequestionId;
+        $this->tutorId = $tutorId;
     }
 
     /**
-     * Get lessonImagequestionId
+     * Get tutorId
      *
      * @return integer 
      */
-    public function getLessonImagequestionId()
+    public function getTutorId()
     {
-        return $this->lessonImagequestionId;
+        return $this->tutorId;
     }
 
     /**
@@ -133,45 +123,5 @@ class Tutoringsession
     public function getPupil()
     {
         return $this->pupil;
-    }
-
-    /**
-     * Set tutor
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Tutor $tutor
-     */
-    public function setTutor(\Education\VisualFeedbackBundle\Entity\Tutor $tutor)
-    {
-        $this->tutor = $tutor;
-    }
-
-    /**
-     * Get tutor
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Tutor 
-     */
-    public function getTutor()
-    {
-        return $this->tutor;
-    }
-
-    /**
-     * Set statuscode
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Statuscode $statuscode
-     */
-    public function setStatuscode(\Education\VisualFeedbackBundle\Entity\Statuscode $statuscode)
-    {
-        $this->statuscode = $statuscode;
-    }
-
-    /**
-     * Get statuscode
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Statuscode 
-     */
-    public function getStatuscode()
-    {
-        return $this->statuscode;
     }
 }

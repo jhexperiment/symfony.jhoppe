@@ -25,9 +25,14 @@ class Image
     private $filename;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\Imagefolder
+     * @var string $localPath
      */
-    private $imagefolder;
+    private $localPath;
+
+    /**
+     * @var string $webPath
+     */
+    private $webPath;
 
 
     /**
@@ -81,22 +86,67 @@ class Image
     }
 
     /**
-     * Set imagefolder
+     * Set localPath
      *
-     * @param Education\VisualFeedbackBundle\Entity\Imagefolder $imagefolder
+     * @param string $localPath
      */
-    public function setImagefolder(\Education\VisualFeedbackBundle\Entity\Imagefolder $imagefolder)
+    public function setLocalPath($localPath)
     {
-        $this->imagefolder = $imagefolder;
+        $this->localPath = $localPath;
     }
 
     /**
-     * Get imagefolder
+     * Get localPath
      *
-     * @return Education\VisualFeedbackBundle\Entity\Imagefolder 
+     * @return string 
      */
-    public function getImagefolder()
+    public function getLocalPath()
     {
-        return $this->imagefolder;
+        return $this->localPath;
+    }
+
+    /**
+     * Set webPath
+     *
+     * @param string $webPath
+     */
+    public function setWebPath($webPath)
+    {
+        $this->webPath = $webPath;
+    }
+
+    /**
+     * Get webPath
+     *
+     * @return string 
+     */
+    public function getWebPath()
+    {
+        return $this->webPath;
+    }
+    /**
+     * @var string $type
+     */
+    private $type;
+
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }
