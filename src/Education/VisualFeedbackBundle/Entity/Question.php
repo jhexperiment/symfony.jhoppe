@@ -199,4 +199,54 @@ class Question
     {
         return $this->pupilanswer;
     }
+    /**
+     * @var integer $index
+     */
+    private $index;
+
+
+    /**
+     * Set index
+     *
+     * @param integer $index
+     */
+    public function setIndex($index)
+    {
+        $this->index = $index;
+    }
+
+    /**
+     * Get index
+     *
+     * @return integer 
+     */
+    public function getIndex()
+    {
+        return $this->index;
+    }
+    /**
+     * @var integer $orderIndex
+     */
+    private $orderIndex;
+
+
+    /**
+     * Set orderIndex
+     *
+     * @param integer $orderIndex
+     */
+    public function setOrderIndex($orderIndex)
+    {
+        $this->orderIndex = $orderIndex;
+    }
+
+    /**
+     * Get orderIndex
+     *
+     * @return integer 
+     */
+    public function getOrderIndex()
+    {
+        return $this->orderIndex;
+    }
 }

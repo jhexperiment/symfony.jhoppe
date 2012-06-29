@@ -25,14 +25,4 @@ Education\VisualFeedbackBundle\Entity\Lesson:
       fixed: false
       nullable: true
       column: lesson_plan
-  oneToOne:
-    tutoringsession:
-      targetEntity: Tutoringsession
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        TutoringSession_id:
-          referencedColumnName: id
-      orphanRemoval: false
   lifecycleCallbacks: {  }

@@ -266,6 +266,10 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-tutor-popup" class="add-popup add-person-popup state-hide">
   <div class="popup-view-container">
+    <div id="top-move-handle" class="move-handle"></div>
+    <div id="right-move-handle" class="move-handle"></div>
+    <div id="bottom-move-handle" class="move-handle"></div>
+    <div id="left-move-handle" class="move-handle"></div>
     <div id="main" class="popup-view">
       <div class="head">
         <span id="action">New</span> Tutor
@@ -333,6 +337,10 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-pupil-popup" class="add-popup add-person-popup state-hide">
   <div class="popup-view-container">
+    <div id="top-move-handle" class="move-handle"></div>
+    <div id="right-move-handle" class="move-handle"></div>
+    <div id="bottom-move-handle" class="move-handle"></div>
+    <div id="left-move-handle" class="move-handle"></div>
     <div id="main" class="popup-view">
       <div class="head">
         <span id="action">New</span> Pupil
@@ -399,6 +407,11 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-subject-popup" class="add-popup state-hide">
   <div class="popup-view-container">
+    <div id="top-move-handle" class="move-handle"></div>
+    <div id="right-move-handle" class="move-handle"></div>
+    <div id="bottom-move-handle" class="move-handle"></div>
+    <div id="left-move-handle" class="move-handle"></div>
+    
     <div id="main" class="popup-view">
       <div class="head">
         <span id="action">New</span> Subject
@@ -425,6 +438,10 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-lesson-plan-popup" class="add-popup state-hide">
   <div class="popup-view-container">
+    <div id="top-move-handle" class="move-handle"></div>
+    <div id="right-move-handle" class="move-handle"></div>
+    <div id="bottom-move-handle" class="move-handle"></div>
+    <div id="left-move-handle" class="move-handle"></div>
     <div id="main" class="popup-view">
       <div class="head">
         <span id="action">New</span> Lesson Plan
@@ -462,6 +479,8 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-lesson-popup" class="add-popup state-hide">
   <div class="popup-view-container">
+    <img class='background' src="/bundles/visualfeedback/images/chalkboard.med.large.png" />
+    
     <div id="top-move-handle" class="move-handle"></div>
     <div id="right-move-handle" class="move-handle"></div>
     <div id="bottom-move-handle" class="move-handle"></div>
@@ -482,26 +501,20 @@ foreach ($aPath as $sName => $sValue) {
               <input type="text" value="" />
             </span>
           </span>
-          <span id="subject" class="data-item required">
+          <span id="subject" class="data-item">
             <span class="label">
               Subject:
-              <sup><span class="red">*</span></sup>
             </span>
             <span class="value">
-              <select>
-                <option value="">Select</option>
-              </select>
+              <input type="text" value="" />
             </span>
           </span>
-          <span id="lesson-plan" class="data-item required">
+          <span id="lesson-plan" class="data-item">
             <span class="label">
               Lesson Plan:
-              <sup><span class="red">*</span></sup>
             </span>
             <span class="value">
-              <select>
-                <option value="">Select</option>
-              </select>
+              <input type="text" value="" />
             </span>
           </span>
         </div>

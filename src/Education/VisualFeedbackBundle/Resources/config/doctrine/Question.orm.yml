@@ -9,6 +9,11 @@ Education\VisualFeedbackBundle\Entity\Question:
       nullable: false
       generator:
         strategy: IDENTITY
+    orderIndex:
+      type: integer
+      unsigned: false
+      nullable: true
+      column: order_index
     name:
       type: string
       length: 128

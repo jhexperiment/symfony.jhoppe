@@ -124,4 +124,54 @@ class Tutoringsession
     {
         return $this->pupil;
     }
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Lesson
+     */
+    private $lesson;
+
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Tutor
+     */
+    private $tutor;
+
+
+    /**
+     * Set lesson
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Lesson $lesson
+     */
+    public function setLesson(\Education\VisualFeedbackBundle\Entity\Lesson $lesson)
+    {
+        $this->lesson = $lesson;
+    }
+
+    /**
+     * Get lesson
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Lesson 
+     */
+    public function getLesson()
+    {
+        return $this->lesson;
+    }
+
+    /**
+     * Set tutor
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Tutor $tutor
+     */
+    public function setTutor(\Education\VisualFeedbackBundle\Entity\Tutor $tutor)
+    {
+        $this->tutor = $tutor;
+    }
+
+    /**
+     * Get tutor
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Tutor 
+     */
+    public function getTutor()
+    {
+        return $this->tutor;
+    }
 }

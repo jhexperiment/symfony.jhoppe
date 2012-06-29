@@ -6,6 +6,10 @@ config_ie:
 
 
 config_index:
+    pattern:  /config/
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
+
+config_index2:
     pattern:  /config/index
     defaults: { _controller: EducationVisualFeedbackBundle:Config:index }
 

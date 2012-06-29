@@ -46,6 +46,8 @@ select.state-error {
   left: 0px;
 }
 
+
+
 .top-bar {
   height: 48px;
   width: 100%;
@@ -246,6 +248,8 @@ select.state-error {
 #image.sub-menu .input object,
 #audio.sub-menu .input object {
   float: left;
+  left: 1px;
+  top: 2px;
 }
 
 #image.sub-menu .input .uploadifyQueue,
@@ -259,7 +263,7 @@ select.state-error {
 
 .view {
   width: 100%;
-  min-height 400px;
+  min-height: 400px;
   display: inline-block;
   float: left;
   background-color: #BBBBBB;
@@ -426,7 +430,6 @@ select.state-error {
 
 .add-popup {
   z-index: 1999;
-  padding: 24px;
   width: 591px;
   height: 366px;
   left: 400px;
@@ -438,11 +441,23 @@ select.state-error {
   font-size: 12pt;
   color: #FFFFFF;
   
-  background: url('/bundles/visualfeedback/images/chalkboard.med.png');
+  background-color: #333333;
+  /*background: url('/bundles/visualfeedback/images/chalkboard.med.png');*/
+  
+  
 }
 
 .add-popup .popup-view-container {
+  width: 100%;
   position: relative;
+  display: inline-block;
+}
+
+.add-popup .popup-view-container .background {
+  z-index: -1;
+  left: -24px;
+  top: -24px;
+  position: absolute;
   display: inline-block;
 }
 
@@ -455,14 +470,14 @@ select.state-error {
 .add-popup .popup-view-container #top-move-handle {
   left: -24px;
   top: -24px;
-  width: 766px;
+  width: 107%;
   height: 24px;
 }
 
 .add-popup .popup-view-container #bottom-move-handle {
   left: -24px;
-  bottom: -24px;
-  width: 766px;
+  bottom: -28px;
+  width: 107%;
   height: 24px;
 }
 
@@ -470,18 +485,19 @@ select.state-error {
   left: -24px;
   top: -24px;
   width: 24px;
-  height: 498px;
+  height: 112%;
 }
 
 .add-popup .popup-view-container #right-move-handle {
-  right: -6px;
+  right: -24px;
   top: -24px;
   width: 24px;
-  height: 498px;
+  height: 112%;
 }
 
 .add-popup .button {
   cursor: pointer;
+  margin: 2px 0px;
   padding: 4px 0px;
   width: 100px;
   position: relative;
@@ -531,6 +547,28 @@ select.state-error {
 .add-popup .popup-view .foot .button {
   margin: 0px 24px;
   float: right;
+}
+
+.add-person-popup #main.popup-view .body .left .uploadify {
+  
+  left: -12px;
+  top: -6px;
+}
+
+.add-person-popup #main.popup-view .body .left .uploadify object {
+  left: 0px;
+  top: 1px; 
+}
+
+.add-person-popup #main.popup-view .body .left .uploadify .uploadify-button {
+  background-color: transparent;
+  background-image: none;
+  border: none;
+  padding: 0;
+}
+
+.add-person-popup #main.popup-view .body .left .uploadify:hover .uploadify-button {
+  background-color: transparent;
 }
 
 .add-person-popup #main.popup-view .body .left {
@@ -652,15 +690,17 @@ select.state-error {
 }
 
 #add-lesson-popup {
-  padding: 24px;
   width: 720px;
   height: 450px;
   
-  background: url('/bundles/visualfeedback/images/chalkboard.med.large.png');
+  /*background: url('/bundles/visualfeedback/images/chalkboard.med.large.png');*/
+}
+
+#add-lesson-popup .background {
+  width: 768;
 }
 
 #add-lesson-popup .body {
-  width: 738px;
   height: 378px;
 }
 
@@ -715,6 +755,8 @@ select.state-error {
   min-width: 64px;
   position: relative;
   display: inline-block;
+  
+  text-align: center;
   
   border: 3px solid rgba(128, 128, 128, 0.8);
 }
@@ -775,6 +817,10 @@ select.state-error {
   text-align: center;
 }
 
+#add-lesson-popup .body .selected-images .image .label input {
+  width: 100px;
+}
+
 #add-lesson-popup .body #image-list-label {
   margin: 0px 0px 4px 0px;
   width: 704px;
@@ -813,6 +859,7 @@ select.state-error {
 }
 
 #add-lesson-popup .body .image-list .image .label {
+  display: none;
   font-size: 10pt;
   text-align: center;
 }

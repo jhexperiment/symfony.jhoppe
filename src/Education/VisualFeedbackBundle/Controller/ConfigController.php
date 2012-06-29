@@ -15,6 +15,7 @@ use Education\VisualFeedbackBundle\Entity\Tutor;
 use Education\VisualFeedbackBundle\Entity\Pupil;
 use Education\VisualFeedbackBundle\Entity\Lesson;
 use Education\VisualFeedbackBundle\Entity\Setting;
+use Education\VisualFeedbackBundle\Entity\Question;
 
 
 class ConfigController extends Controller {
@@ -77,7 +78,7 @@ class ConfigController extends Controller {
       if (empty($oSetting)) {
         $oSetting = new Setting();
         $oSetting->setName('tutor-upload-folder');
-        $oSetting->setValue('/tutor_icons');
+        $oSetting->setValue('/images/tutor_icons');
         $oEntityManager->persist($oSetting);
         $oEntityManager->flush();
       }
@@ -87,7 +88,7 @@ class ConfigController extends Controller {
       if (empty($oSetting)) {
         $oSetting = new Setting();
         $oSetting->setName('pupil-upload-folder');
-        $oSetting->setValue('/pupil_icons');
+        $oSetting->setValue('/images/pupil_icons');
         $oEntityManager->persist($oSetting);
         $oEntityManager->flush();
       }
@@ -117,20 +118,24 @@ class ConfigController extends Controller {
         
         $oEntityManager = $this->getDoctrine()->getEntityManager();
         
-        print_r($oImage->toArray());
         
         $oImage = new Image();
         $oImage->setLabel($_FILES['Filedata']['name']);
+        $oImage->setType($_REQUEST['type']);
         $oImage->setFilename($_FILES['Filedata']['name']);
         $oImage->setLocalPath($_REQUEST['folder']);
-        $oImage->setWebPath(str_replace('/bundles/visualfeedback/images/', '', $_REQUEST['folder']));
+        $oImage->setWebPath($_REQUEST['folder']);
+        //$oImage->setWebPath(str_replace('/bundles/visualfeedback/images', '', $_REQUEST['folder']));
         
         $oEntityManager->persist($oImage);
         $oEntityManager->flush();
         
+        $aReturn = array(
+          'sUrl' => $sReturn,
+          'iId' => $oImage->getId()
+        );
         
-        
-        return new Response(json_encode($sReturn));
+        return new Response(json_encode($aReturn));
       }
       
       return $oResponse;
@@ -176,33 +181,35 @@ class ConfigController extends Controller {
         $aRecordList = $oQueryBuilder
           ->select('i')
           ->from('EducationVisualFeedbackBundle:Image', 'i')
+          ->where("i.type = 'upload'")
           ->getQuery()
-          ->getResult();
+          ->getArrayResult();
       }
       else {
         $aRecordList = $oQueryBuilder
           ->select('i')
           ->from('EducationVisualFeedbackBundle:Image', 'i')
-          ->where( 
-            $oQueryBuilder->expr()
-              ->like('i.filename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
-          )
-          ->orwhere( 
-            $oQueryBuilder->expr()
-              ->like('i.label', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')) 
-          )
+          ->where("i.type = 'upload'")
+          ->andwhere( 
+            $oQueryBuilder->expr()->orX(
+              $oQueryBuilder->expr()->like('i.filename', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')),
+              $oQueryBuilder->expr()->like('i.label', $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
+            ))
           ->getQuery()
-          ->getResult();
+          ->getArrayResult();
+          
       }
       
+      
+      
       $aImageList = array();
-      foreach ($aRecordList as $oImage) {
-        $aImageInfo = $oImage->toArray();
+      foreach ($aRecordList as $aImageInfo) {
+        
         $aImageList[] = array(
-          'iId' => $aImageInfo['Id'],
-          'sUrl' => "{$aImageInfo['WebPath']}/{$aImageInfo['Filename']}",
-          'sLabel' => $aImageInfo['Label'],
-          'sType' => $aImageInfo['Type']
+          'iId' => $aImageInfo['id'],
+          'sUrl' => "{$aImageInfo['webPath']}/{$aImageInfo['filename']}",
+          'sLabel' => $aImageInfo['label'],
+          'sType' => $aImageInfo['type']
         );
       }
       
@@ -352,14 +359,13 @@ class ConfigController extends Controller {
       $aPupilList = array();
       foreach ($aRecordList as $oPupil) {
         $oImage = $oPupil->getImage();
-        $oImageFolder = $oImage->getImagefolder();
         $aPupilList[] = array(
           'iId' => $oPupil->getId(),
           'sFirstName' => $oPupil->getFirstname(),
           'sMiddleName' => $oPupil->getMiddlename(),
           'sLastName' => $oPupil->getLastname(),
           'iImageId' => $oImage->getId(),
-          'sImageUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename()
+          'sImageUrl' => $oImage->getWebPath() . '/' . $oImage->getFilename()
         );
       }
       
@@ -396,17 +402,15 @@ class ConfigController extends Controller {
       
       $aRecordList = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image') 
         ->createQueryBuilder('i') 
-        ->leftJoin('i.imagefolder', 'f')
-        ->where("f.name = 'pupil_icons'") 
+        ->where("i.type = 'pupil_icon'") 
         ->getQuery() 
         ->getResult(); 
       
       $aImageList = array();
       foreach ($aRecordList as $oImage) {
-        $oImageFolder = $oImage->getImagefolder();
         $aImageList[] = array(
           'iId' => $oImage->getId(),
-          'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
+          'sUrl' => $oImage->getWebPath() . '/' . $oImage->getFilename(),
           'sLabel' => $oImage->getLabel()
         );
       }
@@ -457,14 +461,13 @@ class ConfigController extends Controller {
       $aTutorList = array();
       foreach ($aRecordList as $oTutor) {
         $oImage = $oTutor->getImage();
-        $oImageFolder = $oImage->getImagefolder();
         $aTutorList[] = array(
           'iId' => $oTutor->getId(),
           'sFirstName' => $oTutor->getFirstname(),
           'sMiddleName' => $oTutor->getMiddlename(),
           'sLastName' => $oTutor->getLastname(),
           'iImageId' => $oImage->getId(),
-          'sImageUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename()
+          'sImageUrl' => $oImage->getWebPath() . '/' . $oImage->getFilename()
         );
       }
       
@@ -502,17 +505,15 @@ class ConfigController extends Controller {
       
       $aRecordList = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image') 
         ->createQueryBuilder('i') 
-        ->leftJoin('i.imagefolder', 'f')
-        ->where("f.name = 'tutor_icons'") 
+        ->where("i.type = 'tutor_icon'") 
         ->getQuery() 
         ->getResult(); 
       
       $aImageList = array();
       foreach ($aRecordList as $oImage) {
-        $oImageFolder = $oImage->getImagefolder();
         $aImageList[] = array(
           'iId' => $oImage->getId(),
-          'sUrl' => $oImageFolder->getRootPath() . '/' . $oImage->getFilename(),
+          'sUrl' => $oImage->getWebPath() . '/' . $oImage->getFilename(),
           'sLabel' => $oImage->getLabel()
         );
       }
@@ -531,28 +532,14 @@ class ConfigController extends Controller {
      */
     public function listSubjectAction() {
       $oRequest = $this->getRequest();
-      $sSearch = $oRequest->get('sSearch');
       
       $oConnection = $this->get('database_connection');
       
       $oQueryBuilder = $oConnection->createQueryBuilder();
       $oExp = $oQueryBuilder->expr();
-      $oQueryBuilder->select('s.id AS iId, s.name AS sName');
-      $oQueryBuilder->from('Subject', 's');
-      $oQueryBuilder->where('1 = 1');
-      
-      if ( ! empty($sSubjectId)) {
-        $oQueryBuilder->andWhere($oExp->eq('s.id', '?1'));
-        $oQueryBuilder->setParameter(1, $sSubjectId);
-      }
-      
-      if ( ! empty($sSearch)) {
-        $oQueryBuilder->andWhere($oExp->like('s.name', '%?1%'));
-        $oQueryBuilder->setParameter(1, $sSearch);
-      }
-      
-      $oQueryBuilder->orderBy('s.name', 'ASC');
-      
+      $oQueryBuilder->select('DISTINCT(subject)');
+      $oQueryBuilder->from('Lesson', 'l');
+      $oQueryBuilder->orderBy('l.subject', 'ASC');
       $aSubjectList = $oConnection->fetchAll($oQueryBuilder->getSql()); 
       
       $oResponse = new Response(json_encode($aSubjectList));
@@ -583,32 +570,15 @@ class ConfigController extends Controller {
      */
     public function listLessonPlanAction() {
       $oRequest = $this->getRequest();
-      $sSearch = $oRequest->get('sSearch');
-      $sSubjectId = $oRequest->get('iSubjectId');
       
       $oConnection = $this->get('database_connection');
       
-      $sSql = 
-        'SELECT DISTINCT(lp.name) AS sName, lp.id AS iId, ' .
-          's.id AS iSubjectId, s.name AS sSubject ' .
-        'FROM LessonPlan AS lp ' .
-        'LEFT OUTER JOIN Subject_LessonPlan AS s_lp ON (lp.id = s_lp.LessonPlan_id) ' .
-        'LEFT OUTER JOIN Subject AS s ON (s.id = s_lp.Subject_id) ' .
-        'WHERE 1 = 1 ';
-      
-      $aLessonPlanList = array();
-      if ( ! empty($sSubjectId)) {
-        $sSql .= 
-          "AND s.id = '$sSubjectId' ";
-      }
-      
-      if ( ! empty($sSearch)) {
-        $sSql .= "AND lp.name LIKE '%$sSearch%' ";
-      }
-      
-      $sSql .= 'ORDER BY s.name ASC, lp.name ASC';
-      
-      $aLessonPlanList = $oConnection->fetchAll($sSql); 
+      $oQueryBuilder = $oConnection->createQueryBuilder();
+      $oExp = $oQueryBuilder->expr();
+      $oQueryBuilder->select('DISTINCT(lesson_plan)');
+      $oQueryBuilder->from('Lesson', 'l');
+      $oQueryBuilder->orderBy('l.lesson_plan', 'ASC');
+      $aLessonPlanList = $oConnection->fetchAll($oQueryBuilder->getSql()); 
       
       $oResponse = new Response(json_encode($aLessonPlanList));
       
@@ -688,17 +658,12 @@ class ConfigController extends Controller {
     public function listLessonAction() {
       $oRequest = $this->getRequest();
       $sSearch = $oRequest->get('sSearch');
-      $sSubjectId = $oRequest->get('iSubjectId');
-      $sLessonPlanId = $oRequest->get('iLessonPlanId');
-      $bQuestions = $oRequest->get('bQuestions');
       
-      
-      
+      /*
       $oConnection = $this->get('database_connection');
       
       //$aRecordList = array();
       //$oEntityManager = $this->getDoctrine()->getEntityManager();
-      
       $sSql = 
         'SELECT l.id AS iId, l.name AS sName, ' . 
           's.name AS sSubject, s.id AS iSubjectId, ' .
@@ -726,8 +691,33 @@ class ConfigController extends Controller {
       $sSql .= 'ORDER BY s.name ASC, lp.name ASC';
       
       $aLessonList = $oConnection->fetchAll($sSql); 
+      */
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oQueryBuilder = $oEntityManager->createQueryBuilder();
       
-      $oResponse = new Response(json_encode($aLessonList));
+      $aRecordList = null;
+      if (empty($sSearch)) {
+        $aRecordList = $oQueryBuilder
+          ->select('l')
+          ->from('EducationVisualFeedbackBundle:Lesson', 'l')
+          ->getQuery()
+          ->getArrayResult();
+      }
+      else {
+        $aRecordList = $oQueryBuilder
+          ->select('l')
+          ->from('EducationVisualFeedbackBundle:Lesson', 'l')
+          ->where( 
+            $oQueryBuilder->expr()->orX(
+              $oQueryBuilder->expr()->like('l.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')),
+              $oQueryBuilder->expr()->like('l.subject', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')),
+              $oQueryBuilder->expr()->like('l.lesson_plan', $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
+            ))
+          ->getQuery()
+          ->getArrayResult();
+      }
+      
+      $oResponse = new Response(json_encode($aRecordList));
       
       return $oResponse;
        
@@ -739,18 +729,13 @@ class ConfigController extends Controller {
       $oConnection = $this->get('database_connection');
       
       $sSql = 
-        'SELECT l_iq.order_index AS iIndex, ' .
-        'iq.id AS iImageQuestionId, iq.name AS sLabel, iq.text AS sText, ' .
-        'i.filename AS sFileName, f.root_path AS sRootPath, ' .
-        "CONCAT(f.root_path, '/', i.filename) AS sUrl " .
-        'FROM Lesson AS l ' .
-        'LEFT JOIN LessonPlan_Lesson AS lp_l ON (l.id = lp_l.Lesson_id) ' .
-        'LEFT JOIN Lesson_ImageQuestion AS l_iq ON (lp_l.id = l_iq.LessonPlan_Lesson_id) ' .
-        'LEFT JOIN ImageQuestion AS iq ON (iq.id = l_iq.ImageQuestion_id) ' .
-        'LEFT JOIN Image AS i ON (i.id = iq.Image_id) ' .
-        'LEFT JOIN ImageFolder AS f ON (f.id = i.ImageFolder_id) ' .
-        "WHERE l.id = $sId " .
-        'ORDER BY l_iq.order_index';
+        'SELECT q.order_index AS iIndex, i.id AS iImageId, ' .
+        'q.id AS iQuestionId, q.name AS sLabel, q.text AS sText, ' .
+        "CONCAT(i.web_path, '/', i.filename) AS sUrl " .
+        'From Question AS q ' .
+        'LEFT JOIN Image AS i ON (i.id = q.Image_id) ' .
+        "WHERE q.Lesson_id = $sId " .
+        'ORDER BY q.order_index';
       
       $aLessonImageList = $oConnection->fetchAll($sSql); 
       
@@ -763,51 +748,30 @@ class ConfigController extends Controller {
       $oRequest = Request::createFromGlobals();
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       
-      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Subject');
-      $oSubject = $oRepository->find($oRequest->request->get('iSubjectId'));
-      
-      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lessonplan');
-      $oLessonPlan = $oRepository->find($oRequest->request->get('iLessonPlanId'));
-      
-      $oSubjectLessonPlan = new SubjectLessonplan();
-      $oSubjectLessonPlan->setSubject($oSubject);
-      $oSubjectLessonPlan->setLessonplan($oLessonPlan);
-      $oEntityManager->persist($oSubjectLessonPlan);
-      $oEntityManager->flush();
-      
+      $sType = $oRequest->request->get('sType');
       
       $oLesson = new Lesson();
       $oLesson->setName($oRequest->request->get('sName'));
+      $oLesson->setSubject($oRequest->request->get('sSubject'));
+      $oLesson->setLessonPlan($oRequest->request->get('sLessonPlan'));
       $oEntityManager->persist($oLesson);
       $oEntityManager->flush();
-      
-      $oLessonPlanLesson = new LessonplanLesson();
-      $oLessonPlanLesson->setLesson($oLesson);
-      $oLessonPlanLesson->setSubjectLessonplan($oSubjectLessonPlan);
-      $oEntityManager->persist($oLessonPlanLesson);
-      $oEntityManager->flush();
-      
       
       $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
       $aQuestionList = $oRequest->request->get('aQuestionList');
       foreach ($aQuestionList as $aQuestion) {
         $oImage = $oRepository->find($aQuestion['iImageId']);
         
-        $oImageQuestion = new Imagequestion();
-        $oImageQuestion->setName($aQuestion['sText']);
-        $oImageQuestion->setText($aQuestion['sText']);
-        $oImageQuestion->setImage($oImage);
-        $oEntityManager->persist($oImageQuestion);
-        $oEntityManager->flush();
-        
-        $oLessonImageQuestion = new LessonImagequestion();
-        $oLessonImageQuestion->setOrderIndex(intval($aQuestion['iIndex']));
-        $oLessonImageQuestion->setImageQuestion($oImageQuestion);
-        $oLessonImageQuestion->setLessonplanLesson($oLessonPlanLesson);
-        $oEntityManager->persist($oLessonImageQuestion);
+        $oQuestion = new Question();
+        $oQuestion->setOrderIndex(intval($aQuestion['iIndex']));
+        $oQuestion->setName($aQuestion['sText']);
+        $oQuestion->setText($aQuestion['sText']);
+        $oQuestion->setType($sType);
+        $oQuestion->setImage($oImage);
+        $oQuestion->setLesson($oLesson);
+        $oEntityManager->persist($oQuestion);
         $oEntityManager->flush();
       }
-      
       
       $oResponse = new Response(json_encode(array('success' => true)));
       return $oResponse;
@@ -815,10 +779,11 @@ class ConfigController extends Controller {
     public function updateLessonAction() {
       $oRequest = $this->getRequest();
       $aReturn = array();
+      $aReturn['sType'] = $oRequest->get('sType');
       $aReturn['iLessonId'] = intval($oRequest->get('iLessonId'));
       $aReturn['sName'] = $oRequest->get('sName');
-      $aReturn['iSubjectId'] = intval($oRequest->get('iSubjectId'));
-      $aReturn['iLessonPlanId'] = intval($oRequest->get('iLessonPlanId'));
+      $aReturn['sSubject'] = $oRequest->get('sSubject');
+      $aReturn['sLessonPlan'] = $oRequest->get('sLessonPlan');
       
       $aQuestionList = $oRequest->get('aQuestionList');
       
@@ -827,27 +792,15 @@ class ConfigController extends Controller {
         ->getRepository('EducationVisualFeedbackBundle:Lesson')
         ->findOneById($aReturn['iLessonId']);
       
-      $oSubject = $oEntityManager
-        ->getRepository('EducationVisualFeedbackBundle:Subject')
-        ->findOneById($aReturn['iSubjectId']);
-      
+      $oLesson->setName($aReturn['sName']);
+      $oLesson->setSubject($aReturn['sSubject']);
+      $oLesson->setLessonPlan($aReturn['sLessonPlan']);
+      $oEntityManager->persist($oLesson);
+      $oEntityManager->flush();
         
-      $oLessonPlanLesson = $oEntityManager
-        ->getRepository('EducationVisualFeedbackBundle:LessonplanLesson')
-        ->findOneByLesson($aReturn['iLessonId']);
-  
-      /*
-      $aIdList = array();
-      foreach ($aQuestionList as $aQuestion) {
-        $aIdList[] = $aQuestion['iImageQuestionId'];
-      }
-      
-      $sIdList = implode(',', $aIdList);
-      */
-      $iId = $oLessonPlanLesson->getId();
       $sSql = "
-        DELETE FROM Lesson_ImageQuestion 
-        WHERE LessonPlan_Lesson_id = $iId
+        DELETE FROM Question 
+        WHERE Lesson_id = {$aReturn['iLessonId']}
       ";
       
       $oConnection = $this->get('database_connection');
@@ -855,28 +808,18 @@ class ConfigController extends Controller {
       
       
       $oImageRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Image');
-      $oImageQuestionRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Imagequestion');
+      $oQuestionRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Question');
       foreach ($aQuestionList as $aQuestion) {
-        $oImageQuestion = null;
-        if (empty($aQuestion['iImageQuestionId'])) {
-          $oImage = $oImageRepository->find($aQuestion['iImageId']);
-          $oImageQuestion = new Imagequestion();
-          $oImageQuestion->setName($aQuestion['sText']);
-          $oImageQuestion->setText($aQuestion['sText']);
-          $oImageQuestion->setImage($oImage);
-          $oEntityManager->persist($oImageQuestion);
-          $oEntityManager->flush();
-        }
-        else {
-          $oImageQuestion = $oImageQuestionRepository->find($aQuestion['iImageQuestionId']);
-        }
+        $oImage = $oImageRepository->find(intval($aQuestion['iImageId']));
         
-        
-        $oLessonImageQuestion = new LessonImagequestion();
-        $oLessonImageQuestion->setOrderIndex(intval($aQuestion['iIndex']));
-        $oLessonImageQuestion->setImageQuestion($oImageQuestion);
-        $oLessonImageQuestion->setLessonplanLesson($oLessonPlanLesson);
-        $oEntityManager->persist($oLessonImageQuestion);
+        $oQuestion = new Question();
+        $oQuestion->setOrderIndex(intval($aQuestion['iIndex']));
+        $oQuestion->setName($aQuestion['sText']);
+        $oQuestion->setText($aQuestion['sText']);
+        $oQuestion->setType($aReturn['sType']);
+        $oQuestion->setImage($oImage);
+        $oQuestion->setLesson($oLesson);
+        $oEntityManager->persist($oQuestion);
         $oEntityManager->flush();
       }
       
