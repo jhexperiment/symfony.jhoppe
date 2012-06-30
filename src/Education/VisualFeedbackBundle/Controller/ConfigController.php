@@ -16,6 +16,7 @@ use Education\VisualFeedbackBundle\Entity\Pupil;
 use Education\VisualFeedbackBundle\Entity\Lesson;
 use Education\VisualFeedbackBundle\Entity\Setting;
 use Education\VisualFeedbackBundle\Entity\Question;
+use Education\VisualFeedbackBundle\Entity\TutoringSession;
 
 
 class ConfigController extends Controller {
@@ -523,7 +524,43 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-
+    public function updateTutorAction() {
+      $oRequest = $this->getRequest();
+      $aReturn = array();
+      $aReturn['iTutorId'] = intval($oRequest->get('iTutorId'));
+      $aReturn['iImageId'] = intval($oRequest->get('iImageId'));
+      $aReturn['sFirstName'] = $oRequest->get('sFirstName');
+      $aReturn['sMiddleName'] = $oRequest->get('sMiddleName');
+      $aReturn['sLastName'] = $oRequest->get('sLastName');
+      
+      
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oTutor = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Tutor')
+        ->findOneById($aReturn['iTutorId']);
+      
+      $oImage = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Image')
+        ->findOneById($aReturn['iImageId']);
+        
+      
+      $oTutor->setFirstName($aReturn['sFirstName']);
+      $oTutor->setMiddleName($aReturn['sMiddleName']);
+      $oTutor->setLastName($aReturn['sLastName']);
+      $oTutor->setImage($oImage);
+      
+      
+      $oEntityManager->persist($oTutor);
+      $oEntityManager->flush();
+        
+      
+      $aReturn['bSuccess'] = true;
+      
+      $oResponse = new Response(json_encode($aReturn));
+      return $oResponse;
+    }
+   
     
     //Subject
     
@@ -711,7 +748,7 @@ class ConfigController extends Controller {
             $oQueryBuilder->expr()->orX(
               $oQueryBuilder->expr()->like('l.name', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')),
               $oQueryBuilder->expr()->like('l.subject', $oQueryBuilder->expr()->literal('%' . $sSearch . '%')),
-              $oQueryBuilder->expr()->like('l.lesson_plan', $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
+              $oQueryBuilder->expr()->like('l.lessonPlan', $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
             ))
           ->getQuery()
           ->getArrayResult();
@@ -882,71 +919,103 @@ class ConfigController extends Controller {
      * @Route("/config/list/session.{_format}", defaults={"_format"="json"}, requirements={"_format"="json|xml"}, name="_pupil_list")
      */
     public function listSessionAction() {
-      $aItem = array(
-        'id' => '2',
-        'hash' => 'f80ee1084e630c19cf78c04dfbb5350d',
-        'display_content' => 'text',
-        'Pupils_id' => '35',
-        'Tutors_id' => '2',
-        'Lesson_ImageQuestions_id' => '64',
-        'StatusCodes_id' => '1',
-        'pupil_info' => array(
-          'id' => '35',
-          'first_name' => 'pupil5',
-          'middle_name' => '',
-          'last_name' => 'mana',
-          'Images_id' => '1',
-          'icon' => '/bundles/visualfeedback/images/pupil_icons/pupil_default.gif'
-        ),
-        'tutor_info' => array(
-          'id' => '2',
-          'first_name' => 'Seymore',
-          'middle_name' => '',
-          'last_name' => 'Butts',
-          'Images_id' => '21',
-          'icon' => '/bundles/visualfeedback/images/uploads/evilmonkey.jpg'
-        ),
-        'lesson_info' => array(
-          'id' => '8',
-          'name' => 'RadTadTootin',
-          'lesson_name' => 'RadTadTootin',
-          'question_info_list' => array(
-            array(
-            'id' => '61',
-            'name' => null,
-            'text' => 'aligator',
-            'Images_id' => '3',
-            'icon' => '/images/uploads/aligator.jpg'
-            ),
-            array(
-            'id' => '62',
-            'name' => null,
-            'text' => 'tutor',
-            'Images_id' => '2',
-            'icon' => '/bundles/visualfeedback/images/tutor_icons/tutor_default.png'
-            ),
-            array(
-            'id' => '63',
-            'name' => null,
-            'text' => 'tiger',
-            'Images_id' => '6',
-            'icon' => '/bundles/visualfeedback/images/uploads/tiger.jpg'
-            )
+      $oRequest = $this->getRequest();
+      $sSearch = $oRequest->get('sSearch');
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oQueryBuilder = $oEntityManager->createQueryBuilder();
+      
+      $aRecordList = null;
+      if (empty($sSearch)) {
+        $aRecordList = $oQueryBuilder
+          ->select('s')
+          ->from('EducationVisualFeedbackBundle:Tutoringsession', 's')
+          ->getQuery()
+          ->getResult();
+      }
+      else {
+        $aRecordList = $oQueryBuilder
+          ->select('s')
+          ->from('EducationVisualFeedbackBundle:Tutoringsession', 's')
+          ->leftJoin('s.Tutor', 't', 'WITH', 't.name = ' . $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
+          ->leftJoin('s.Pupil', 'p', 'WITH', 'p.name = ' . $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
+          ->leftJoin('s.Lesson', 'l', 'WITH', 'l.name = ' . $oQueryBuilder->expr()->literal('%' . $sSearch . '%'))
+          ->getQuery()
+          ->getResult();
+      }
+      $aSessionList = array();
+      foreach ($aRecordList as $oSession) {
+        $oTutor = $oSession->getTutor();
+        $oTutorIcon = $oTutor->getImage();
+        
+        $oPupil = $oSession->getPupil();
+        $oPupilIcon = $oPupil->getImage();
+        
+        $oLesson = $oSession->getLesson();
+        
+        $aSessionList[] = array(
+          'iSessionId' => $oSession->getId(),
+          'sHash' => $oSession->getHash(),
+          'sStatus' => $oSession->getStatus(),
+          'aTutor' => array(
+            'iTutorId' => $oTutor->getId(),
+            'sFirstName' => $oTutor->getFirstName(),
+            'sMiddleName' => $oTutor->getMiddleName(),
+            'sLastName' => $oTutor->getFirstName(),
+            'sIconUrl' => $oTutorIcon->getWebPath() . '/' . $oTutorIcon->getFilename()
+          ),
+          'aPupil' => array(
+            'iPupilId' => $oPupil->getId(),
+            'sFirstName' => $oPupil->getFirstName(),
+            'sMiddleName' => $oPupil->getMiddleName(),
+            'sLastName' => $oPupil->getFirstName(),
+            'sIconUrl' => $oPupilIcon->getWebPath() . '/' . $oPupilIcon->getFilename()
+          ),
+          'aLesson' => array(
+            'iLessonId' => $oLesson->getId(),
+            'sName' => $oLesson->getName(),
+            'sSubject' => $oLesson->getSubject(),
+            'sLessonPlan' => $oLesson->getLessonPlan()
           )
-        )
-
-      );
-
-      $aList = array(
-        $aItem
-      );
+          
+        );
+      }
       
-      $oResponse = new Response(json_encode($aList));
-      
+      $oResponse = new Response(json_encode($aSessionList));
       
       return $oResponse;
     }
-
+    public function createSessionAction() {
+      $oRequest = Request::createFromGlobals();
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Tutor');
+      $oTutor = $oRepository->findOneById($oRequest->request->get('iTutorId'));
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Pupil');
+      $oPupil = $oRepository->findOneById($oRequest->request->get('iPupilId'));
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Lesson');
+      $oLesson = $oRepository->findOneById($oRequest->request->get('iLessonId'));
+      
+      
+      
+      $oSession = new TutoringSession();
+      $oSession->setHash(uniqid());
+      $oSession->setStatus('New');
+      $oSession->setPupil($oPupil);
+      $oSession->setTutor($oTutor);
+      $oSession->setLesson($oLesson);
+      
+      $oEntityManager->persist($oSession);
+      $oEntityManager->flush();
+      
+      
+      $oResponse = new Response(json_encode(array('success' => true)));
+      return $oResponse;
+    }
+    
+    
     //Setting
     public function listSettingAction() {
       

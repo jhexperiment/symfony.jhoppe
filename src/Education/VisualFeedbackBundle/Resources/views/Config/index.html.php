@@ -44,12 +44,6 @@ foreach ($aPath as $sName => $sValue) {
     <span id="pupil" class="menu-item">
       <span class="text">Pupils</span>
     </span>
-    <span id="subject" class="menu-item state-hide">
-      <span class="text">Subjects</span>
-    </span>
-    <span id="lesson-plan" class="menu-item state-hide">
-      <span class="text">Lesson Plans</span>
-    </span>
     <span id="lesson" class="menu-item">
       <span class="text">Lessons</span>
     </span>
@@ -177,45 +171,6 @@ foreach ($aPath as $sName => $sValue) {
     </div>
   </div>
   
-  <div id="subject" class="view state-hide">
-    <div class="head">
-      <div class="title">Subjects</div>
-    </div>
-    <div class="body">
-      <table class="subject-list">
-        <thead>
-          <tr>
-            <th class="id">ID</th>
-            <th class="subject">Subject</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-        </tbody>
-      </table>
-    </div>
-  </div>
-  
-  <div id="lesson-plan" class="view state-hide">
-    <div class="head">
-      <div class="title">Lesson Plans</div>
-    </div>
-    <div class="body">
-      <table class="lesson-plan-list">
-        <thead>
-          <tr>
-            <th class="id">ID</th>
-            <th class="subject">Subject</th>
-            <th class="lesson-plan">Lesson Plan</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-        </tbody>
-      </table>
-    </div>
-  </div>
-  
   <div id="lesson" class="view state-hide">
     <div class="head">
       <div class="title">Lessons</div>
@@ -226,9 +181,34 @@ foreach ($aPath as $sName => $sValue) {
         <thead>
           <tr>
             <th class="id">ID</th>
-            <th class="subject">Subject</th>
-            <th class="lesson-plan">Lesson Plan</th>
             <th class="lesson">Lesson</th>
+            <th class="lesson-plan">Lesson Plan</th>
+            <th class="subject">Subject</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div id="session" class="view state-hide">
+    <div class="head">
+      <div class="title">Sessions</div>
+      
+    </div>
+    <div class="body">
+      <table class="session-list">
+        <thead>
+          <tr>
+            <th class="id">ID</th>
+            <th class="hash">Hash</th>
+            <th class="tutor-id">Tutor ID</th>
+            <th class="tutor">Tutor</th>
+            <th class="pupil-id">Pupil ID</th>
+            <th class="pupil">Pupil</th>
+            <th class="lesson">lesson</th>
           </tr>
         </thead>
         <tbody>
@@ -266,12 +246,14 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-tutor-popup" class="add-popup add-person-popup state-hide">
   <div class="popup-view-container">
+    <img class='background' src="/bundles/visualfeedback/images/chalkboard.med.png" />
     <div id="top-move-handle" class="move-handle"></div>
     <div id="right-move-handle" class="move-handle"></div>
     <div id="bottom-move-handle" class="move-handle"></div>
     <div id="left-move-handle" class="move-handle"></div>
     <div id="main" class="popup-view">
       <div class="head">
+        <input id="tutor-id" type="hidden" value="" />
         <span id="action">New</span> Tutor
       </div>
       <div class="body">
@@ -337,12 +319,14 @@ foreach ($aPath as $sName => $sValue) {
 
 <div id="add-pupil-popup" class="add-popup add-person-popup state-hide">
   <div class="popup-view-container">
+    <img class='background' src="/bundles/visualfeedback/images/chalkboard.med.png" />
     <div id="top-move-handle" class="move-handle"></div>
     <div id="right-move-handle" class="move-handle"></div>
     <div id="bottom-move-handle" class="move-handle"></div>
     <div id="left-move-handle" class="move-handle"></div>
     <div id="main" class="popup-view">
       <div class="head">
+        <input id="pupil-id" type="hidden" value="" />
         <span id="action">New</span> Pupil
       </div>
       <div class="body">
@@ -405,77 +389,7 @@ foreach ($aPath as $sName => $sValue) {
   </div>
 </div>
 
-<div id="add-subject-popup" class="add-popup state-hide">
-  <div class="popup-view-container">
-    <div id="top-move-handle" class="move-handle"></div>
-    <div id="right-move-handle" class="move-handle"></div>
-    <div id="bottom-move-handle" class="move-handle"></div>
-    <div id="left-move-handle" class="move-handle"></div>
-    
-    <div id="main" class="popup-view">
-      <div class="head">
-        <span id="action">New</span> Subject
-      </div>
-      <div class="body">
-        <div id="name" class="data-item">
-          <span class="label">
-            Name:
-            <sup><span class="red">*</span></sup>
-          </span>
-          <span class="value">
-            <input type="text" value="" />
-          </span>
-        </div>
-      </div>
-      <div class="foot">
-        <span id="cancel-button" class="button">Cancel</span>
-        <span id="create-button" class="button state-hide">Create Subject</span>
-        <span id="update-button" class="button state-hide">Update Subject</span>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div id="add-lesson-plan-popup" class="add-popup state-hide">
-  <div class="popup-view-container">
-    <div id="top-move-handle" class="move-handle"></div>
-    <div id="right-move-handle" class="move-handle"></div>
-    <div id="bottom-move-handle" class="move-handle"></div>
-    <div id="left-move-handle" class="move-handle"></div>
-    <div id="main" class="popup-view">
-      <div class="head">
-        <span id="action">New</span> Lesson Plan
-      </div>
-      <div class="body">
-        <div id="subject" class="data-item">
-          <span class="label">
-            Subject:
-            <sup><span class="red">*</span></sup>
-          </span>
-          <span class="value">
-            <select>
-              
-            </select>
-          </span>
-        </div>
-        <div id="name" class="data-item">
-          <span class="label">
-            Name:
-            <sup><span class="red">*</span></sup>
-          </span>
-          <span class="value">
-            <input type="text" value="" />
-          </span>
-        </div>
-      </div>
-      <div class="foot">
-        <span id="cancel-button" class="button">Cancel</span>
-        <span id="create-button" class="button state-hide">Create Lesson Plan</span>
-        <span id="update-button" class="button state-hide">Update Lesson Plan</span>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div id="add-lesson-popup" class="add-popup state-hide">
   <div class="popup-view-container">
@@ -538,6 +452,67 @@ foreach ($aPath as $sName => $sValue) {
         <span id="cancel-button" class="button">Cancel</span>
         <span id="create-button" class="button state-hide">Create Lesson</span>
         <span id="update-button" class="button state-hide">Update Lesson</span>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<div id="add-session-popup" class="add-popup state-hide">
+  <div class="popup-view-container">
+    <img class='background' src="/bundles/visualfeedback/images/chalkboard.med.large.png" />
+    
+    <div id="top-move-handle" class="move-handle"></div>
+    <div id="right-move-handle" class="move-handle"></div>
+    <div id="bottom-move-handle" class="move-handle"></div>
+    <div id="left-move-handle" class="move-handle"></div>
+    <div id="main" class="popup-view">
+      <div class="head">
+        <input id="session-id" type="hidden" value="" />
+        <span id="action">New</span> Session
+      </div>
+      <div class="body">
+        <table id="tutor-list">
+          <thead>
+            <tr>
+              <th class="title" colspan="2">Tutor</th>
+            </tr>
+            <tr>
+              <th class="id">ID</th>
+              <th class="name">Name</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <table id="pupil-list">
+          <thead>
+            <tr>
+              <th class="title" colspan="2">Pupil</th>
+            </tr>
+            <tr>
+              <th class="id">ID</th>
+              <th class="name">Name</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <table id="lesson-list">
+          <thead>
+            <tr>
+              <th class="title" colspan="2">Lesson</th>
+            </tr>
+            <tr>
+              <th class="id">ID</th>
+              <th class="name">Name</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="foot">
+        <span id="cancel-button" class="button">Cancel</span>
+        <span id="create-button" class="button state-hide">Create Session</span>
+        <span id="update-button" class="button state-hide">Update Session</span>
       </div>
     </div>
   </div>

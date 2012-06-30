@@ -15,6 +15,7 @@ oThisPage = {
   'sAudioUploadFolder': null,
   'sTutorUploadFolder': null,
   'sPupilUploadFolder': null,
+    
   'fnInit': function() {
     oThisPage.sRootWebUrl = $("#root-web-folder").val();
     oThisPage.sImageUploadFolder = $("#image-upload-folder").val();
@@ -190,23 +191,18 @@ oThisPage = {
     $(".main-menu #tutor.menu-item").click(function() {
       $(".sub-menu-container .filter-list").addClass('state-hide');
       
-      oThisPage.fnGetTutorList();
+      oThisPage.fnRenderTutorList();
     });
     $("#tutor.sub-menu #add.menu-item").click(function() {
       var oPopup = $("#add-tutor-popup");
       oPopup.removeClass("state-hide");
       oPopup.find("#create-button").removeClass('state-hide');
+      oPopup.find("#update-button").addClass('state-hide');
+      oPopup.find(".picture img").attr("src", "");
+      oPopup.find("input").val("");
+      
       $.fnCenter(oPopup);
       $(".modal").addClass('state-show');
-      /*
-      oPopup.css('opacity', 0.0);
-      
-      oPopup.animate({
-        'opacity': 1.0
-      }, 1000, function() {
-        //oPopup.removeAttr('style');
-      });
-      */
     });
     $("#add-tutor-popup").draggable({
       'handle': '.move-handle'
@@ -267,7 +263,7 @@ oThisPage = {
                     '<div class="icon">' +
                       '<img src="' + this.sUrl + '" />' +
                     '</div>' + 
-                    '<div class="label">' +
+                    '<div class="label state-hide">' +
                       this.sLabel +
                     '</div>' +
                   '</div>';
@@ -327,13 +323,36 @@ oThisPage = {
       oPopup.find("#image-list.popup-view").addClass("state-hide");
       oPopup.find("#main.popup-view").removeClass("state-hide");
     });
+    $("#add-tutor-popup #main.popup-view .foot #update-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      var aPost = {
+        'iTutorId': oView.find(".head #tutor-id").val(),
+        'iImageId': oView.find(".body #image-id").val(),
+        'sFirstName': oView.find(".body #first-name input").val(),
+        'sMiddleName': oView.find(".body #middle-name input").val(),
+        'sLastName': oView.find(".body #last-name input").val()
+      }
+      $.ajax({
+        'data': aPost,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "update/tutor",
+        'success': function(aData, textStatus, jqXHR) {
+          $(".modal").removeClass('state-show');
+          $("#add-tutor-popup").addClass('state-hide');
+          
+        }
+      });
+    });
     
     
     //Pupil
     $(".main-menu #pupil.menu-item").click(function() {
       $(".sub-menu-container .filter-list").addClass('state-hide');
       
-      oThisPage.fnGetPupilList();
+      oThisPage.fnRenderPupilList();
     });
     $("#pupil.sub-menu #add.menu-item").click(function() {
       var oPopup = $("#add-pupil-popup");
@@ -412,7 +431,7 @@ oThisPage = {
                     '<div class="icon">' +
                       '<img src="' + this.sUrl + '" />' +
                     '</div>' + 
-                    '<div class="label">' +
+                    '<div class="label state-hide">' +
                       this.sLabel +
                     '</div>' +
                   '</div>';
@@ -436,16 +455,9 @@ oThisPage = {
     });
     $("#add-pupil-popup #main.popup-view .foot #cancel-button").click(function() {
       $(".modal").removeClass('state-show');
-      var oPopup = $("#add-pupil-popup");
+      var oPopup = $(this).parents(".add-popup");
       oPopup.addClass('state-hide');
-      /*
-      oPopup.animate({
-        'opacity': 0.0
-      }, 1000, function() {
-        oPopup.addClass("state-hide");
-        oPopup.removeAttr('style');
-      });
-      */
+      
     });
     $("#add-pupil-popup #main.popup-view .foot #create-button").click(function() {
       var oView = $(this).parents(".popup-view");
@@ -473,186 +485,13 @@ oThisPage = {
       oPopup.find("#main.popup-view").removeClass("state-hide");
     });
     
-    //Subject
-    $(".main-menu #subject.menu-item").click(function() {
-      $(".sub-menu-container .filter-list").addClass('state-hide');
-      
-      var aPost = {
-        'sSearch': $(".sub-menu-container .search-bar input").val()
-      }
-      
-      $("#subject.view .body table.subject-list tbody").html("");
-      oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          oThisPage.fnRenderSubjectRow(this);
-        });
-      });
-    });
-    $("#subject.sub-menu #add.menu-item").click(function() {
-      var oPopup = $("#add-subject-popup");
-      oPopup.removeClass("state-hide");
-      oPopup.find("#create-button").removeClass('state-hide');
-      $.fnCenter(oPopup);
-      $(".modal").addClass('state-show');
-      /*
-      oPopup.css('opacity', 0.0);
-      
-      oPopup.animate({
-        'opacity': 1.0
-      }, 1000, function() {
-        //oPopup.removeAttr('style');
-      });
-      */
-    });
-    $("#add-subject-popup #main.popup-view .foot #cancel-button").click(function() {
-      $(".modal").removeClass('state-show');
-      var oPopup = $("#add-subject-popup");
-      oPopup.addClass('state-hide');
-      /*
-      oPopup.animate({
-        'opacity': 0.0
-      }, 1000, function() {
-        oPopup.addClass("state-hide");
-        oPopup.removeAttr('style');
-      });
-      */
-    });
-    $("#add-subject-popup #main.popup-view .foot #create-button").click(function() {
-      var oView = $(this).parents(".popup-view");
-      var oContainer = oView.find(".body");
-      var aData = {
-        'sName' : oContainer.find("#name input").val()
-      }
-      $.ajax({
-        'data': aData,
-        'dataType': 'json',
-        'type': 'POST',
-        'url': "create/subject",
-        'success': function(aData, textStatus, jqXHR) {
-          $(".modal").removeClass('state-show');
-          $("#add-subject-popup").addClass('state-hide');
-        }
-      });
-    });
-    
-    //Lesson Plan
-    $(".main-menu #lesson-plan.menu-item").click(function() {
-      var oFilterList = $(".sub-menu-container .filter-list");
-      oFilterList.removeClass('state-hide');
-      oFilterList.find("#lesson-plan").addClass('state-hide');
-      var sSearch = $(".sub-menu-container .search-bar input").val();
-      $("#lesson-plan.view .body table.lesson-plan-list tbody").html("");
-      var aPost = {
-        'sSearch': sSearch
-      };
-      oThisPage.fnGetLessonPlanList(aPost, function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          oThisPage.fnRenderLessonPlanRow(this);
-        });
-      });
-    });
-    $("#lesson-plan.sub-menu #add.menu-item").click(function() {
-      var oPopup = $("#add-lesson-plan-popup");
-      oPopup.removeClass("state-hide");
-      oPopup.find("#create-button").removeClass('state-hide');
-      $.fnCenter(oPopup);
-      $(".modal").addClass('state-show');
-      /*
-      oPopup.css('opacity', 0.0);
-      
-      oPopup.animate({
-        'opacity': 1.0
-      }, 1000, function() {
-        //oPopup.removeAttr('style');
-      });
-      */
-      
-      var aPost = {
-        
-      };
-      oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
-        var oSelect = $("#add-lesson-plan-popup #main.popup-view .body #subject select");
-        oSelect.html('<option value="">Select</option>');
-        $.each(aData, function() {
-          var sHtml = 
-              '<option value="' + this.iId + '">' + 
-                  this.sName + 
-              '</option>';
-          oSelect.append(sHtml);
-        });
-      });
-    });
-    $("#add-lesson-plan-popup #main.popup-view .foot #cancel-button").click(function() {
-      $(".modal").removeClass('state-show');
-      var oPopup = $("#add-lesson-plan-popup");
-      oPopup.addClass('state-hide');
-      /*
-      oPopup.animate({
-        'opacity': 0.0
-      }, 1000, function() {
-        oPopup.addClass("state-hide");
-        oPopup.removeAttr('style');
-      });
-      */
-    });
-    $("#add-lesson-plan-popup #main.popup-view .foot #create-button").click(function() {
-      var oView = $(this).parents(".popup-view");
-      var oContainer = oView.find(".body");
-      var aData = {
-        'iSubjectId' : oContainer.find("#subject select").val(),
-        'sName' : oContainer.find("#name input").val()
-      }
-      $.ajax({
-        'data': aData,
-        'dataType': 'json',
-        'type': 'POST',
-        'url': "create/lessonPlan",
-        'success': function(aData, textStatus, jqXHR) {
-          $(".modal").removeClass('state-show');
-          $("#add-lesson-plan-popup").addClass('state-hide');
-        }
-      });
-    });
-    
     //Lesson
     $(".main-menu #lesson.menu-item").click(function() {
       var oFilterList = $(".sub-menu-container .filter-list");
       oFilterList.removeClass('state-hide');
       oFilterList.find("#lesson-plan").removeClass('state-hide');
       
-      var aPost = {
-        'sSearch' : $(".sub-menu-container .search-bar input").val()
-      }
-      $("#lesson.view .body table.lesson-list tbody").html("");
-      oThisPage.fnGetLessonList(aPost, function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          oThisPage.fnRenderLessonRow(this);
-        });
-      });
-      
-      aPost = {};
-      oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
-        var oSelect = $(".sub-menu-container .filter-list #subject select");
-        oSelect.html('<option value="">All</option>');
-        $.each(aData, function() {
-          var sHtml = 
-            '<option value="' + this.subject + '">' +
-              this.subject +
-            '</option>';
-          oSelect.append(sHtml);
-        });
-      });
-      oThisPage.fnGetLessonPlanList(aPost, function(aData, textStatus, jqXHR) {
-        var oSelect = $(".sub-menu-container .filter-list #lesson-plan select");
-        oSelect.html('<option value="">All</option>');
-        $.each(aData, function() {
-          var sHtml = 
-            '<option value="' + this.lesson_plan + '">' +
-              this.lesson_plan +
-            '</option>';
-          oSelect.append(sHtml);
-        });
-      });
+      oThisPage.fnRenderLessonTable();
     });
     $("#lesson.sub-menu #add.menu-item").click(function() {
       oThisPage.fnShowLessonPopup();
@@ -695,34 +534,10 @@ oThisPage = {
       }
       
     }).sortable("refresh");
-    /*
-    .droppable({
-      'drop': function( event, ui ) {
-        $(this).find(".drop-message").addClass('state-hide');
-        
-        var draggable = ui.draggable;
-        // append only if dropped from image-list 
-        if (draggable.parent().hasClass("image-list")) {
-          var oImage = draggable.clone();
-          oImage.data("aData", draggable.data("aData"));
-          oThisPage.fnLessonAppendImage(oImage);
-        }
-      }
-    });
-    */
-    //$("#add-lesson-popup .body .selected-images .wrapper").disableSelection();
     $("#add-lesson-popup #main.popup-view .foot #cancel-button").click(function() {
       $(".modal").removeClass('state-show');
-      var oPopup = $("#add-lesson-popup");
+      var oPopup = $(this).parents(".add-popup");
       oPopup.addClass('state-hide');
-      /*
-      oPopup.animate({
-        'opacity': 0.0
-      }, 1000, function() {
-        oPopup.addClass("state-hide");
-        oPopup.removeAttr('style');
-      });
-      */
     });
     $("#add-lesson-popup .body #image-list-label .filter #filter-button").click(function() {
       var oBody = $(this).parents(".body");
@@ -845,13 +660,79 @@ oThisPage = {
         'success': function(aData, textStatus, jqXHR) {
           $(".modal").removeClass('state-show');
           $("#add-lesson-popup").addClass('state-hide');
-          
+          oThisPage.fnRenderLessonTable();
         }
       });
     });
     $("#add-lesson-popup .body .image-list").resizable({
       'handles': "s",
       'alsoResize': "#add-lesson-popup, #add-lesson-popup .body, #add-lesson-popup .popup-view, #add-lesson-popup .background"
+    });
+    
+    //Session
+    $(".main-menu #session.menu-item").click(function() {
+      oThisPage.fnRenderSessionTable();
+    });
+    $("#session.sub-menu #add.menu-item").click(function() {
+      oThisPage.fnShowSessionPopup();
+    });
+    $("#add-session-popup").draggable({
+      'handle': '.move-handle'
+    });
+    $("#add-session-popup #main.popup-view .foot #cancel-button").click(function() {
+      $(".modal").removeClass('state-show');
+      var oPopup = $(this).parents(".add-popup");
+      oPopup.addClass('state-hide');
+      oPopup.find("table tbody").empty();
+    });
+    $("#add-session-popup #main.popup-view .foot #create-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      
+      var aData = {
+        'iTutorId': $.trim(oView.find(".body #tutor-list tr.state-selected td.id").html()),
+        'iPupilId': $.trim(oView.find(".body #pupil-list tr.state-selected td.id").html()),
+        'iLessonId': $.trim(oView.find(".body #lesson-list tr.state-selected td.id").html())
+        
+      }
+      $.ajax({
+        'data': aData,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "create/session",
+        'success': function(aData, textStatus, jqXHR) {
+          $(".modal").removeClass('state-show');
+          $("#add-session-popup").addClass('state-hide');
+        }
+      });
+      
+      
+      
+    });
+    $("#add-session-popup #main.popup-view .foot #update-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      var aPost = {
+        'sType': 'Image Question',
+        'iLessonId': oView.find(".head #lesson-id").val(),
+        'sName': oView.find(".body .input .value input").val(),
+        'sSubject': oView.find(".body .input #subject input").val(),
+        'sLessonPlan': oView.find(".body .input #lesson-plan input").val(),
+        'aQuestionList': oThisPage.fnReadLessonPopupImageList(oView)
+      }
+      $.ajax({
+        'data': aPost,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "update/session",
+        'success': function(aData, textStatus, jqXHR) {
+          $(".modal").removeClass('state-show');
+          $("#add-lesson-popup").addClass('state-hide');
+          oThisPage.fnRenderLessonTable();
+        }
+      });
     });
     
     
@@ -863,7 +744,7 @@ oThisPage = {
       oThisPage.fnUpdateAllSettings();
     });
     
-    
+    // General
     $(".sub-menu-container .search-bar input").keypress(function(event) {
       if (event.keyCode == $.KEY.RETURN) {
         $(this).parents(".search-bar").find(".search-button").click();
@@ -884,24 +765,15 @@ oThisPage = {
         oThisPage.fnGetImageList(sSearch, 'uploads', oThisPage.fnDisplayImageTabImages);
       }
       else if (sId == "tutor") {
-        oThisPage.fnGetTutorList();
+        oThisPage.fnRenderTutorList();
       }
       else if (sId == "lesson") {
-        aPost['iSubjectId'] = oFilterList.find("#subject select").val();
-        aPost['iLessonPlanId'] = oFilterList.find("#lesson-plan select").val();
+        //aPost['iSubjectId'] = oFilterList.find("#subject select").val();
+        //aPost['iLessonPlanId'] = oFilterList.find("#lesson-plan select").val();
         oThisPage.fnGetLessonList(aPost, function(aData, textStatus, jqXHR) {
           $("#lesson.view .body table.lesson-list tbody").html("");
           $.each(aData, function() {
             oThisPage.fnRenderLessonRow(this);
-          });
-        });
-      }
-      else if (sId == "lesson-plan") {
-        aPost['iSubjectId'] = oFilterList.find("#subject select").val();
-        oThisPage.fnGetLessonPlanList(aPost, function(aData, textStatus, jqXHR) {
-          $("#lesson-plan.view .body table.lesson-plan-list tbody").html("");
-          $.each(aData, function() {
-            oThisPage.fnRenderLessonPlanRow(this);
           });
         });
       }
@@ -936,8 +808,9 @@ oThisPage = {
     });
     
     // default to image tab
-    setTimeout('$(".main-menu #lesson.menu-item").click()', 750);
+    setTimeout('$(".main-menu #session.menu-item").click()', 750);
   },
+    
   // General
   'fnPreload': function() {
     var oImg = new Image(16,16);
@@ -974,20 +847,137 @@ oThisPage = {
     return bValid;
   },
   
-  // Lesson
-  'fnGetLessonList': function(sSearch, fnCallback) {
-    var aData = {
-      'sSearch': sSearch
+  // Session
+  'fnShowSessionPopup': function() {
+    var oPopup = $("#add-session-popup");
+    oPopup.find(".head #action").html("Add");
+    oPopup.find(".foot #update-button").addClass("state-hide");
+    oPopup.find(".foot #create-button").removeClass("state-hide");
+    oPopup.find("input, select").val("");
+    oPopup.removeClass("state-hide");
+    $.fnCenter(oPopup);
+    $(".modal").addClass('state-show');
+    
+    var aPost = {
+      'sSearch': ''
     };
     
+    oThisPage.fnGetTutorList(aPost, function(aData, textStatus, jqXHR) {
+      var oPopup = $("#add-session-popup");
+      var oTutorList = oPopup.find("#tutor-list tbody").empty();
+      $.each(aData, function() {
+        var sHtml = 
+          '<tr>' +
+            '<td class="id">' + this.iId + '</td>' +
+            '<td class="name">' + 
+              $.trim(this.sFirstName + ' ' + this.sLastName) + 
+            '</td>' +
+          '</tr>';
+        var oHtml = $(sHtml);
+        oHtml.find("td.name").fnTrackHover().click(function() {
+          var oPopup = $("#add-session-popup");
+          oPopup.find("#tutor-list .state-selected").removeClass('state-selected');
+      
+          $(this).parents("tr").addClass('state-selected');
+        });
+        
+        oTutorList.append(oHtml);
+      });
+      
+      var tmp = '';
+    });
+    
+    oThisPage.fnGetPupilList(aPost, function(aData, textStatus, jqXHR) {
+      var oPopup = $("#add-session-popup");
+      var oTutorList = oPopup.find("#pupil-list tbody").empty();
+      $.each(aData, function() {
+        var sHtml = 
+          '<tr>' +
+            '<td class="id">' + this.iId + '</td>' +
+            '<td class="name">' + 
+              $.trim(this.sFirstName + ' ' + this.sLastName) + 
+            '</td>' +
+          '</tr>';
+        var oHtml = $(sHtml);
+        oHtml.find("td.name").fnTrackHover().click(function() {
+          var oPopup = $("#add-session-popup");
+          oPopup.find("#pupil-list .state-selected").removeClass('state-selected');
+      
+          $(this).parents("tr").addClass('state-selected');
+        });
+        oTutorList.append(oHtml);
+      });
+      
+      var tmp = '';
+    });
+    
+    oThisPage.fnGetLessonList(aPost, function(aData, textStatus, jqXHR) {
+      var oPopup = $("#add-session-popup");
+      var oTutorList = oPopup.find("#lesson-list tbody").empty();
+      
+      $.each(aData, function() {
+        var sHtml = 
+          '<tr>' +
+            '<td class="id">' + this.id + '</td>' +
+            '<td class="name">' + 
+              this.name + 
+            '</td>' +
+          '</tr>';
+        var oHtml = $(sHtml);
+        oHtml.find("td.name").fnTrackHover().click(function() {
+          var oPopup = $("#add-session-popup");
+          oPopup.find("#lesson-list .state-selected").removeClass('state-selected');
+      
+          $(this).parents("tr").addClass('state-selected');
+        });
+        oTutorList.append(oHtml);
+      });
+      
+      var tmp = '';
+    });
+  },
+  'fnGetSessionList': function(aPost, fnCallback) {
     $.ajax({
-      'data': aData,
+      'data': aPost,
       'dataType': 'json',
       'type': 'POST',
-      'url': "list/lesson.json",
+      'url': "list/session.json",
       'success': fnCallback
     });
   },
+  'fnRenderSessionTable': function() {
+    var aPost = {
+      'sSearch' : $(".sub-menu-container .search-bar input").val()
+    }
+    $("#session.view .body table.session-list tbody").html("");
+    oThisPage.fnGetSessionList(aPost, function(aData, textStatus, jqXHR) {
+      $.each(aData, function() {
+        oThisPage.fnRenderSessionRow(this);
+      });
+    });
+  },
+  'fnRenderSessionRow': function(aSession) {
+    var sHtml = 
+        '<tr>' + 
+          '<td class="id">' + aSession.iSessionId + '</td>' +
+          '<td class="hash">' + aSession.sHash + '</td>' +
+          '<td class="tutor-id">' + aSession.aTutor.iTutorId + '</td>' +
+          '<td class="tutor">' + 
+            $.trim(aSession.aTutor.sFirstName + ' ' + aSession.aTutor.sLastName) + 
+          '</td>' +
+          '<td class="pupil-id">' + aSession.aPupil.iPupilId + '</td>' +
+          '<td class="pupil">' +  
+            $.trim(aSession.aPupil.sFirstName + ' ' + aSession.aPupil.sLastName) + 
+          '</td>' +
+          '<td class="lesson">' + aSession.aLesson.sName + '</td>' +
+        '</tr>';
+    var oHtml = $(sHtml);
+    
+    $("#session.view .body table.session-list tbody").append(oHtml);
+  },
+  
+  
+  // Lesson
   'fnReorderLessonImages': function(oImage) {
     if ($.fnIsEmpty(oImage)) {
       return false;
@@ -1050,46 +1040,7 @@ oThisPage = {
     oPopup.find("#create-button").removeClass('state-hide');
     $.fnCenter(oPopup);
     $(".modal").addClass('state-show');
-    /*
-    oPopup.css('opacity', 0.0);
     
-    oPopup.animate({
-      'opacity': 1.0
-    }, 1000, function() {
-      //oPopup.removeAttr('style');
-    });
-    */
-    
-    //$("#add-lesson-popup .body .image-list").html("");
-    /*
-    var aPost = {};
-    oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
-      var oSelect = $("#add-lesson-popup .body .input #subject select");
-      oSelect.html('<option value="">Select</option>');
-      $.each(aData, function() {
-        var sSelected = '';
-        if ( ! $.fnIsEmpty(oThisPage.aTmpData) && ! $.fnIsEmpty(oThisPage.aTmpData.iSubjectId)) {
-          if (oThisPage.aTmpData.iSubjectId == this.iId) {
-            sSelected = 'selected="selected"';
-          }
-        }
-        
-        var sHtml = 
-            '<option value="' + this.iId + '" ' + sSelected + '>' + 
-               this.sName +
-            '</option>';
-        var oHtml = $(sHtml);
-        
-        oSelect.append(oHtml);
-      });
-      
-      oSelect.change();
-      
-      if ( ! $.fnIsEmpty(oThisPage.aTmpData)) {
-        oThisPage.aTmpData.iSubjectId = null;
-      }
-    });
-    */
     var sSearch = $(".sub-menu-container .search-bar input").val();
     oThisPage.fnGetImageList(sSearch, 'uploads', function(aData, textStatus, jqXHR) {
       var oImageList = $("#add-lesson-popup .body .image-list");
@@ -1143,13 +1094,13 @@ oThisPage = {
     var sHtml = 
         '<tr>' + 
           '<td class="id">' + aLesson.id + '</td>' +
-          '<td class="subject">' + aLesson.subject + '</td>' +
-          '<td class="lesson-plan">' +  aLesson.lessonPlan + '</td>' +
           '<td class="lesson">' +
             '<span class="text">' + 
               aLesson.name +
             '</span>' + 
           '</td>' +
+          '<td class="lesson-plan">' +  aLesson.lessonPlan + '</td>' +
+          '<td class="subject">' + aLesson.subject + '</td>' +
         '</tr>';
     var oHtml = $(sHtml);
     oHtml.find(".lesson .text").hover(
@@ -1238,6 +1189,41 @@ oThisPage = {
     iWidth += parseInt(oImage.css("margin-right").replace('px', ''));
     var iCount = oSelectedImages.find(".image").length;
     oSelectedImages.width(iWidth * (iCount + 2));
+  },
+  'fnRenderLessonTable': function() {
+    var aPost = {
+      'sSearch' : $(".sub-menu-container .search-bar input").val()
+    }
+    $("#lesson.view .body table.lesson-list tbody").html("");
+    oThisPage.fnGetLessonList(aPost, function(aData, textStatus, jqXHR) {
+      $.each(aData, function() {
+        oThisPage.fnRenderLessonRow(this);
+      });
+    });
+    
+    aPost = {};
+    oThisPage.fnGetSubjectList(aPost, function(aData, textStatus, jqXHR) {
+      var oSelect = $(".sub-menu-container .filter-list #subject select");
+      oSelect.html('<option value="">All</option>');
+      $.each(aData, function() {
+        var sHtml = 
+          '<option value="' + this.subject + '">' +
+            this.subject +
+          '</option>';
+        oSelect.append(sHtml);
+      });
+    });
+    oThisPage.fnGetLessonPlanList(aPost, function(aData, textStatus, jqXHR) {
+      var oSelect = $(".sub-menu-container .filter-list #lesson-plan select");
+      oSelect.html('<option value="">All</option>');
+      $.each(aData, function() {
+        var sHtml = 
+          '<option value="' + this.lesson_plan + '">' +
+            this.lesson_plan +
+          '</option>';
+        oSelect.append(sHtml);
+      });
+    });
   },
   
   // Image
@@ -1339,6 +1325,7 @@ oThisPage = {
     });
   },
   
+  // Settings
   'fnUpdateAllSettings': function() {
     var aItemList = $("#setting.view .body .setting-item");
     var aSettingList = {};
@@ -1367,18 +1354,6 @@ oThisPage = {
   },
   
   // Subject
-  'fnRenderSubjectRow': function(aSubject) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aSubject.iId + '</td>' +
-          '<td class="subject">' +
-            aSubject.sName + 
-          '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    
-    $("#subject.view .body table.subject-list tbody").append(oHtml);
-  },
   'fnGetSubjectList': function(aPost, fnCallback) {
     $.ajax({
       'data': aPost,
@@ -1390,22 +1365,6 @@ oThisPage = {
   },
   
   // LessonPlan
-  'fnRenderLessonPlanRow': function(aLessonPlan) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aLessonPlan.iId + '</td>' +
-          '<td class="subject">' +
-            '<input type="hidden" value="' + aLessonPlan.iSubjectId + '" />' +
-            aLessonPlan.sSubject + 
-          '</td>' +
-          '<td class="lesson-plan">' + 
-            aLessonPlan.sName + 
-          '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    
-    $("#lesson-plan.view .body table.lesson-plan-list tbody").append(oHtml);
-  },
   'fnGetLessonPlanList': function(aPost, fnCallback) {
     
     $.ajax({
@@ -1418,94 +1377,101 @@ oThisPage = {
   },
   
   // Pupil
-  'fnGetPupilList': function() {
+  'fnRenderPupilList': function() {
     $("#pupil.view .body .pupil-list").html("");
     
-    var aData = {
+    var aPost = {
       'sSearch': $(".sub-menu-container .search-bar input").val()
     };
     
+    oThisPage.fnGetPupilList(aPost, function(aData, textStatus, jqXHR) {
+      $.each(aData, function() {
+        var sHtml = 
+            '<div class="image">' + 
+              '<div class="icon">' +
+                '<img src="' + this.sImageUrl + '" />' +
+              '</div>' + 
+              '<div class="label">' +
+                $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
+              '</div>' +
+            '</div>';
+        var oHtml = $(sHtml);
+        oHtml.data("aData", this);
+        oHtml.click(function() {
+          var aData = $(this).data("aData");
+          var oPopup = $("#add-pupil-popup");
+          $(".modal").addClass('state-show');
+          oPopup.removeClass('state-hide');
+          oPopup.find(".head #action").html("Edit");
+          oPopup.find("#create-button").addClass("state-hide");
+          oPopup.find("#update-button").removeClass("state-hide");
+          oPopup.find(".picture img").attr('src', aData.sImageUrl);
+          oPopup.find(".picture #image-id").val(aData.iImageId);
+          oPopup.find("#first-name input").val(aData.sFirstName);
+          oPopup.find("#middle-name input").val(aData.sMiddleName);
+          oPopup.find("#last-name input").val(aData.sLastName);
+        });
+        $("#pupil.view .body .pupil-list").append(oHtml);
+      });
+    });   
+  },
+  'fnGetPupilList': function(aPost, fnCallback) {
     $.ajax({
-      'data': aData,
+      'data': aPost,
       'dataType': 'json',
       'type': 'POST',
       'url': "list/pupil.json",
-      'success': function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          var sHtml = 
-              '<div class="image">' + 
-                '<div class="icon">' +
-                  '<img src="' + this.sImageUrl + '" />' +
-                '</div>' + 
-                '<div class="label">' +
-                  $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
-                '</div>' +
-              '</div>';
-          var oHtml = $(sHtml);
-          oHtml.data("aData", this);
-          oHtml.click(function() {
-            var aData = $(this).data("aData");
-            var oPopup = $("#add-pupil-popup");
-            $(".modal").addClass('state-show');
-            oPopup.removeClass('state-hide');
-            oPopup.find(".head #action").html("Edit");
-            oPopup.find("#create-button").addClass("state-hide");
-            oPopup.find("#update-button").removeClass("state-hide");
-            oPopup.find(".picture img").attr('src', aData.sImageUrl);
-            oPopup.find(".picture #image-id").val(aData.iImageId);
-            oPopup.find("#first-name input").val(aData.sFirstName);
-            oPopup.find("#middle-name input").val(aData.sMiddleName);
-            oPopup.find("#last-name input").val(aData.sLastName);
-          });
-          $("#pupil.view .body .pupil-list").append(oHtml);
-        });
-      }
+      'success': fnCallback
     });
   },
   
   // Tutor
-  'fnGetTutorList': function() {
+  'fnRenderTutorList': function() {
     $("#tutor.view .body .tutor-list").html("");
     
-    var aData = {
+    var aPost = {
       'sSearch': $(".sub-menu-container .search-bar input").val()
     };
     
+    oThisPage.fnGetTutorList(aPost, function(aData, textStatus, jqXHR) {
+      $.each(aData, function() {
+        var sHtml = 
+            '<div class="tutor image">' + 
+              '<div class="icon">' +
+                '<img src="' + this.sImageUrl + '" />' +
+              '</div>' + 
+              '<div class="label">' +
+                $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
+              '</div>' +
+            '</div>';
+        var oHtml = $(sHtml);
+        oHtml.data("aData", this);
+        oHtml.click(function() {
+          var aData = $(this).data("aData");
+          var oPopup = $("#add-tutor-popup");
+          $(".modal").addClass('state-show');
+          oPopup.removeClass('state-hide');
+          oPopup.find(".head #action").html("Edit");
+          oPopup.find(".head #tutor-id").val(aData.iId);
+          oPopup.find("#create-button").addClass("state-hide");
+          oPopup.find("#update-button").removeClass("state-hide");
+          oPopup.find(".picture img").attr('src', aData.sImageUrl);
+          oPopup.find(".picture #image-id").val(aData.iImageId);
+          oPopup.find("#first-name input").val(aData.sFirstName);
+          oPopup.find("#middle-name input").val(aData.sMiddleName);
+          oPopup.find("#last-name input").val(aData.sLastName);
+        });
+        $("#tutor.view .body .tutor-list").append(oHtml);
+      });
+    });
+  },
+  'fnGetTutorList': function(aPost, fnCallback) {
     $.ajax({
-      'data': aData,
+      'data': aPost,
       'dataType': 'json',
       'type': 'POST',
       'url': "list/tutor.json",
-      'success': function(aData, textStatus, jqXHR) {
-        $.each(aData, function() {
-          var sHtml = 
-              '<div class="image">' + 
-                '<div class="icon">' +
-                  '<img src="' + this.sImageUrl + '" />' +
-                '</div>' + 
-                '<div class="label">' +
-                  $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
-                '</div>' +
-              '</div>';
-          var oHtml = $(sHtml);
-          oHtml.data("aData", this);
-          oHtml.click(function() {
-            var aData = $(this).data("aData");
-            var oPopup = $("#add-tutor-popup");
-            $(".modal").addClass('state-show');
-            oPopup.removeClass('state-hide');
-            oPopup.find(".head #action").html("Edit");
-            oPopup.find("#create-button").addClass("state-hide");
-            oPopup.find("#update-button").removeClass("state-hide");
-            oPopup.find(".picture img").attr('src', aData.sImageUrl);
-            oPopup.find(".picture #image-id").val(aData.iImageId);
-            oPopup.find("#first-name input").val(aData.sFirstName);
-            oPopup.find("#middle-name input").val(aData.sMiddleName);
-            oPopup.find("#last-name input").val(aData.sLastName);
-          });
-          $("#tutor.view .body .tutor-list").append(oHtml);
-        });
-      }
+      'success': fnCallback
     });
   },
   

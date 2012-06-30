@@ -9,6 +9,16 @@ var oMain = {
       'hide': function() {
         return this.css('display', 'none');
       },
+      'fnTrackHover': function() {
+        return this.hover(
+          function() {
+            $(this).addClass('state-hover');
+          },
+          function() {
+            $(this).removeClass('state-hover');
+          }
+        );
+      },
       /**
        * $("<css>").fnAllowOnlyNumberKeys()
        * 
