@@ -1,5 +1,6 @@
-/web/bundles/visualfeedback/images/uploads/
-/web/bundles/visualfeedback/images/tutor_icons/
+/web/bundles/visualfeedback/images/uploads/*
+/web/bundles/visualfeedback/images/tutor_icons/*
+/web/bundles/visualfeedback/images/pupil_icons/*
 /web/bundles/acmedemo/
 /web/bundels/framework/
 /web/bundels/sensiodistribution/

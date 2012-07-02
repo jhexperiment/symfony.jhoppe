@@ -225,9 +225,11 @@ oThisPage = {
         var tmp = '';
       },
       'onUploadSuccess' : function(aFile, aData) {
-        var tmp = '';
-        var sUrl = oThisPage.sRootWebUrl + oThisPage.sTutorUploadFolder + '/' + aFile.name;
-        $("#add-tutor-popup #main.popup-view .body .left .picture img").attr("src", sUrl);
+        aData = eval('(' + aData + ')');
+        //var sUrl = oThisPage.sRootWebUrl + oThisPage.sTutorUploadFolder + '/' + aFile.name;
+        var oPicture = $("#add-tutor-popup #main.popup-view .body .left .picture");
+        oPicture.find("#image-id").val(aData.iId);
+        oPicture.find("img").attr("src", aData.sUrl);
       },
       'onUploadError' : function(event, ID, fileObj, errorObj) {
         var tmp = '';
@@ -393,9 +395,11 @@ oThisPage = {
         var tmp = '';
       },
       'onUploadSuccess' : function(aFile, aData) {
-        var tmp = '';
-        var sUrl = oThisPage.sRootWebUrl + oThisPage.sPupilUploadFolder + '/' + aFile.name;
-        $("#add-pupil-popup #main.popup-view .body .left .picture img").attr("src", sUrl);
+        aData = eval('(' + aData + ')');
+        //var sUrl = oThisPage.sRootWebUrl + oThisPage.sPupilUploadFolder + '/' + aFile.name;
+        var oPicture = $("#add-pupil-popup #main.popup-view .body .left .picture");
+        oPicture.find("#image-id").val(aData.iId);
+        oPicture.find("img").attr("src", aData.sUrl);
       },
       'onUploadError' : function(event, ID, fileObj, errorObj) {
         var tmp = '';
