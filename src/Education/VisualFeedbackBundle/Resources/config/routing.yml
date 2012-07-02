@@ -167,7 +167,7 @@ report_index2:
     pattern:  /report/index
     defaults: { _controller: EducationVisualFeedbackBundle:Report:index }
 
-pupil_session_list:
+report_session_list:
     pattern:  /report/list/session.{_format}
     defaults: { _controller: EducationVisualFeedbackBundle:Config:listSession }
 
