@@ -16,7 +16,7 @@ use Education\VisualFeedbackBundle\Entity\Pupil;
 use Education\VisualFeedbackBundle\Entity\Lesson;
 use Education\VisualFeedbackBundle\Entity\Setting;
 use Education\VisualFeedbackBundle\Entity\Question;
-use Education\VisualFeedbackBundle\Entity\TutoringSession;
+use Education\VisualFeedbackBundle\Entity\Tutoringsession;
 
 
 class ConfigController extends Controller {
