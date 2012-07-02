@@ -132,7 +132,7 @@ class ConfigController extends Controller {
         $oEntityManager->flush();
         
         $aReturn = array(
-          'sUrl' => $sReturn,
+          'sUrl' => "/$sReturn",
           'iId' => $oImage->getId()
         );
         
