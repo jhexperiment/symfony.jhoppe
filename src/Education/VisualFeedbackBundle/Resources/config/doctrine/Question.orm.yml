@@ -39,15 +39,6 @@ Education\VisualFeedbackBundle\Entity\Question:
         Image_id:
           referencedColumnName: id
       orphanRemoval: false
-    lesson:
-      targetEntity: Lesson
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        Lesson_id:
-          referencedColumnName: id
-      orphanRemoval: false
     audio:
       targetEntity: Audio
       cascade: {  }
@@ -57,13 +48,13 @@ Education\VisualFeedbackBundle\Entity\Question:
         Audio_id:
           referencedColumnName: id
       orphanRemoval: false
-    pupilanswer:
-      targetEntity: Pupilanswer
+    lesson:
+      targetEntity: Lesson
       cascade: {  }
       mappedBy: null
       inversedBy: null
       joinColumns:
-        PupilAnswer_id:
+        Lesson_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

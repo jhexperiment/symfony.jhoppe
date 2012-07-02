@@ -138,4 +138,58 @@ pupil_index:
     pattern:  /pupil/index
     defaults: { _controller: EducationVisualFeedbackBundle:Pupil:index }
 
+pupil_lesson_index:
+    pattern:  /pupil/lesson
+    defaults: { _controller: EducationVisualFeedbackBundle:Pupil:lesson }
+
+pupil_session_list:
+    pattern:  /pupil/list/session.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listSession }
+
+pupil_session_get:
+    pattern:  /pupil/get/session.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:getSession }
+
+pupil_navigate:
+    pattern:  /pupil/navigate
+    defaults: { _controller: EducationVisualFeedbackBundle:Pupil:navigateSession }
+
+pupil_answer:
+    pattern:  /pupil/answer
+    defaults: { _controller: EducationVisualFeedbackBundle:Pupil:answer }
+
+
+report_index:
+    pattern:  /report/
+    defaults: { _controller: EducationVisualFeedbackBundle:Report:index }
+
+report_index2:
+    pattern:  /report/index
+    defaults: { _controller: EducationVisualFeedbackBundle:Report:index }
+
+pupil_session_list:
+    pattern:  /report/list/session.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listSession }
+
+report_lesson_list:
+    pattern:  /report/list/lesson.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listLesson }
+
+report_subject_list:
+    pattern:  /report/list/subject.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listSubject }
+
+report_lesson_plan_list:
+    pattern:  /report/list/lessonplan.{_format}
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:listLessonPlan }
+
+
+
+
+
+
+
+
+
+
 

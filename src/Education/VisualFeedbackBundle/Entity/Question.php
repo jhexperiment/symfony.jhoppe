@@ -15,6 +15,11 @@ class Question
     private $id;
 
     /**
+     * @var integer $orderIndex
+     */
+    private $orderIndex;
+
+    /**
      * @var string $name
      */
     private $name;
@@ -35,11 +40,6 @@ class Question
     private $image;
 
     /**
-     * @var Education\VisualFeedbackBundle\Entity\Lesson
-     */
-    private $lesson;
-
-    /**
      * @var Education\VisualFeedbackBundle\Entity\Audio
      */
     private $audio;
@@ -48,6 +48,11 @@ class Question
      * @var Education\VisualFeedbackBundle\Entity\Pupilanswer
      */
     private $pupilanswer;
+
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Lesson
+     */
+    private $lesson;
 
 
     /**
@@ -58,6 +63,26 @@ class Question
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set orderIndex
+     *
+     * @param integer $orderIndex
+     */
+    public function setOrderIndex($orderIndex)
+    {
+        $this->orderIndex = $orderIndex;
+    }
+
+    /**
+     * Get orderIndex
+     *
+     * @return integer 
+     */
+    public function getOrderIndex()
+    {
+        return $this->orderIndex;
     }
 
     /**
@@ -141,26 +166,6 @@ class Question
     }
 
     /**
-     * Set lesson
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Lesson $lesson
-     */
-    public function setLesson(\Education\VisualFeedbackBundle\Entity\Lesson $lesson)
-    {
-        $this->lesson = $lesson;
-    }
-
-    /**
-     * Get lesson
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Lesson 
-     */
-    public function getLesson()
-    {
-        return $this->lesson;
-    }
-
-    /**
      * Set audio
      *
      * @param Education\VisualFeedbackBundle\Entity\Audio $audio
@@ -199,54 +204,24 @@ class Question
     {
         return $this->pupilanswer;
     }
-    /**
-     * @var integer $index
-     */
-    private $index;
-
 
     /**
-     * Set index
+     * Set lesson
      *
-     * @param integer $index
+     * @param Education\VisualFeedbackBundle\Entity\Lesson $lesson
      */
-    public function setIndex($index)
+    public function setLesson(\Education\VisualFeedbackBundle\Entity\Lesson $lesson)
     {
-        $this->index = $index;
+        $this->lesson = $lesson;
     }
 
     /**
-     * Get index
+     * Get lesson
      *
-     * @return integer 
+     * @return Education\VisualFeedbackBundle\Entity\Lesson 
      */
-    public function getIndex()
+    public function getLesson()
     {
-        return $this->index;
-    }
-    /**
-     * @var integer $orderIndex
-     */
-    private $orderIndex;
-
-
-    /**
-     * Set orderIndex
-     *
-     * @param integer $orderIndex
-     */
-    public function setOrderIndex($orderIndex)
-    {
-        $this->orderIndex = $orderIndex;
-    }
-
-    /**
-     * Get orderIndex
-     *
-     * @return integer 
-     */
-    public function getOrderIndex()
-    {
-        return $this->orderIndex;
+        return $this->lesson;
     }
 }

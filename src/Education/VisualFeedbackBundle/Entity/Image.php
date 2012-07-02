@@ -20,6 +20,11 @@ class Image
     private $label;
 
     /**
+     * @var string $type
+     */
+    private $type;
+
+    /**
      * @var string $filename
      */
     private $filename;
@@ -63,6 +68,26 @@ class Image
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
@@ -123,30 +148,5 @@ class Image
     public function getWebPath()
     {
         return $this->webPath;
-    }
-    /**
-     * @var string $type
-     */
-    private $type;
-
-
-    /**
-     * Set type
-     *
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * Get type
-     *
-     * @return string 
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 }

@@ -925,6 +925,8 @@ class ConfigController extends Controller {
       $oEntityManager = $this->getDoctrine()->getEntityManager();
       $oQueryBuilder = $oEntityManager->createQueryBuilder();
       
+      
+      
       $aRecordList = null;
       if (empty($sSearch)) {
         $aRecordList = $oQueryBuilder
@@ -943,6 +945,9 @@ class ConfigController extends Controller {
           ->getQuery()
           ->getResult();
       }
+      
+      
+      
       $aSessionList = array();
       foreach ($aRecordList as $oSession) {
         $oTutor = $oSession->getTutor();
@@ -953,22 +958,96 @@ class ConfigController extends Controller {
         
         $oLesson = $oSession->getLesson();
         
+        $iCurrentQuestion = $oSession->getCurrentQuestion();
+        
+        $oQueryBuilder = $oEntityManager->createQueryBuilder();
+        $aList = $oQueryBuilder
+          ->select('q')
+          ->from('EducationVisualFeedbackBundle:Question', 'q')
+          ->where("q.lesson = :lesson")
+          ->setParameter('lesson', $oLesson->getId())
+          ->getQuery()
+          ->getResult();
+          
+        $aCurrentQuestion = null;
+        $aPercentList = array(
+          'aImage' => array(
+            'iCorrect' => 0,
+            'iIncorrect' => 0,
+            'iSkipped' => 0
+          ),
+          'aText' => array(
+            'iCorrect' => 0,
+            'iIncorrect' => 0,
+            'iSkipped' => 0
+          )
+        );
+        $aQuestionList = array();
+        foreach ($aList as $oQuestion) {
+          $oQueryBuilder = $oEntityManager->createQueryBuilder();
+          $aAnswerList = $oQueryBuilder
+            ->select('a')
+            ->from('EducationVisualFeedbackBundle:Pupilanswer', 'a')
+            ->where("a.tutoringsession = :tutoring_session")
+            ->andWhere("a.question = :question")
+            ->setParameter('tutoring_session', $oSession->getId())
+            ->setParameter('question', $oQuestion->getId())
+            ->getQuery()
+            ->getResult();
+          
+          $oAnswer = null;
+          $sImageAnswer = '';
+          $sTextAnswer = '';
+          if ( ! empty($aAnswerList)) {
+            $oAnswer = $aAnswerList[0];
+            $sImageAnswer = $oAnswer->getImageAnswer();
+            $sTextAnswer = $oAnswer->getTextAnswer();
+          }
+           
+          $aPercentList['aImage']['iCorrect'] += ($sImageAnswer == 'yes') ? 1 : 0;
+          $aPercentList['aImage']['iIncorrect'] += ($sImageAnswer == 'no') ? 1 : 0;
+          $aPercentList['aImage']['iSkipped'] += ($sImageAnswer == '') ? 1 : 0;
+          
+          $aPercentList['aText']['iCorrect'] += ($sTextAnswer == 'yes') ? 1 : 0;
+          $aPercentList['aText']['iIncorrect'] += ($sTextAnswer == 'no') ? 1 : 0;
+          $aPercentList['aText']['iSkipped'] += ($sTextAnswer == '') ? 1 : 0;
+                   
+          $oQuestionIcon = $oQuestion->getImage();
+          $aQuestion = array(
+            'iQuestionId' => $oQuestion->getId(),
+            'iOrderIndex' => $oQuestion->getOrderIndex(),
+            'sIconUrl' => $oQuestionIcon->getWebPath() . '/' . $oQuestionIcon->getFilename(),
+            'sText' => $oQuestion->getText(),
+            'sImageAnswer' => empty($sImageAnswer) ? '&nbsp;' : $sImageAnswer,
+            'sTextAnswer' => empty($sTextAnswer) ? '&nbsp;' : $sTextAnswer
+          );
+          
+          if ($aQuestion['iOrderIndex'] == $iCurrentQuestion) {
+            $aCurrentQuestion = $aQuestion;
+          }
+          
+          $aQuestionList[] = $aQuestion;
+        }
+        
         $aSessionList[] = array(
           'iSessionId' => $oSession->getId(),
           'sHash' => $oSession->getHash(),
           'sStatus' => $oSession->getStatus(),
+          'aCurrentQuestion' => $aCurrentQuestion,
+          'aQuestionList' => $aQuestionList,
+          'aPercentList' => $aPercentList,
           'aTutor' => array(
             'iTutorId' => $oTutor->getId(),
             'sFirstName' => $oTutor->getFirstName(),
             'sMiddleName' => $oTutor->getMiddleName(),
-            'sLastName' => $oTutor->getFirstName(),
+            'sLastName' => $oTutor->getLastName(),
             'sIconUrl' => $oTutorIcon->getWebPath() . '/' . $oTutorIcon->getFilename()
           ),
           'aPupil' => array(
             'iPupilId' => $oPupil->getId(),
             'sFirstName' => $oPupil->getFirstName(),
             'sMiddleName' => $oPupil->getMiddleName(),
-            'sLastName' => $oPupil->getFirstName(),
+            'sLastName' => $oPupil->getLastName(),
             'sIconUrl' => $oPupilIcon->getWebPath() . '/' . $oPupilIcon->getFilename()
           ),
           'aLesson' => array(
@@ -1014,7 +1093,120 @@ class ConfigController extends Controller {
       $oResponse = new Response(json_encode(array('success' => true)));
       return $oResponse;
     }
-    
+    public function getSessionAction() {
+      $oRequest = $this->getRequest();
+      $sHash = $oRequest->get('sHash');
+      $iCurrentQuestion = intval($oRequest->get('iCurrentQuestion'));
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oQueryBuilder = $oEntityManager->createQueryBuilder();
+      
+      $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Tutoringsession');
+      $oSession = $oRepository->findOneByHash($sHash);
+      
+     
+      
+      /*  
+      $bContinue = true;
+      do {
+        $oSession = $oRepository->findOneByHash($sHash);
+        $bContinue = ($oSession->getCurrentQuestion() == $iCurrentQuestion);
+        sleep(1);
+      } while ($bContinue);
+      
+      $bContinue = true;
+      $iCounter = 0;
+      $atmp = array();
+      while ($bContinue) {
+        //$oEntityManager->flush();
+        //$oSession = $oRepository->findOneByHash($sHash);
+       
+        $aRecordList = $oQueryBuilder
+          ->select('s')
+          ->from('EducationVisualFeedbackBundle:Tutoringsession', 's')
+          ->where("s.hash = '{$sHash}'")
+          ->getQuery()
+          ->getResult();
+        
+        $oSession = $aRecordList[0];
+        
+        $iSessionQuestion = $oSession->getCurrentQuestion();
+        $atmp[] = "{$iCounter} - {$iSessionQuestion}";
+        if ($iSessionQuestion != $iCurrentQuestion) {
+          $bContinue = false;
+        }
+        
+        if ($iCounter > 20) {
+          $bContinue = false;
+        }
+        
+        $iCounter++;
+        //sleep(1);
+        usleep(500000);
+      }
+      */
+      $aSession = null;
+      if ($oSession->getCurrentQuestion() != $iCurrentQuestion) {
+          
+        $oTutor = $oSession->getTutor();
+        $oTutorIcon = $oTutor->getImage();
+        
+        $oPupil = $oSession->getPupil();
+        $oPupilIcon = $oPupil->getImage();
+        
+        $oLesson = $oSession->getLesson();
+        
+        
+        
+        $oQuestion = $oQueryBuilder
+          ->select('q')
+          ->from('EducationVisualFeedbackBundle:Question', 'q')
+          ->where("q.lesson = :lesson")
+          ->andWhere("q.orderIndex = :order_index")
+          ->setParameter('lesson', $oLesson->getId())
+          ->setParameter('order_index', $oSession->getCurrentQuestion())
+          ->getQuery()
+          ->getSingleResult();
+        
+          
+        $oQuestionIcon = $oQuestion->getImage();
+        $aSession = array(
+          'iSessionId' => $oSession->getId(),
+          'sHash' => $oSession->getHash(),
+          'sStatus' => $oSession->getStatus(),
+          'iCurrentQuestion' => $oSession->getCurrentQuestion(),
+          'aQuestion' => array(
+            'sIconUrl' => $oQuestionIcon->getWebPath() . '/' . $oQuestionIcon->getFilename(),
+            'sText' => $oQuestion->getText()
+          ),
+          'aTutor' => array(
+            'iTutorId' => $oTutor->getId(),
+            'sFirstName' => $oTutor->getFirstName(),
+            'sMiddleName' => $oTutor->getMiddleName(),
+            'sLastName' => $oTutor->getFirstName(),
+            'sIconUrl' => $oTutorIcon->getWebPath() . '/' . $oTutorIcon->getFilename()
+          ),
+          'aPupil' => array(
+            'iPupilId' => $oPupil->getId(),
+            'sFirstName' => $oPupil->getFirstName(),
+            'sMiddleName' => $oPupil->getMiddleName(),
+            'sLastName' => $oPupil->getFirstName(),
+            'sIconUrl' => $oPupilIcon->getWebPath() . '/' . $oPupilIcon->getFilename()
+          ),
+          'aLesson' => array(
+            'iLessonId' => $oLesson->getId(),
+            'sName' => $oLesson->getName(),
+            'sSubject' => $oLesson->getSubject(),
+            'sLessonPlan' => $oLesson->getLessonPlan()
+          )
+          
+        );
+      }
+      
+      $oResponse = new Response(json_encode($aSession));
+      
+      return $oResponse;
+    }
     
     //Setting
     public function listSettingAction() {

@@ -14,21 +14,17 @@ Education\VisualFeedbackBundle\Entity\Tutoringsession:
       length: 256
       fixed: false
       nullable: false
+    currentQuestion:
+      type: integer
+      unsigned: false
+      nullable: false
+      column: current_question
     status:
       type: string
       length: 128
       fixed: false
       nullable: true
   oneToOne:
-    lesson:
-      targetEntity: Lesson
-      cascade: {  }
-      mappedBy: null
-      inversedBy: null
-      joinColumns:
-        Lesson_id:
-          referencedColumnName: id
-      orphanRemoval: false
     pupil:
       targetEntity: Pupil
       cascade: {  }
@@ -45,6 +41,15 @@ Education\VisualFeedbackBundle\Entity\Tutoringsession:
       inversedBy: null
       joinColumns:
         Tutor_id:
+          referencedColumnName: id
+      orphanRemoval: false
+    lesson:
+      targetEntity: Lesson
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Lesson_id:
           referencedColumnName: id
       orphanRemoval: false
   lifecycleCallbacks: {  }

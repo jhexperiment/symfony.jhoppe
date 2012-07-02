@@ -1,122 +1,51 @@
-$(document).ready(function() {
-	oMain.fnInit();
-	oThisPage.fnInit();
+$(document).ready(function()
+{
+	//thisPage.init();
 
+  oProjectorScreen.fnInit();
   
-	$(window).load(function() {
-		
+	$(window).load(function()
+	{
+		//thisPage.run();
 	});
 });
 
+var oProjectorScreen = {
+  'oDom': null,
+  'iLastHeight': 0,
+  'fnInit': function() {
+    oProjectorScreen.oDom = $("#projector-screen-1");
+  },
+  'fnClose': function() {
+    var oScreen = oProjectorScreen.oDom.find(".screen");
+    oProjectorScreen.iLastHeight = oScreen.height();
+    oScreen.animate({
+      'height': 0
+    }, 3000, function() {
+      
+    });
+  }
+};
 
 
-var oThisPage = {
-	'fnInit': function() {
-	  
-		var sHover = 
-      "";
-    $(sHover).fnTrackHover();
-    
+var thisPage = {
+	'init': function()
+	{
+		$("#pupil_display").hide();
+		var hoverOptions =
+		{
+			'interval': 250,
+			'over': thisPage.answerControlShow,
+			'timeout': 1000,
+			'out': thisPage.answerControlHide
+		};
+
+		$("#answer_controls").hoverIntent(hoverOptions);
 		
-		oThisPage.fnRenderSessionTable();
+		
+		
+		
 	},
-	
-	// Pupil
-	'fnRenderPupilList': function() {
-    $("#pupil.view .body .pupil-list").html("");
-    
-    var aPost = {
-      'sSearch': $(".sub-menu-container .search-bar input").val()
-    };
-    
-    oThisPage.fnGetPupilList(aPost, function(aData, textStatus, jqXHR) {
-      $.each(aData, function() {
-        var sHtml = 
-            '<div class="image">' + 
-              '<div class="icon">' +
-                '<img src="' + this.sImageUrl + '" />' +
-              '</div>' + 
-              '<div class="label">' +
-                $.trim($.trim(this.sFirstName + ' ' + this.sMiddleName) + ' ' + this.sLastName) + 
-              '</div>' +
-            '</div>';
-        var oHtml = $(sHtml);
-        oHtml.data("aData", this);
-        oHtml.click(function() {
-          var aData = $(this).data("aData");
-          var oPopup = $("#add-pupil-popup");
-          $(".modal").addClass('state-show');
-          oPopup.removeClass('state-hide');
-          oPopup.find(".head #action").html("Edit");
-          oPopup.find("#create-button").addClass("state-hide");
-          oPopup.find("#update-button").removeClass("state-hide");
-          oPopup.find(".picture img").attr('src', aData.sImageUrl);
-          oPopup.find(".picture #image-id").val(aData.iImageId);
-          oPopup.find("#first-name input").val(aData.sFirstName);
-          oPopup.find("#middle-name input").val(aData.sMiddleName);
-          oPopup.find("#last-name input").val(aData.sLastName);
-        });
-        $("#pupil.view .body .pupil-list").append(oHtml);
-      });
-    });   
-  },
-  'fnGetPupilList': function(aPost, fnCallback) {
-    $.ajax({
-      'data': aPost,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "list/pupil.json",
-      'success': fnCallback
-    });
-  },
-  
-  // Session
-	'fnGetSessionList': function(aPost, fnCallback) {
-    $.ajax({
-      'data': aPost,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "list/session.json",
-      'success': fnCallback
-    });
-  },
-  'fnRenderSessionTable': function() {
-    var aPost = {
-      'sSearch' : $(".sub-menu-container .search-bar input").val()
-    }
-    $("#session.view .body table.session-list tbody").html("");
-    oThisPage.fnGetSessionList(aPost, function(aData, textStatus, jqXHR) {
-      $.each(aData, function() {
-        oThisPage.fnRenderSessionRow(this);
-      });
-    });
-  },
-  'fnRenderSessionRow': function(aSession) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aSession.iSessionId + '</td>' +
-          '<td class="hash">' + aSession.sHash + '</td>' +
-          '<td class="tutor-id">' + aSession.aTutor.iTutorId + '</td>' +
-          '<td class="tutor">' + 
-            $.trim(aSession.aTutor.sFirstName + ' ' + aSession.aTutor.sLastName) + 
-          '</td>' +
-          '<td class="pupil-id">' + aSession.aPupil.iPupilId + '</td>' +
-          '<td class="pupil">' +  
-            $.trim(aSession.aPupil.sFirstName + ' ' + aSession.aPupil.sLastName) + 
-          '</td>' +
-          '<td class="lesson">' + aSession.aLesson.sName + '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    oHtml.fnTrackHover();
-    oHtml.click(function() {
-      var sHash = $.trim($(this).find(".hash").html());
-      window.location.href = 'lesson?sHash=' + sHash;
-    });
-    $("#session.view .body table.session-list tbody").append(oHtml);
-  },
-  
-	
-	
 	'buttonMouseDown': function()
 	{
 		var answer_button_dom = $(this);

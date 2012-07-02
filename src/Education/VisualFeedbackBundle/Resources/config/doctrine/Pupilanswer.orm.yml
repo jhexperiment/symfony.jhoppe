@@ -26,6 +26,15 @@ Education\VisualFeedbackBundle\Entity\Pupilanswer:
       unsigned: false
       nullable: false
   oneToOne:
+    question:
+      targetEntity: Question
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        Question_id:
+          referencedColumnName: id
+      orphanRemoval: false
     tutoringsession:
       targetEntity: Tutoringsession
       cascade: {  }

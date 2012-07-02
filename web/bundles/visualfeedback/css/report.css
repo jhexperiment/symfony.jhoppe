@@ -1,0 +1,206 @@
+@font-face {
+  font-family: chalkboard;
+  src: url('/bundles/visualfeedback/css/fonts/DK.Crayon.Crumble.ttf');
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  
+  font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
+}
+
+pre {
+  left: 0px;
+  top: 1024px;
+  position: absolute;
+}
+
+input.state-error,
+select.state-error {
+  outline: 2px solid #FF0000;
+}
+
+.state-hide {
+  display: none !important;
+}
+
+.red {
+  color: #FF8A8A;
+}
+
+.modal {
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  left: 100%;
+  top: 0px;
+  position: fixed;
+  display: inline-block;
+  
+  background-color: #444444;
+  opacity: 0.8;
+}
+
+.modal.state-show {
+  left: 0px;
+}
+
+
+
+.sub-menu-container {
+  width: 100%;
+  display: inline-block;
+  float: left;
+  border-bottom: 4px solid #222222;
+}
+
+.sub-menu-container .search-bar {
+  float: right;
+}
+
+.sub-menu-container .search-bar input {
+  margin: 8px 32px 0px 0px;
+  float: left;
+}
+
+.sub-menu-container .search-bar .search-button {
+  cursor: pointer;
+  padding: 8px 0px;
+  min-width: 75px;
+  position: relative;
+  display: inline-block;
+  float: right;
+  font-size: 12pt;
+  text-align: center;
+  color: #DDDDDD;
+  
+  background-color: #888888;
+}
+
+.sub-menu-container .search-bar .search-button .state-hover {
+  color: #000000;
+  
+  background-color: #AAAAAA;
+}
+
+.sub-menu-container .filter-list {
+  margin: 8px 0px 0px 0px;
+  display: none;
+  float: right;
+}
+
+.sub-menu-container .filter-list .text {
+  margin: 0px 0px 0px 16px;
+}
+
+
+.view-container {
+  
+}
+
+.view {
+  width: 100%;
+  min-height: 400px;
+  display: inline-block;
+  float: left;
+  background-color: #BBBBBB;
+}
+
+.view .head {
+  width: 100%;
+  display: inline-block;
+  float: left;
+}
+
+.view .head .title {
+  margin: 10px;
+  width: 100%;
+  display: inline-block;
+  float: left;
+  
+  font-size: 16pt;
+  text-align: center;
+}
+
+.view .body {
+  width: 100%;
+  display: inline-block;
+  float: left;
+}
+
+.view .body table {
+  border-collapse: collapse;
+}
+
+.view .body table th {
+  border: 1px solid #000000;
+}
+
+.view .body table td {
+  border: 1px solid #000000;
+}
+
+.view .body table .id {
+  display: none;
+}
+
+.view .body table .hash {
+  display: none;
+}
+
+.view .body table .tutor-id {
+  display: none;
+}
+
+.view .body table .pupil-id {
+  display: none;
+}
+
+.view .body table td {
+  padding: 4px;
+}
+
+#session.view .body table td.current-question {
+  width: 60px;
+  text-align: center;
+}
+
+#session.view .body table td.percent {
+  width: 72px;
+  text-align: center;
+}
+
+#session.view .body table td.answer-list-column table.answer-list th {
+  cursor: help;
+}
+
+#session.view .body table td.answer-list-column table.answer-list td {
+  min-width: 24px;
+  
+  text-align: center;
+}
+
+#session.view .body table td.answer-list-column table.answer-list td.yes {
+  color: #006600;
+}
+
+#session.view .body table td.answer-list-column table.answer-list td.no {
+  color: #FF0000;
+}
+
+#session.view .body table td.answer-list-column table.answer-list td.label {
+  text-align: left;
+}
+
+
+
+
+
+
+
+
+
+
+
+

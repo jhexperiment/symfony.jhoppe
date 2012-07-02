@@ -29,11 +29,6 @@ class Lesson
      */
     private $lessonPlan;
 
-    /**
-     * @var Education\VisualFeedbackBundle\Entity\Tutoringsession
-     */
-    private $tutoringsession;
-
 
     /**
      * Get id
@@ -103,25 +98,5 @@ class Lesson
     public function getLessonPlan()
     {
         return $this->lessonPlan;
-    }
-
-    /**
-     * Set tutoringsession
-     *
-     * @param Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession
-     */
-    public function setTutoringsession(\Education\VisualFeedbackBundle\Entity\Tutoringsession $tutoringsession)
-    {
-        $this->tutoringsession = $tutoringsession;
-    }
-
-    /**
-     * Get tutoringsession
-     *
-     * @return Education\VisualFeedbackBundle\Entity\Tutoringsession 
-     */
-    public function getTutoringsession()
-    {
-        return $this->tutoringsession;
     }
 }

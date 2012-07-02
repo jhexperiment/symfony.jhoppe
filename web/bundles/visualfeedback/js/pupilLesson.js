@@ -11,16 +11,149 @@ $(document).ready(function() {
 
 
 var oThisPage = {
+  'iCurrentQuestion': null,
+  'bAnswerControlMoving': false,
 	'fnInit': function() {
 	  
 		var sHover = 
+      "#answer-controls .ui-icon, " +
+      "#answer-controls .ui-button";
+    $(sHover).hover(
+      function() {
+        $(this).addClass("ui-state-hover");
+      },
+      function() {
+        $(this).removeClass("ui-state-hover");
+      }
+    );
+    
+    sHover = 
       "";
     $(sHover).fnTrackHover();
     
-		
-		oThisPage.fnRenderSessionTable();
+		$("#answer-controls .yes-button").click(function() {
+      oThisPage.fnAnswerQuestion('yes');
+    });
+    $("#answer-controls .no-button").click(function() {
+      oThisPage.fnAnswerQuestion('no');
+    });
+    $("#answer-controls .prev-question").click(function() {
+      if ( ! $(this).hasClass("ui-state-disabled")) {
+        oThisPage.fnNavigateLesson('prev');
+      }
+    });
+    $("#answer-controls .next-question").click(function() {
+      if ( ! $(this).hasClass("ui-state-disabled")) {
+        oThisPage.fnNavigateLesson('next');
+      }
+    });
+    $("#answer-controls .content-type").click(function() {
+      var oView = $("#lesson.view");
+      var sCurrent = $.trim($(this).html());
+      switch (sCurrent) {
+        case 'image':
+          oView.find("#display-image").addClass('state-hide');
+          oView.find("#display-text").removeClass('state-hide');
+          $(this).html('text');
+          break;
+        
+        case 'text':
+          oView.find("#display-text").addClass('state-hide');
+          oView.find("#display-image").removeClass('state-hide');
+          $(this).html('image');
+          break;
+      }
+    });
+    
+    $("#answer-controls .content-type").hover(
+      function() {
+        oThisPage.fnAnswerControlShow();
+      },
+      function() {
+        
+      }
+    );
+    
+    $("#answer-controls").hover(
+      function() {
+        
+      },
+      function() {
+        //setTimeout('oThisPage.fnAnswerControlHide()', 3000);
+      }
+    );
+    
+    oThisPage.fnAnswerControlHide();
+		oThisPage.fnPollQuestion();
 	},
-	
+	'fnPollQuestion': function() {
+	  var aPost = {
+      'sHash': $("#hash").val(),
+      'iCurrentQuestion': oThisPage.iCurrentQuestion
+    };
+    
+    oThisPage.fnGetSession(aPost, function(aData, textStatus, jqXHR) {
+      if (aData != null) {
+        oThisPage.iCurrentQuestion = aData.iCurrentQuestion;
+        $("#display-text").html(aData.aQuestion.sText);
+        $("#display-image img").attr('src', aData.aQuestion.sIconUrl);
+      }
+      setTimeout("oThisPage.fnPollQuestion()", 2000);
+    });
+	},
+	'fnNavigateLesson': function(sDir) {
+    var aPost = {
+      'sDir': sDir,
+      'sHash': $("#hash").val()
+    };
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "navigate",
+      'success': function(aData, textStatus, jqXHR) {
+        var oAnswerControl = $("#answer-controls");
+        if (aData.bFirst) {
+          oAnswerControl.find(".prev-question").addClass('ui-state-disabled');
+        }
+        else {
+          oAnswerControl.find(".prev-question").removeClass('ui-state-disabled');
+        }
+        
+        if (aData.bLast) {
+          oAnswerControl.find(".next-question").addClass('ui-state-disabled');
+        }
+        else {
+          oAnswerControl.find(".next-question").removeClass('ui-state-disabled');
+        }
+      }
+    });
+  },
+  'fnAnswerQuestion': function(sAnswer) {
+    var aPost = {
+      'sType': $.trim($("#answer-controls .content-type").html()),
+      'sAnswer': sAnswer,
+      'sHash': $("#hash").val()
+    };
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "answer",
+      'success': function(aData, textStatus, jqXHR) {
+        
+      }
+    });
+  },
+  'fnAnswerControlHide': function()
+  {
+    $("#answer-controls").animate({bottom: '-60px'}, 500);
+  },
+  'fnAnswerControlShow': function()
+  {
+    $("#answer-controls").animate({bottom: '0px'}, 500);
+  },
+  
 	// Pupil
 	'fnRenderPupilList': function() {
     $("#pupil.view .body .pupil-list").html("");
@@ -71,7 +204,16 @@ var oThisPage = {
   },
   
   // Session
-	'fnGetSessionList': function(aPost, fnCallback) {
+	'fnGetSession': function(aPost, fnCallback) {
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "get/session.json",
+      'success': fnCallback
+    });
+  },
+  'fnGetSessionList': function(aPost, fnCallback) {
     $.ajax({
       'data': aPost,
       'dataType': 'json',
@@ -110,12 +252,11 @@ var oThisPage = {
     oHtml.fnTrackHover();
     oHtml.click(function() {
       var sHash = $.trim($(this).find(".hash").html());
-      window.location.href = 'lesson?sHash=' + sHash;
+      window.location.href = 'lesson?hash=' + sHash;
     });
     $("#session.view .body table.session-list tbody").append(oHtml);
   },
   
-	
 	
 	'buttonMouseDown': function()
 	{
@@ -199,14 +340,6 @@ var oThisPage = {
 			'display_content': display_content
 		};
 		postData('tutor', 'update_tutoring_session', post_info, function(response_text){});
-	},
-	'answerControlHide': function()
-	{
-		$("#answer_controls").animate({bottom: '-60px'}, 500);
-	},
-	'answerControlShow': function()
-	{
-		$("#answer_controls").animate({bottom: '0px'}, 500);
 	},
 	'run': function()
 	{

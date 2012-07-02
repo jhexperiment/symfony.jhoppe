@@ -124,4 +124,29 @@ class Pupilanswer
     {
         return $this->tutoringsession;
     }
+    /**
+     * @var Education\VisualFeedbackBundle\Entity\Question
+     */
+    private $question;
+
+
+    /**
+     * Set question
+     *
+     * @param Education\VisualFeedbackBundle\Entity\Question $question
+     */
+    public function setQuestion(\Education\VisualFeedbackBundle\Entity\Question $question)
+    {
+        $this->question = $question;
+    }
+
+    /**
+     * Get question
+     *
+     * @return Education\VisualFeedbackBundle\Entity\Question 
+     */
+    public function getQuestion()
+    {
+        return $this->question;
+    }
 }

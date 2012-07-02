@@ -47,7 +47,6 @@ select.state-error {
 }
 
 
-
 .top-bar {
   height: 48px;
   width: 100%;
@@ -319,9 +318,6 @@ select.state-error {
 .view .body table .pupil-id {
   display: none;
 }
-
-
-
 
 .view .body table td {
   padding: 4px;
