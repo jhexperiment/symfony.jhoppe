@@ -1079,7 +1079,7 @@ class ConfigController extends Controller {
       
       
       
-      $oSession = new TutoringSession();
+      $oSession = new Tutoringsession();
       $oSession->setHash(uniqid());
       $oSession->setStatus('New');
       $oSession->setCurrentQuestion(1);
