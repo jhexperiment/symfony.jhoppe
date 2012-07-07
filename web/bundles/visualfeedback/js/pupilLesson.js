@@ -13,6 +13,8 @@ $(document).ready(function() {
 var oThisPage = {
   'iCurrentQuestion': null,
   'bAnswerControlMoving': false,
+	'bIsResizing': false,
+	
 	'fnInit': function() {
 	  
 		var sHover = 
@@ -48,35 +50,36 @@ var oThisPage = {
       }
     });
     $("#answer-controls .content-type").click(function() {
-      var oView = $("#lesson.view");
       var sCurrent = $.trim($(this).html());
       switch (sCurrent) {
         case 'image':
-          oView.find("#display-image").addClass('state-hide');
-          oView.find("#display-text").removeClass('state-hide');
-          $(this).html('text');
+          $("#display-image").addClass('state-hide');
+          $("#display-text").removeClass('state-hide');
+          //oThisPage.contentTypeAnimateFlip($(this), 'text');
           break;
         
         case 'text':
-          oView.find("#display-text").addClass('state-hide');
-          oView.find("#display-image").removeClass('state-hide');
-          $(this).html('image');
+          $("#display-text").addClass('state-hide');
+          $("#display-image").removeClass('state-hide');
+          //oThisPage.contentTypeAnimateFlip($(this), 'image');
           break;
       }
     });
-    
-    $("#answer-controls .content-type").hover(
-      function() {
-        oThisPage.fnAnswerControlShow();
-      },
-      function() {
-        
+    $("#answer-controls .pull-tab").click(function() {
+      var oAnswerControls = $(this).parents("#answer-controls");
+      
+      if (oAnswerControls.hasClass("state-show")) {
+        oThisPage.fnAnswerControlHide();
       }
-    );
+      else {
+        oThisPage.fnAnswerControlShow();
+      }
+      
+    });
     
     $("#answer-controls").hover(
       function() {
-        
+        //oThisPage.fnAnswerControlShow();
       },
       function() {
         //setTimeout('oThisPage.fnAnswerControlHide()', 3000);
@@ -85,6 +88,36 @@ var oThisPage = {
     
     oThisPage.fnAnswerControlHide();
 		oThisPage.fnPollQuestion();
+		
+		$(window).resize(oThisPage.fnWindowResizeCallback);
+	},
+	
+	'contentTypeAnimateFlip': function(oElement, sText) {
+    oElement.animate({
+        'height': 'toggle',
+        'bottom': '+=25'
+      }, 1000,
+      function() {
+        oElement.animate({
+            'height': 'toggle',
+            'bottom': '-=25'
+          }, 1000,
+          function() {
+            oElement.html(sText);
+          }
+        );
+      }
+    );
+  },
+	'fnWindowResizeCallback': function() {
+	  if ( ! oThisPage.bIsResizing ) {
+        oThisPage.bIsResizing = true;
+        var oImage = $("#display-image");
+        var oText = $("#display-text"); 
+        $.fnCenter(oImage);
+        $.fnCenter(oText);
+        oThisPage.bIsResizing = false;
+      }
 	},
 	'fnPollQuestion': function() {
 	  var aPost = {
@@ -97,6 +130,7 @@ var oThisPage = {
         oThisPage.iCurrentQuestion = aData.iCurrentQuestion;
         $("#display-text").html(aData.aQuestion.sText);
         $("#display-image img").attr('src', aData.aQuestion.sIconUrl);
+        oThisPage.fnWindowResizeCallback();
       }
       setTimeout("oThisPage.fnPollQuestion()", 2000);
     });
@@ -145,13 +179,23 @@ var oThisPage = {
       }
     });
   },
-  'fnAnswerControlHide': function()
-  {
-    $("#answer-controls").animate({bottom: '-60px'}, 500);
+  'fnAnswerControlHide': function() {
+    var oAnswerControls = $("#answer-controls"); 
+    oAnswerControls.animate({'bottom': '-240px'}, 500, function() {
+      
+    });
+    oAnswerControls.removeClass('state-show');
+    oAnswerControls.find(".down.icon").addClass('state-hide');
+    oAnswerControls.find(".up.icon").removeClass('state-hide');
   },
-  'fnAnswerControlShow': function()
-  {
-    $("#answer-controls").animate({bottom: '0px'}, 500);
+  'fnAnswerControlShow': function() {
+    var oAnswerControls = $("#answer-controls"); 
+    oAnswerControls.animate({'bottom': '0px'}, 500, function() {
+      
+    });
+    oAnswerControls.addClass('state-show');
+    oAnswerControls.find(".up.icon").addClass('state-hide');
+    oAnswerControls.find(".down.icon").removeClass('state-hide');
   },
   
 	// Pupil
@@ -222,91 +266,13 @@ var oThisPage = {
       'success': fnCallback
     });
   },
-  'fnRenderSessionTable': function() {
-    var aPost = {
-      'sSearch' : $(".sub-menu-container .search-bar input").val()
-    }
-    $("#session.view .body table.session-list tbody").html("");
-    oThisPage.fnGetSessionList(aPost, function(aData, textStatus, jqXHR) {
-      $.each(aData, function() {
-        oThisPage.fnRenderSessionRow(this);
-      });
-    });
-  },
-  'fnRenderSessionRow': function(aSession) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aSession.iSessionId + '</td>' +
-          '<td class="hash">' + aSession.sHash + '</td>' +
-          '<td class="tutor-id">' + aSession.aTutor.iTutorId + '</td>' +
-          '<td class="tutor">' + 
-            $.trim(aSession.aTutor.sFirstName + ' ' + aSession.aTutor.sLastName) + 
-          '</td>' +
-          '<td class="pupil-id">' + aSession.aPupil.iPupilId + '</td>' +
-          '<td class="pupil">' +  
-            $.trim(aSession.aPupil.sFirstName + ' ' + aSession.aPupil.sLastName) + 
-          '</td>' +
-          '<td class="lesson">' + aSession.aLesson.sName + '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    oHtml.fnTrackHover();
-    oHtml.click(function() {
-      var sHash = $.trim($(this).find(".hash").html());
-      window.location.href = 'lesson?hash=' + sHash;
-    });
-    $("#session.view .body table.session-list tbody").append(oHtml);
-  },
+  
   
 	
-	'buttonMouseDown': function()
-	{
-		var answer_button_dom = $(this);
-		answer_button_dom.addClass('ui-state-active');
-	},
-	'buttonMouseUp': function()
-	{
-		var answer_button_dom = $(this);
-		answer_button_dom.removeClass('ui-state-active');
-	},
-	'buttonHoverOn': function()
-	{
-		var answer_button_dom = $(this);
-		answer_button_dom.addClass('ui-state-hover');
-	},
-	'buttonHoverOff': function()
-	{
-		var answer_button_dom = $(this);
-		answer_button_dom.removeClass('ui-state-hover');
-		answer_button_dom.removeClass('ui-state-active');
-	},
-
-	'contentTypeAnimateFlip': function(content_type_dom, content_type)
-	{
-		content_type_dom.animate
-		(
-			{
-				'height': 'toggle',
-				'bottom': '+=25'
-
-			}, 1000,
-			function()
-			{
-
-				content_type_dom.animate
-				(
-					{
-						'height': 'toggle',
-						'bottom': '-=25'
-
-					}, 1000,
-					function()
-					{
-						content_type_dom.html(content_type);
-					}
-				);
-			}
-		);
-	},
+	
+	
+	
+	
 	'contentTypeMouseUp': function()
 	{
 		$("body").css("cursor", "progress");
