@@ -208,7 +208,8 @@ foreach ($aPath as $sName => $sValue) {
             <th class="tutor">Tutor</th>
             <th class="pupil-id">Pupil ID</th>
             <th class="pupil">Pupil</th>
-            <th class="lesson">lesson</th>
+            <th class="lesson">Lesson</th>
+            <th class="status">Status</th>
           </tr>
         </thead>
         <tbody>

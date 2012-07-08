@@ -777,16 +777,26 @@ var oMain = {
       };
       var aElement = {
         'height': oElement.height(),
-        'width': oElement.width()
+        'width': oElement.width(),
+        'paddingTop': parseInt(oElement.css("padding-top").replace("px", "")),
+        'paddingRight': parseInt(oElement.css("padding-right").replace("px", "")),
+        'paddingBottom': parseInt(oElement.css("padding-bottom").replace("px", "")),
+        'paddingLeft': parseInt(oElement.css("padding-left").replace("px", "")),
+        'marginTop': parseInt(oElement.css("margin-top").replace("px", "")),
+        'marginRight': parseInt(oElement.css("margin-right").replace("px", "")),
+        'marginBottom': parseInt(oElement.css("margin-bottom").replace("px", "")),
+        'marginLeft': parseInt(oElement.css("margin-left").replace("px", ""))
       };
-      /*
-      var aReturn = {
-        'left': (aWindow.width / 2) - (aElement.width / 2),
-        'top': (aWindow.height / 2) - (aElement.height / 2)
-      }
-      */
-      var iLeft = (aWindow.width / 2) - (aElement.width / 2);
-      var iTop = (aWindow.height / 2) - (aElement.height / 2);
+      
+      aElement['totalWidth'] = aElement.width + 
+        aElement.paddingLeft + aElement.paddingRight + 
+        aElement.marginLeft + aElement.marginRight;
+      aElement['totalHeight'] = aElement.height + 
+        aElement.paddingTop + aElement.paddingBottom + 
+        aElement.marginBottom + aElement.marginBottom;
+        
+      var iLeft = (aWindow.width / 2) - (aElement.totalWidth / 2);
+      var iTop = (aWindow.height / 2) - (aElement.totalHeight / 2);
       oElement.css("left", Math.max(iLeft, 16));
       oElement.css("top", Math.max(iTop, 16));
     };

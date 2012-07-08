@@ -11,6 +11,7 @@ $(document).ready(function() {
 
 
 var oThisPage = {
+  'bLessonComplete': false,
   'iCurrentQuestion': null,
   'bAnswerControlMoving': false,
 	'bIsResizing': false,
@@ -18,98 +19,362 @@ var oThisPage = {
 	'fnInit': function() {
 	  
 		var sHover = 
-      "#answer-controls .ui-icon, " +
-      "#answer-controls .ui-button";
-    $(sHover).hover(
-      function() {
-        $(this).addClass("ui-state-hover");
-      },
-      function() {
-        $(this).removeClass("ui-state-hover");
-      }
-    );
-    
-    sHover = 
-      "";
+      "#answer-control-large .icon, " +
+      "#answer-control-large .center .button, " +
+      "#answer-control-large .arrow-icon";
     $(sHover).fnTrackHover();
     
-		$("#answer-controls .yes-button").click(function() {
-      oThisPage.fnAnswerQuestion('yes');
+    $(sHover).mousedown(function() {
+      $(this).addClass("state-press");
     });
-    $("#answer-controls .no-button").click(function() {
-      oThisPage.fnAnswerQuestion('no');
-    });
-    $("#answer-controls .prev-question").click(function() {
-      if ( ! $(this).hasClass("ui-state-disabled")) {
-        oThisPage.fnNavigateLesson('prev');
-      }
-    });
-    $("#answer-controls .next-question").click(function() {
-      if ( ! $(this).hasClass("ui-state-disabled")) {
-        oThisPage.fnNavigateLesson('next');
-      }
-    });
-    $("#answer-controls .content-type").click(function() {
-      var sCurrent = $.trim($(this).html());
-      switch (sCurrent) {
-        case 'image':
-          $("#display-image").addClass('state-hide');
-          $("#display-text").removeClass('state-hide');
-          //oThisPage.contentTypeAnimateFlip($(this), 'text');
-          break;
-        
-        case 'text':
-          $("#display-text").addClass('state-hide');
-          $("#display-image").removeClass('state-hide');
-          //oThisPage.contentTypeAnimateFlip($(this), 'image');
-          break;
-      }
-    });
-    $("#answer-controls .pull-tab").click(function() {
-      var oAnswerControls = $(this).parents("#answer-controls");
-      
-      if (oAnswerControls.hasClass("state-show")) {
-        oThisPage.fnAnswerControlHide();
-      }
-      else {
-        oThisPage.fnAnswerControlShow();
-      }
-      
+    $(sHover).mouseup(function() {
+      $(this).removeClass("state-press");
     });
     
-    $("#answer-controls").hover(
+    
+		$("#answer-control-large .yes-button").click(function() {
+      oThisPage.fnAnswerQuestion('yes');
+    });
+    $("#answer-control-large .no-button").click(function() {
+      oThisPage.fnAnswerQuestion('no');
+    });
+    $("#answer-control-large .prev-question").click(function() {
+       if ( ! $(this).hasClass('state-disabled')){
+        oThisPage.fnPrevQuestion();
+      }
+    });
+    $("#answer-control-large .next-question").click(function() {
+      if ( ! $(this).hasClass('state-disabled')){
+        oThisPage.fnNextQuestion();
+      }
+      
+      
+    });
+    $("#answer-control-large .content-type").click(function() {
+      oThisPage.fnFlipContentType($(this));
+    });
+    
+    
+    $("#answer-control-small").hover(
       function() {
-        //oThisPage.fnAnswerControlShow();
+        if ( ! oThisPage.bLessonComplete) {
+          oThisPage.fnAnswerControlShow();
+        }
       },
       function() {
         //setTimeout('oThisPage.fnAnswerControlHide()', 3000);
       }
     );
+    $("#answer-control-large").hover(
+      function() {
+        $(this).addClass("state-hover");
+      },
+      function() {
+        $(this).removeClass("state-hover");
+        setTimeout('oThisPage.fnAnswerControlHide()', 1000);
+      }
+    );
     
-    oThisPage.fnAnswerControlHide();
-		oThisPage.fnPollQuestion();
-		
+    //oThisPage.fnPollQuestion();
+    var aCurrentQuestion = oThisPage.fnGetCurrentQuestion();
+		oThisPage.fnSetQuestion(aCurrentQuestion, 'image');
 		$(window).resize(oThisPage.fnWindowResizeCallback);
 	},
 	
-	'contentTypeAnimateFlip': function(oElement, sText) {
-    oElement.animate({
-        'height': 'toggle',
-        'bottom': '+=25'
-      }, 1000,
-      function() {
-        oElement.animate({
-            'height': 'toggle',
-            'bottom': '-=25'
-          }, 1000,
-          function() {
-            oElement.html(sText);
-          }
-        );
+	
+	'fnRecordAnswer': function(aQuestion) {
+	  var aPost = {
+      'aQuestion': aQuestion,
+      'sHash': $("#hash").val()
+    };
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "answer",
+      'success': function(aData, textStatus, jqXHR) {
+        
       }
-    );
+    });
+	  
+	  
+	},
+	'fnFlipContentType': function(oContentType) {
+	  if (oContentType == null) {
+	    oContentType = $("#answer-control-large .content-type");
+	  }
+	  var oImage = oContentType.find("#image");
+    var oText = oContentType.find("#text");
+    
+    var oDisplayImage = $("#display-image");
+    var oDisplayText = $("#display-text");
+    
+    var aCurrentQuestion = oThisPage.fnGetCurrentQuestion();
+    
+	  var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+    
+    switch (sCurrentType) {
+      case 'image':
+        // Hide Image
+        oImage.addClass('state-hide');
+        oDisplayImage.addClass('state-hide');
+        // Show Text
+        oText.removeClass('state-hide');
+        oDisplayText.removeClass('state-hide');
+        oThisPage.fnHighlightAnswer(aCurrentQuestion.aAnswer.sTextAnswer);
+        break;
+      
+      case 'text':
+        // Hide Text
+        oText.addClass('state-hide');
+        oDisplayText.addClass('state-hide');
+        // Show Image
+        oImage.removeClass('state-hide');
+        oDisplayImage.removeClass('state-hide');
+        oThisPage.fnHighlightAnswer(aCurrentQuestion.aAnswer.sImageAnswer);
+        break;
+    }
+	  
+    oThisPage.fnWindowResizeCallback();
+	},
+	'fnShowLessonComplete': function() {
+	  oThisPage.fnAnswerControlHide(true)
+	  
+	  var oDisplayImage = $("#display-image");
+    var oDisplayText = $("#display-text");
+    
+    var sUrl = '/bundles/visualfeedback/images/star.png';
+    oDisplayImage.removeClass('state-hide').find("img").attr("src", sUrl);
+    oDisplayText.addClass('state-hide').html("Pau. Hana maika'i.");
   },
-	'fnWindowResizeCallback': function() {
+  'fnGetCurrentQuestion': function() {
+    return aSessionInfo.aLesson.aQuestionList[aSessionInfo.iCurrentQuestion];
+  },
+  'fnNextQuestion': function() {
+    var oContentType = $("#answer-control-large .content-type");
+    var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+    aSessionInfo.iCurrentQuestion++;
+    oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), sCurrentType);
+  },
+  'fnNextStep': function() {
+    var oContentType = $("#answer-control-large .content-type");
+    var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+    switch (sCurrentType) {
+      case 'image':
+       oContentType.click();
+       oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), 'text');
+       break;
+      
+      case 'text':
+       if ( ! oThisPage.fnIsLastQuestion(oThisPage.fnGetCurrentQuestion())) {
+         aSessionInfo.iCurrentQuestion++;
+       }
+       oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), 'image');
+       break;
+    }
+  },
+  'fnPrevQuestion': function() {
+    var oContentType = $("#answer-control-large .content-type");
+    var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+    aSessionInfo.iCurrentQuestion--;
+    oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), sCurrentType);
+  },
+  'fnPrevStep': function() {
+    var oContentType = $("#answer-control-large .content-type");
+    var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+    switch (sCurrentType) {
+      case 'image':
+       oContentType.click();
+       oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), 'text');
+       break;
+      
+      case 'text':
+       if ( ! oThisPage.fnIsFirstQuestion(oThisPage.fnGetCurrentQuestion())) {
+         aSessionInfo.iCurrentQuestion--;
+       }
+       oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), 'image');
+       break;
+    }
+  },
+  'fnIsFirstQuestion': function(aQuestion) {
+    return (aQuestion.iOrderIndex == 1);
+  },
+  'fnIsLastQuestion': function(aQuestion) {
+    return (aQuestion.iOrderIndex == aSessionInfo.aLesson.iQuestionCount);
+  },
+  'fnIsQuestionComplete': function(aQuestion) {
+    return (aQuestion.sImageAnswer != null) && (aQuestion.sTextAnswer != null);
+  },
+  'fnIsLessonComplete': function() {
+    var bComplete = true;
+    $.each(aSessionInfo.aLesson.aQuestionList, function() {
+      if (this.aAnswer.sImageAnswer == null || this.aAnswer.sTextAnswer == null) {
+        bComplete = false;
+        return true;
+      }
+      if (this.aAnswer.sImageAnswer == "null" || this.aAnswer.sTextAnswer == "null") {
+        bComplete = false;
+        return true;
+      }
+    });
+    oThisPage.bLessonComplete = bComplete;
+    return bComplete;
+  },
+  'fnSetQuestion': function(aQuestion, sType) {
+    oThisPage.fnFillDetailsTable();
+    
+	  if (oThisPage.fnIsLastQuestion(aQuestion)) {
+      $("#answer-control-large .next-question").addClass('state-disabled');
+    }
+    else {
+      $("#answer-control-large .next-question").removeClass('state-disabled');
+    }
+    
+    if (oThisPage.fnIsFirstQuestion(aQuestion)) {
+      $("#answer-control-large .prev-question").addClass('state-disabled');
+    }
+    else {
+      $("#answer-control-large .prev-question").removeClass('state-disabled');
+    }
+    
+    
+    if (oThisPage.fnIsLessonComplete()) {
+      oThisPage.fnShowLessonComplete();
+    }
+    else {
+      var sUrl = aQuestion.aImage.sWebPath;
+    
+      $("#display-image img").attr("src", sUrl);
+      $("#display-text").html(aQuestion.sText);
+      
+      var oContentType = $("#answer-control-large .content-type");
+      var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+      
+      if (sCurrentType != sType) {
+        oContentType.click();
+        sCurrentType = sType;
+      }
+      
+      var oYesButton = $("#answer-control-large .center .yes-button");
+      var oNoButton = $("#answer-control-large .center .no-button");
+      
+      switch (sCurrentType) {
+        case 'image':
+          oThisPage.fnHighlightAnswer(aQuestion.aAnswer.sImageAnswer, oYesButton, oNoButton);
+          break;
+        
+        case 'text':
+          oThisPage.fnHighlightAnswer(aQuestion.aAnswer.sTextAnswer, oYesButton, oNoButton);
+          break;
+      }
+    }
+    
+	  oThisPage.fnWindowResizeCallback();
+	},
+	'fnFillDetailsTable': function() {
+    var aCurrentQuestion = oThisPage.fnGetCurrentQuestion();
+    var oTable = $("table#details");
+
+    var sCurrentQuestion = '' + aCurrentQuestion.iOrderIndex + '. ' + aCurrentQuestion.sText; 
+    oTable.find(".current-question").html(sCurrentQuestion);
+    
+    oTable.find(".image-answer").html(aCurrentQuestion.aAnswer.sImageAnswer);
+    oTable.find(".text-answer").html(aCurrentQuestion.aAnswer.sTextAnswer);
+  },
+  'fnHighlightAnswer': function(sAnswer, oYesButton, oNoButton) {
+    if (oYesButton == null) {
+      oYesButton = $("#answer-control-large .center .yes-button");
+    }
+    if (oNoButton == null) {
+      oNoButton = $("#answer-control-large .center .no-button");
+    }
+    
+    
+    // has answer
+    if (sAnswer != null && sAnswer != "null") {
+      // Answer is
+      switch (sAnswer.toLowerCase()) {
+        case 'yes':
+          // show green check mark on yes button
+          oThisPage.fnHighlightYesButton(oYesButton);
+          
+          // show white close on no button
+          oThisPage.fnResetNoButton(oNoButton);
+          break;
+          
+        case 'no':
+          // show red close on no button
+          oThisPage.fnHighlightNoButton(oNoButton);
+          
+          // show white check mark on yes button
+          oThisPage.fnResetYesButton(oYesButton);
+          break;
+      }
+      
+    } // no answer (skipped)
+    else {
+      // show white check mark on yes button
+      oThisPage.fnResetYesButton(oYesButton);
+      
+      // show white close on no button
+      oThisPage.fnResetNoButton(oNoButton);            
+    }
+  },
+  'fnHighlightYesButton': function(oYesButton) {
+    if (oYesButton == null) {
+      oYesButton = $("#answer-control-large .center .yes-button");
+    }
+    oYesButton.find("img#white").addClass('state-hide');
+    oYesButton.find("img#green").removeClass('state-hide');
+  },
+  'fnResetYesButton': function(oYesButton) {
+    if (oYesButton == null) {
+      oYesButton = $("#answer-control-large .center .yes-button");
+    }
+    
+    oYesButton.find("img#white").removeClass('state-hide');
+    oYesButton.find("img#green").addClass('state-hide');
+  },
+  'fnHighlightNoButton': function(oNoButton) {
+    if (oNoButton == null) {
+      oNoButton = $("#answer-control-large .center .no-button");
+    }
+    
+    oNoButton.find("img#white").addClass('state-hide');
+    oNoButton.find("img#red").removeClass('state-hide');
+  },
+  'fnResetNoButton': function(oNoButton) {
+    if (oNoButton == null) {
+      oNoButton = $("#answer-control-large .center .no-button");
+    }
+    
+    oNoButton.find("img#white").removeClass('state-hide');
+    oNoButton.find("img#red").addClass('state-hide');
+  },
+  'fnAnswerQuestion': function(sAnswer) {
+    var oContentType = $("#answer-control-large .content-type");
+    var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
+    var aCurrentQuestion = oThisPage.fnGetCurrentQuestion();
+    
+    switch (sCurrentType) {
+      case 'image':
+        aCurrentQuestion.aAnswer.sImageAnswer = sAnswer;
+        break;
+      
+      case 'text':
+        aCurrentQuestion.aAnswer.sTextAnswer = sAnswer;
+        break;
+    }
+    aCurrentQuestion.aAnswer.iTimestamp = Math.round(new Date().getTime() / 1000);
+    
+    oThisPage.fnRecordAnswer(aCurrentQuestion);
+    
+    oThisPage.fnHighlightAnswer(sAnswer);
+    //oThisPage.fnSetQuestion(aCurrentQuestion, sCurrentType);
+    setTimeout("oThisPage.fnNextStep();", 500);
+    
+  },
+  'fnWindowResizeCallback': function() {
 	  if ( ! oThisPage.bIsResizing ) {
         oThisPage.bIsResizing = true;
         var oImage = $("#display-image");
@@ -163,39 +428,40 @@ var oThisPage = {
       }
     });
   },
-  'fnAnswerQuestion': function(sAnswer) {
-    var aPost = {
-      'sType': $.trim($("#answer-controls .content-type").html()),
-      'sAnswer': sAnswer,
-      'sHash': $("#hash").val()
-    };
-    $.ajax({
-      'data': aPost,
-      'dataType': 'json',
-      'type': 'POST',
-      'url': "answer",
-      'success': function(aData, textStatus, jqXHR) {
-        
-      }
-    });
-  },
-  'fnAnswerControlHide': function() {
-    var oAnswerControls = $("#answer-controls"); 
-    oAnswerControls.animate({'bottom': '-240px'}, 500, function() {
+  'fnAnswerControlHide': function(bForce) {
+    var oAnswerControlSmall = $("#answer-control-small"); 
+    var oAnswerControlLarge = $("#answer-control-large"); 
+    if (bForce || ( ! oAnswerControlLarge.hasClass('state-hover') ) ) {
       
-    });
-    oAnswerControls.removeClass('state-show');
-    oAnswerControls.find(".down.icon").addClass('state-hide');
-    oAnswerControls.find(".up.icon").removeClass('state-hide');
+      oAnswerControlLarge.fadeOut(250, function() {
+        $(this).addClass('state-hide');
+        oAnswerControlSmall.removeAttr('style').css('opacity',0).removeClass('state-hide');
+        oAnswerControlSmall.animate({
+          "opacity": 0.2
+        }, 250, function() {
+          
+        });
+      });
+      
+      
+    }
   },
   'fnAnswerControlShow': function() {
-    var oAnswerControls = $("#answer-controls"); 
-    oAnswerControls.animate({'bottom': '0px'}, 500, function() {
-      
+    var oAnswerControlSmall = $("#answer-control-small"); 
+    var oAnswerControlLarge = $("#answer-control-large"); 
+    
+    oAnswerControlSmall.fadeOut(250, function() {
+      $(this).addClass('state-hide');
+      oAnswerControlLarge.removeAttr('style').css('opacity',0).removeClass('state-hide');
+      oAnswerControlLarge.animate({
+        "opacity": 1
+      }, 250, function() {
+        
+      });
     });
-    oAnswerControls.addClass('state-show');
-    oAnswerControls.find(".up.icon").addClass('state-hide');
-    oAnswerControls.find(".down.icon").removeClass('state-hide');
+    
+    
+    
   },
   
 	// Pupil
@@ -273,7 +539,24 @@ var oThisPage = {
 	
 	
 	
-	'contentTypeMouseUp': function()
+	'contentTypeAnimateFlip': function(oElement, sText) {
+    oElement.animate({
+        'height': 'toggle',
+        'bottom': '+=25'
+      }, 1000,
+      function() {
+        oElement.animate({
+            'height': 'toggle',
+            'bottom': '-=25'
+          }, 1000,
+          function() {
+            oElement.html(sText);
+          }
+        );
+      }
+    );
+  },
+  'contentTypeMouseUp': function()
 	{
 		$("body").css("cursor", "progress");
 		var display_content_dom = $(this);

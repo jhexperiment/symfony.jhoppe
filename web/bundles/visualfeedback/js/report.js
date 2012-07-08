@@ -122,11 +122,7 @@ oThisPage = {
           '</td>' +
           '<td class="lesson">' + aSession.aLesson.sName + '</td>' +
           '<td class="image-correct percent">' + sImageCorrect + '</td>' +
-          '<td class="image-incorrect percent">' + sImageIncorrect + '</td>' +
-          '<td class="image-skipped percent">' + sImageSkipped + '</td>' +
           '<td class="text-correct percent">' + sTextCorrect + '</td>' +
-          '<td class="text-incorrect percent">' + sTextIncorrect + '</td>' +
-          '<td class="text-skipped percent">' + sTextSkipped + '</td>' +
           '<td class="current-question">' + aSession.aCurrentQuestion.iOrderIndex + '</td>' +
           '<td class="answer-list-column" colspan="9">' + 
             sAnswerList + 

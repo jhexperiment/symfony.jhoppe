@@ -46,11 +46,7 @@
             <th class="pupil">Pupil</th>
             <th class="lesson">Lesson</th>
             <th class="image-correct">Correct Image</th>
-            <th class="image-incorrect">Incorrect Image</th>
-            <th class="image-skipped">Skipped Image</th>
             <th class="text-correct">Correct Text</th>
-            <th class="text-incorrect">Incorrect Text</th>
-            <th class="text-skipped">Skipped Text</th>
             <th class="current-question">Current Question</th>
             <th class="answer-list">Answers</th>
           </tr>

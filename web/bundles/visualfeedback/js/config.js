@@ -974,6 +974,7 @@ oThisPage = {
             $.trim(aSession.aPupil.sFirstName + ' ' + aSession.aPupil.sLastName) + 
           '</td>' +
           '<td class="lesson">' + aSession.aLesson.sName + '</td>' +
+          '<td class="status">' + aSession.sStatus + '</td>' +
         '</tr>';
     var oHtml = $(sHtml);
     
