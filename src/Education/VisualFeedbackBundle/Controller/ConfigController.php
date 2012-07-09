@@ -421,7 +421,43 @@ class ConfigController extends Controller {
       
       return $oResponse;
     }
-    
+    public function updatePupilAction() {
+      $oRequest = $this->getRequest();
+      $aReturn = array();
+      $aReturn['iPupilId'] = intval($oRequest->get('iPupilId'));
+      $aReturn['iImageId'] = intval($oRequest->get('iImageId'));
+      $aReturn['sFirstName'] = $oRequest->get('sFirstName');
+      $aReturn['sMiddleName'] = $oRequest->get('sMiddleName');
+      $aReturn['sLastName'] = $oRequest->get('sLastName');
+      
+      
+      
+      $oEntityManager = $this->getDoctrine()->getEntityManager();
+      $oPupil = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Pupil')
+        ->findOneById($aReturn['iPupilId']);
+      
+      $oImage = $oEntityManager
+        ->getRepository('EducationVisualFeedbackBundle:Image')
+        ->findOneById($aReturn['iImageId']);
+        
+      
+      $oPupil->setFirstName($aReturn['sFirstName']);
+      $oPupil->setMiddleName($aReturn['sMiddleName']);
+      $oPupil->setLastName($aReturn['sLastName']);
+      $oPupil->setImage($oImage);
+      
+      
+      $oEntityManager->persist($oPupil);
+      $oEntityManager->flush();
+        
+      
+      $aReturn['bSuccess'] = true;
+      
+      $oResponse = new Response(json_encode($aReturn));
+      return $oResponse;
+    }
+   
     
     //Tutor
     

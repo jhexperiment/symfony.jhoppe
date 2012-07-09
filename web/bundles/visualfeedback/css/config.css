@@ -16,6 +16,13 @@ pre {
   position: absolute;
 }
 
+.text-center { text-align: center; }
+
+.clearfix:after {content: ".";display: block;height: 0;clear: both;visibility: hidden;}
+* html .clearfix {height:1%;}
+*+html .clearfix {width:100%;height:1px;}
+.clearfix {display: block;}
+
 input.state-error,
 select.state-error {
   outline: 2px solid #FF0000;
@@ -231,6 +238,7 @@ select.state-error {
 #image.sub-menu .input,
 #audio.sub-menu .input {
   padding: 8px;
+  width: 400px;
   left: 75px;
   top: 0px;
   position: absolute;
@@ -276,7 +284,7 @@ select.state-error {
 }
 
 .view .head .title {
-  margin: 10px;
+  margin: 10px 0px;
   width: 100%;
   display: inline-block;
   float: left;
@@ -364,6 +372,11 @@ select.state-error {
 #image.view .body .image .icon img {
   width: 64px;
   height: 64px;
+}
+
+#image.view .body .image-list {
+  width: 100%;
+  display: inline-block;
 }
 
 #audio.view .body .audio {

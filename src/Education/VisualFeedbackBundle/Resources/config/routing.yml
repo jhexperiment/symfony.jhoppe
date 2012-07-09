@@ -58,6 +58,9 @@ config_pupil_create:
     pattern:  /config/create/pupil
     defaults: { _controller: EducationVisualFeedbackBundle:Config:createPupil }
 
+config_pupil_update:
+    pattern:  /config/update/pupil
+    defaults: { _controller: EducationVisualFeedbackBundle:Config:updatePupil }
 
 
 
@@ -157,6 +160,10 @@ pupil_navigate:
 pupil_answer:
     pattern:  /pupil/answer
     defaults: { _controller: EducationVisualFeedbackBundle:Pupil:answer }
+
+pupil_set_current_question:
+    pattern:  /pupil/setCurrentQuestion
+    defaults: { _controller: EducationVisualFeedbackBundle:Pupil:setCurrentQuestion }
 
 
 report_index:

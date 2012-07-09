@@ -3,10 +3,16 @@
 <link rel="stylesheet" href="/bundles/visualfeedback/css/config.css" type="text/css">
 <script type="text/javascript" src="/bundles/visualfeedback/js/config.js"></script>
 
+<link rel="stylesheet" type="text/css" media="screen" href="/bundles/elFinder/css/elfinder.min.css">
+<link rel="stylesheet" type="text/css" media="screen" href="/bundles/elFinder/css/theme.css">
+<script type="text/javascript" src="/bundles/elFinder/js/elfinder.min.js"></script>
+
 <link rel="stylesheet" href="/bundles/visualfeedback/js/uploadify/uploadify.css" type="text/css">
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/jquery.uploadify.js"></script>
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/swfobject.js"></script>
 <script type="text/javascript" src="/bundles/visualfeedback/js/crypto-js/crypto-md5/crypto-md5.js"></script>
+
+
 
 <?
 foreach ($aPath as $sName => $sValue) {
@@ -20,9 +26,19 @@ foreach ($aPath as $sName => $sValue) {
 
 <div class="top-bar">
   <span class="navigation-bar">
-    <span id="config" class="navigation-item">Config</span>
-    <span id="tutor" class="navigation-item">Tutor</span>
-    <span id="pupil" class="navigation-item">Pupil</span>
+    <span id="config" class="navigation-item">
+      <a href="/app_dev.php/config/index">Config</a>
+    </span>
+    <span id="tutor" class="navigation-item">
+      <a href="/app_dev.php/tutor/index">Tutor</a>
+    </span>
+    <span id="pupil" class="navigation-item">
+      <a href="/app_dev.php/pupil/index">Pupil</a>
+    </span>
+    <span id="report" class="navigation-item">
+      <a href="/app_dev.php/report/index">Report</a>
+    </span>
+    
   </span>
   <span class="account-menu">
     <span id="user-name" class="account-menu-item">User Name</span>
@@ -140,6 +156,7 @@ foreach ($aPath as $sName => $sValue) {
     </div>
     <div class="body">
       <div class="image-list"></div>
+      <div id="elfinder state-hide"></div>
     </div>
   </div>
   

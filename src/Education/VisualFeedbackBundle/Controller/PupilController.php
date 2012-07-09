@@ -180,6 +180,29 @@ class PupilController extends Controller {
     return $oResponse;
   }
 
+  public function setCurrentQuestionAction() {
+    $oRequest = $this->getRequest();
+    $sHash = $oRequest->get('sHash');
+    $iCurrentQuestion = $oRequest->get('iCurrentQuestion');
+    
+    $oEntityManager = $this->getDoctrine()->getEntityManager();
+    
+    $oRepository = $oEntityManager->getRepository('EducationVisualFeedbackBundle:Tutoringsession');
+    $oSession = $oRepository->findOneByHash($sHash);
+    
+    $oSession->setCurrentQuestion(intval($iCurrentQuestion));
+    $oEntityManager->persist($oSession);
+    $oEntityManager->flush();
+    
+    $aViewData = array(
+      'bSuccess' => 'success'
+    );
+    
+    $oResponse = new Response(json_encode($aViewData));
+    
+    return $oResponse;
+  }
+
   public function answerAction() {
     $oRequest = $this->getRequest();
     $sHash = $oRequest->get('sHash');

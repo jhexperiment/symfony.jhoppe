@@ -134,10 +134,12 @@ select.state-error {
 }
 
 .view .body table th {
+  padding: 1px;
   border: 1px solid #000000;
 }
 
 .view .body table td {
+  padding: 1px;
   border: 1px solid #000000;
 }
 
@@ -155,10 +157,6 @@ select.state-error {
 
 .view .body table .pupil-id {
   display: none;
-}
-
-.view .body table td {
-  padding: 4px;
 }
 
 #session.view .body table td.current-question {

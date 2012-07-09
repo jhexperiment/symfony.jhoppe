@@ -8,7 +8,7 @@ $(document).ready(function() {
   });
 });
 
-oThisPage = {
+var oThisPage = {
   'aTmpData': null,
   'sRootWebFolder': null,
   'sImageUploadFolder': null,
@@ -26,6 +26,7 @@ oThisPage = {
     
     var oMainMenu = $(".main-menu")
     oMainMenu.removeClass('state-hide');
+    /*
     var iWidth = oMainMenu.width();
     oMainMenu.css("margin-left", "-" + iWidth +"px")
     oMainMenu.data('orig-width', iWidth);
@@ -34,7 +35,7 @@ oThisPage = {
     }, 500, function() {
       
     });
-    
+    */
     var sHover = 
       ".main-menu .menu-item, " +
       ".sub-menu .menu-item, " + 
@@ -54,10 +55,11 @@ oThisPage = {
       oContainer.find(".sub-menu").addClass("state-hide");
       var oSubMenu = oContainer.find("#" + sId + ".sub-menu");
       oSubMenu.removeClass('state-hide');
+      /*
       var iWidth = oSubMenu.width();
       oSubMenu.css("margin-left", "-" + iWidth +"px")
       oSubMenu.data('orig-width', iWidth);
-      
+      */
       $(".main-menu .menu-item").removeClass('state-selected');
       $(this).addClass('state-selected');
       
@@ -66,12 +68,13 @@ oThisPage = {
       
       $(".sub-menu-container .search-bar input").val("");
       
-      
+      /*
       oSubMenu.animate({
         "margin-left": 0
       }, 250, function() {
         
       });
+      */
     });
     
     
@@ -127,16 +130,32 @@ oThisPage = {
     $("#image.sub-menu #add.menu-item").click(function() {
       var oInput = $(this).parent().find(".input");
       oInput.data("original-width", oInput.width());
-      oInput.width(0);
-      oInput.removeClass("state-hide");
+      //oInput.width(0);
+      if (oInput.hasClass('state-hide')) {
+        oInput.removeClass("state-hide");
+      }
+      else {
+        oInput.addClass("state-hide");
+      }
       
+      /*
       oInput.animate({
         'width': oInput.data("original-width")
       }, 250, function() {
         oInput.css("width", "auto");
       });
+      */
     });
+    $('#image.view .body #elfinder').elfinder({
+      'width': 900,
+      'height': 400,
+      'path': oThisPage.sRootWebFolder + '/bundles/visualfeedback/images/uploads',
+      'url' : '/bundles/elFinder/php/connector.php'  // connector URL (REQUIRED)
+    }).elfinder("instance");
     
+    $("#image.view .body #elfinder .elfinder-statusbar").removeAttr('style');
+    $("#image.view .body #elfinder .ui-dialog").hide();
+    //$("#image.view .body #elfinder").resize();
     
     // Audio
     $(".main-menu #audio.menu-item").click(function() {
@@ -176,14 +195,20 @@ oThisPage = {
     $("#audio.sub-menu #add.menu-item").click(function() {
       var oInput = $(this).parent().find(".input");
       oInput.data("original-width", oInput.width());
-      oInput.width(0);
-      oInput.removeClass("state-hide");
-      
+      //oInput.width(0);
+      if (oInput.hasClass('state-hide')) {
+        oInput.removeClass("state-hide");
+      }
+      else {
+        oInput.addClass("state-hide");
+      }
+      /*
       oInput.animate({
         'width': oInput.data("original-width")
       }, 250, function() {
         oInput.css("width", "auto");
       });
+      */
     });
     
     
@@ -317,6 +342,7 @@ oThisPage = {
         'success': function(aData, textStatus, jqXHR) {
           $(".modal").removeClass('state-show');
           $("#add-tutor-popup").addClass('state-hide');
+          oThisPage.fnRenderTutorList();
         }
       });
     });
@@ -344,7 +370,7 @@ oThisPage = {
         'success': function(aData, textStatus, jqXHR) {
           $(".modal").removeClass('state-show');
           $("#add-tutor-popup").addClass('state-hide');
-          
+          oThisPage.fnRenderTutorList();
         }
       });
     });
@@ -480,6 +506,7 @@ oThisPage = {
         'success': function(aData, textStatus, jqXHR) {
           $(".modal").removeClass('state-show');
           $("#add-pupil-popup").addClass('state-hide');
+          oThisPage.fnRenderPupilList();
         }
       });
     });
@@ -487,6 +514,29 @@ oThisPage = {
       var oPopup = $(this).parents("#add-pupil-popup");
       oPopup.find("#image-list.popup-view").addClass("state-hide");
       oPopup.find("#main.popup-view").removeClass("state-hide");
+    });
+    $("#add-pupil-popup #main.popup-view .foot #update-button").click(function() {
+      var oView = $(this).parents(".popup-view");
+      var oContainer = oView.find(".body .right");
+      
+      var aPost = {
+        'iPupilId': oView.find(".head #pupil-id").val(),
+        'iImageId': oView.find(".body #image-id").val(),
+        'sFirstName': oView.find(".body #first-name input").val(),
+        'sMiddleName': oView.find(".body #middle-name input").val(),
+        'sLastName': oView.find(".body #last-name input").val()
+      }
+      $.ajax({
+        'data': aPost,
+        'dataType': 'json',
+        'type': 'POST',
+        'url': "update/pupil",
+        'success': function(aData, textStatus, jqXHR) {
+          $(".modal").removeClass('state-show');
+          $("#add-pupil-popup").addClass('state-hide');
+          oThisPage.fnRenderPupilList();
+        }
+      });
     });
     
     //Lesson
@@ -810,6 +860,10 @@ oThisPage = {
     $(".sub-menu-container .filter-list #lesson-plan select").change(function() {
       $(".sub-menu-container .search-bar .search-button").click();
     });
+    
+    
+    
+    
     
     // default to image tab
     setTimeout('$(".main-menu #session.menu-item").click()', 750);
@@ -1408,6 +1462,7 @@ oThisPage = {
           $(".modal").addClass('state-show');
           oPopup.removeClass('state-hide');
           oPopup.find(".head #action").html("Edit");
+          oPopup.find(".head #pupil-id").val(aData.iId);
           oPopup.find("#create-button").addClass("state-hide");
           oPopup.find("#update-button").removeClass("state-hide");
           oPopup.find(".picture img").attr('src', aData.sImageUrl);

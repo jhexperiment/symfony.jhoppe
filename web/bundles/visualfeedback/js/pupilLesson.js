@@ -150,11 +150,28 @@ var oThisPage = {
   'fnGetCurrentQuestion': function() {
     return aSessionInfo.aLesson.aQuestionList[aSessionInfo.iCurrentQuestion];
   },
+  'fnRecordCurrentQuestion': function() {
+    var aPost = {
+      'iCurrentQuestion': aSessionInfo.iCurrentQuestion,
+      'sHash': $("#hash").val()
+    };
+    $.ajax({
+      'data': aPost,
+      'dataType': 'json',
+      'type': 'POST',
+      'url': "setCurrentQuestion",
+      'success': function(aData, textStatus, jqXHR) {
+        
+      }
+    });
+  },
   'fnNextQuestion': function() {
     var oContentType = $("#answer-control-large .content-type");
     var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
     aSessionInfo.iCurrentQuestion++;
     oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), sCurrentType);
+    
+    oThisPage.fnRecordCurrentQuestion();
   },
   'fnNextStep': function() {
     var oContentType = $("#answer-control-large .content-type");
@@ -178,6 +195,8 @@ var oThisPage = {
     var sCurrentType = oContentType.find("#image").hasClass('state-hide') ? 'text' : 'image';
     aSessionInfo.iCurrentQuestion--;
     oThisPage.fnSetQuestion(oThisPage.fnGetCurrentQuestion(), sCurrentType);
+    
+    oThisPage.fnRecordCurrentQuestion();
   },
   'fnPrevStep': function() {
     var oContentType = $("#answer-control-large .content-type");
