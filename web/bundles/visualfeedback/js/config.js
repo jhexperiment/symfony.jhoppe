@@ -210,6 +210,40 @@ var oThisPage = {
       });
       */
     });
+    $("#audio.view .body #jplayer").jPlayer({
+      'solution': 'html, flash',
+      'swfPath': "/bundles/visualfeedback/js/jquery/plugins/jplayer",
+      'supplied': "mp3",
+      'wmode': "window",
+      'ready': function () {
+        $(this).jPlayer("setMedia", {
+          'mp3': "/bundles/visualfeedback/audio/uploads/THX - 20th Century Fox Fanfare.mp3"
+        });
+      },
+      'cssSelectorAncestor': '#jp_container_1',
+      'cssSelector': {
+        videoPlay: '.jp-video-play',
+        play: '.jp-play',
+        pause: '.jp-pause',
+        stop: '.jp-stop',
+        seekBar: '.jp-seek-bar',
+        playBar: '.jp-play-bar',
+        mute: '.jp-mute',
+        unmute: '.jp-unmute',
+        volumeBar: '.jp-volume-bar',
+        volumeBarValue: '.jp-volume-bar-value',
+        volumeMax: '.jp-volume-max',
+        currentTime: '.jp-current-time',
+        duration: '.jp-duration',
+        fullScreen: '.jp-full-screen',
+        restoreScreen: '.jp-restore-screen',
+        repeat: '.jp-repeat',
+        repeatOff: '.jp-repeat-off',
+        gui: '.jp-gui',
+        noSolution: '.jp-no-solution'
+       },
+      
+     });
     
     
     // Tutor
@@ -866,7 +900,7 @@ var oThisPage = {
     
     
     // default to image tab
-    setTimeout('$(".main-menu #session.menu-item").click()', 750);
+    setTimeout('$(".main-menu #audio.menu-item").click()', 750);
   },
     
   // General
@@ -1552,7 +1586,13 @@ var oThisPage = {
           '</div>';
       var oHtml = $(sHtml);
       oHtml.data("aData", this);
-      
+      oHtml.click(function() {
+        var aData = $(this).data("aData");
+        $("#audio.view .body #jplayer").jPlayer("setMedia", {
+          'mp3': aData.sUrl
+        }).jPlayer("play");
+        $("#audio.view .body #jp_container_1").find(".jp-title ul li").html(aData.sLabel);
+      });
       oHtml.find(".label").dblclick(function() {
         // dblclick event on image label
         var sOldValue = $.trim($(this).html());
