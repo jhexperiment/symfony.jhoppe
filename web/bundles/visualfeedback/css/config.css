@@ -453,6 +453,15 @@ select.state-error {
   text-decoration: underline;
 }
 
+#session.view .body .session-list tr {
+  cursor: pointer;
+}
+
+#session.view .body .session-list tr.state-hover {
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
 .add-popup {
   z-index: 1999;
   width: 591px;
@@ -923,10 +932,18 @@ select.state-error {
 
 #add-session-popup .body table {
   margin: 0px 2px;
+  width: 32%;
   border-collapse: collapse;
   
   float: left;
 }
+#add-session-popup .body table th {
+  font-size: 14pt;
+  
+  background-color: #888888;
+  
+}
+
 
 #add-session-popup .body table th,
 #add-session-popup .body table td {

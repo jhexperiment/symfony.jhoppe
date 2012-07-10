@@ -15,6 +15,8 @@ var oThisPage = {
   'sAudioUploadFolder': null,
   'sTutorUploadFolder': null,
   'sPupilUploadFolder': null,
+  'oLessonDataTable': null,
+  'oSessionDataTable': null,
     
   'fnInit': function() {
     oThisPage.sRootWebUrl = $("#root-web-folder").val();
@@ -756,6 +758,17 @@ var oThisPage = {
       'handles': "s",
       'alsoResize': "#add-lesson-popup, #add-lesson-popup .body, #add-lesson-popup .popup-view, #add-lesson-popup .background"
     });
+    oThisPage.oLessonDataTable = $("#lesson.view .body table.lesson-list").dataTable({
+      "bJQueryUI": true,
+      "sPaginationType": "full_numbers",
+      "aoColumns": [ 
+        { "sClass": "id" },
+        { "sClass": "lesson" },
+        { "sClass": "lesson-plan" },
+        { "sClass": "subject" }
+      ]
+      
+    });
     
     //Session
     $(".main-menu #session.menu-item").click(function() {
@@ -822,7 +835,20 @@ var oThisPage = {
         }
       });
     });
-    
+    oThisPage.oSessionDataTable =  $("#session.view .body table.session-list").dataTable({
+      "bJQueryUI": true,
+      "sPaginationType": "full_numbers",
+      "aoColumns": [ 
+        { "sClass": "id" },
+        { "sClass": "hash" },
+        { "sClass": "tutor-id" },
+        { "sClass": "tutor" },
+        { "sClass": "pupil-id" },
+        { "sClass": "pupil" },
+        { "sClass": "lesson" },
+        { "sClass": "status" }
+      ]
+    });
     
     //Setting 
     $(".main-menu #setting.menu-item").click(function() {
@@ -900,7 +926,7 @@ var oThisPage = {
     
     
     // default to image tab
-    setTimeout('$(".main-menu #audio.menu-item").click()', 750);
+    setTimeout('$(".main-menu #session.menu-item").click()', 750);
   },
     
   // General
@@ -942,7 +968,7 @@ var oThisPage = {
   // Session
   'fnShowSessionPopup': function() {
     var oPopup = $("#add-session-popup");
-    oPopup.find(".head #action").html("Add");
+    oPopup.find(".head #action").html("Create");
     oPopup.find(".foot #update-button").addClass("state-hide");
     oPopup.find(".foot #create-button").removeClass("state-hide");
     oPopup.find("input, select").val("");
@@ -1041,32 +1067,28 @@ var oThisPage = {
     var aPost = {
       'sSearch' : $(".sub-menu-container .search-bar input").val()
     }
-    $("#session.view .body table.session-list tbody").html("");
+    //$("#session.view .body table.session-list tbody").html("");
+    oThisPage.oSessionDataTable.fnClearTable();
     oThisPage.fnGetSessionList(aPost, function(aData, textStatus, jqXHR) {
       $.each(aData, function() {
         oThisPage.fnRenderSessionRow(this);
       });
     });
+    
+    
   },
   'fnRenderSessionRow': function(aSession) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aSession.iSessionId + '</td>' +
-          '<td class="hash">' + aSession.sHash + '</td>' +
-          '<td class="tutor-id">' + aSession.aTutor.iTutorId + '</td>' +
-          '<td class="tutor">' + 
-            $.trim(aSession.aTutor.sFirstName + ' ' + aSession.aTutor.sLastName) + 
-          '</td>' +
-          '<td class="pupil-id">' + aSession.aPupil.iPupilId + '</td>' +
-          '<td class="pupil">' +  
-            $.trim(aSession.aPupil.sFirstName + ' ' + aSession.aPupil.sLastName) + 
-          '</td>' +
-          '<td class="lesson">' + aSession.aLesson.sName + '</td>' +
-          '<td class="status">' + aSession.sStatus + '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    
-    $("#session.view .body table.session-list tbody").append(oHtml);
+    var aRowInfo = [
+      /* id */    aSession.iSessionId,
+      /* hash */    aSession.sHash,
+      /* tutor-id */    aSession.aTutor.iTutorId,
+      /* tutor */    $.trim(aSession.aTutor.sFirstName + ' ' + aSession.aTutor.sLastName),
+      /* pupil-id */    aSession.aPupil.iPupilId,
+      /* pupil */    $.trim(aSession.aPupil.sFirstName + ' ' + aSession.aPupil.sLastName),
+      /* lesson */    aSession.aLesson.sName,
+      /* status */    aSession.sStatus
+    ];
+    oThisPage.oSessionDataTable.fnAddData(aRowInfo);
   },
   
   
@@ -1123,7 +1145,7 @@ var oThisPage = {
   },
   'fnShowLessonPopup': function() {
     var oPopup = $("#add-lesson-popup");
-    oPopup.find(".head #action").html("Add");
+    oPopup.find(".head #action").html("Create");
     oPopup.find(".foot #update-button").addClass("state-hide");
     oPopup.find(".foot #create-button").removeClass("state-hide");
     oPopup.find("input, select").val("");
@@ -1184,19 +1206,15 @@ var oThisPage = {
     });
   },
   'fnRenderLessonRow': function(aLesson) {
-    var sHtml = 
-        '<tr>' + 
-          '<td class="id">' + aLesson.id + '</td>' +
-          '<td class="lesson">' +
-            '<span class="text">' + 
-              aLesson.name +
-            '</span>' + 
-          '</td>' +
-          '<td class="lesson-plan">' +  aLesson.lessonPlan + '</td>' +
-          '<td class="subject">' + aLesson.subject + '</td>' +
-        '</tr>';
-    var oHtml = $(sHtml);
-    oHtml.find(".lesson .text").hover(
+    var aRowInfo = [
+      /* id */    aLesson.id,
+      /* lesson */    '<span class="text">' + aLesson.name + '</span>' ,
+      /* lesson-plan */    aLesson.lessonPlan,
+      /* subject */    aLesson.subject
+    ];
+    oThisPage.oLessonDataTable.fnAddData(aRowInfo);
+    
+    $("#lesson.view .body .lesson-list td.lesson .text").hover(
       function() {
         $(this).addClass('state-hover');
       },
@@ -1252,7 +1270,7 @@ var oThisPage = {
       });
     });
     
-    $("#lesson.view .body table.lesson-list tbody").append(oHtml);
+    //$("#lesson.view .body table.lesson-list tbody").append(oHtml);
   },
   'fnLessonAppendImage': function(oImage) {
     var sHtml = 
@@ -1287,7 +1305,8 @@ var oThisPage = {
     var aPost = {
       'sSearch' : $(".sub-menu-container .search-bar input").val()
     }
-    $("#lesson.view .body table.lesson-list tbody").html("");
+    //$("#lesson.view .body table.lesson-list tbody").html("");
+    oThisPage.oLessonDataTable.fnClearTable();
     oThisPage.fnGetLessonList(aPost, function(aData, textStatus, jqXHR) {
       $.each(aData, function() {
         oThisPage.fnRenderLessonRow(this);

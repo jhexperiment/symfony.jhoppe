@@ -10,6 +10,11 @@
 <script type="text/javascript" src="/bundles/visualfeedback/js/jquery/plugins/jplayer/jquery.jplayer.min.js"></script>
 <link rel="stylesheet" href="/bundles/visualfeedback/css/jquery/jplayer/jplayer.blue.monday.css" type="text/css">
 
+
+<script type="text/javascript" src="/bundles/visualfeedback/js/jquery/plugins/dataTables/jquery.dataTables.js"></script>
+<link rel="stylesheet" href="/bundles/visualfeedback/css/jquery/dataTables/jquery.dataTables.css" type="text/css">
+<link rel="stylesheet" href="/bundles/visualfeedback/css/jquery/dataTables/jquery.dataTables_themeroller.css" type="text/css">
+
 <link rel="stylesheet" href="/bundles/visualfeedback/js/uploadify/uploadify.css" type="text/css">
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/jquery.uploadify.js"></script>
 <script type="text/javascript" src="/bundles/visualfeedback/js/uploadify/swfobject.js"></script>
@@ -316,7 +321,7 @@ foreach ($aPath as $sName => $sValue) {
     <div id="main" class="popup-view">
       <div class="head">
         <input id="tutor-id" type="hidden" value="" />
-        <span id="action">New</span> Tutor
+        <span id="action">Create</span> Tutor
       </div>
       <div class="body">
         <span class="left">
@@ -389,7 +394,7 @@ foreach ($aPath as $sName => $sValue) {
     <div id="main" class="popup-view">
       <div class="head">
         <input id="pupil-id" type="hidden" value="" />
-        <span id="action">New</span> Pupil
+        <span id="action">Create</span> Pupil
       </div>
       <div class="body">
         <span class="left">
@@ -464,7 +469,7 @@ foreach ($aPath as $sName => $sValue) {
     <div id="main" class="popup-view">
       <div class="head">
         <input id="lesson-id" type="hidden" value="" />
-        <span id="action">New</span> Lesson
+        <span id="action">Create</span> Lesson
       </div>
       <div class="body">
         <div class="input">
@@ -531,17 +536,16 @@ foreach ($aPath as $sName => $sValue) {
     <div id="main" class="popup-view">
       <div class="head">
         <input id="session-id" type="hidden" value="" />
-        <span id="action">New</span> Session
+        <span id="action">Create</span> Session
       </div>
       <div class="body">
         <table id="tutor-list">
           <thead>
             <tr>
-              <th class="title" colspan="2">Tutor</th>
+              <th class="title" colspan="2">TUTOR</th>
             </tr>
             <tr>
               <th class="id">ID</th>
-              <th class="name">Name</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -549,11 +553,10 @@ foreach ($aPath as $sName => $sValue) {
         <table id="pupil-list">
           <thead>
             <tr>
-              <th class="title" colspan="2">Pupil</th>
+              <th class="title" colspan="2">PUPIL</th>
             </tr>
             <tr>
               <th class="id">ID</th>
-              <th class="name">Name</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -561,11 +564,10 @@ foreach ($aPath as $sName => $sValue) {
         <table id="lesson-list">
           <thead>
             <tr>
-              <th class="title" colspan="2">Lesson</th>
+              <th class="title" colspan="2">LESSON</th>
             </tr>
             <tr>
               <th class="id">ID</th>
-              <th class="name">Name</th>
             </tr>
           </thead>
           <tbody></tbody>
